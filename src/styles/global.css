@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #faf6ef;
+}
+
+body {
+  @apply text-gray-800;
+  background: var(--bg);
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-xl px-5 py-3 font-medium shadow-sm transition hover:shadow;
+  @apply bg-brand-700 text-white;
+}
+.btn-primary:hover { @apply bg-brand-900; }
