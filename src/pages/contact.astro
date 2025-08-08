@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title = "Contact — Nora's Upholstery";
+const description = "Request a free estimate. Send us photos of your items and any deadlines, and we’ll reply with a quote.";
+---
+<BaseLayout {title} {description}>
+  <section id="quote" class="max-w-3xl mx-auto px-4 py-16">
+    <h1 class="text-3xl font-bold mb-6">Get a Quote</h1>
+    <p class="mb-6">Upload photos or describe your items (e.g., dental chair, dining chair set). We’ll confirm fabric options, pickup/delivery, and timeline.</p>
+
+    <!-- For local preview this just posts nowhere; we'll swap to a service when deploying -->
+    <form name="quote" method="POST" class="space-y-4 bg-white/80 border rounded-xl p-6">
+      <label class="block">
+        <span class="text-sm font-medium">Name</span>
+        <input required name="name" class="mt-1 w-full rounded-md border p-3" placeholder="Your name" />
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium">Email</span>
+        <input required type="email" name="email" class="mt-1 w-full rounded-md border p-3" placeholder="you@example.com" />
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium">Phone</span>
+        <input name="phone" class="mt-1 w-full rounded-md border p-3" placeholder="647‑981‑2622" />
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium">Item type & quantity</span>
+        <input name="items" class="mt-1 w-full rounded-md border p-3" placeholder="e.g., 6 dining chairs, 1 dental chair, gym bench pad" />
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium">Deadline or preferred dates</span>
+        <input name="deadline" class="mt-1 w-full rounded-md border p-3" placeholder="e.g., by next Friday (dental rush available)" />
+      </label>
+      <label class="block">
+        <span class="text-sm font-medium">Message</span>
+        <textarea name="message" class="mt-1 w-full rounded-md border p-3" rows="4" placeholder="Tell us about fabric, damage, pickup/delivery needs"></textarea>
+      </label>
+
+      <div class="pt-2">
+        <button class="btn-primary" type="submit">Send</button>
+      </div>
+    </form>
+
+    <div class="mt-10 text-sm">
+      <p><strong>Phone:</strong> <a class="underline" href="tel:+16479812622">647‑981‑2622</a></p>
+      <p><strong>Email:</strong> <a class="underline" href="mailto:shaida.nora@gmail.com">shaida.nora@gmail.com</a></p>
+      <p><strong>Service area:</strong> Greater Toronto Area</p>
+    </div>
+  </section>
+</BaseLayout>
