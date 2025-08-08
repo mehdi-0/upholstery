@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title = "Nora's Upholstery — Professional Upholstery for Clinics, Homes & Hospitality";
+const description = "Fast, professional upholstery across the GTA. Dental chairs, chiropractic & medical tables, gym pads, restaurant booths, sofas, dining chairs and more. Pickup & delivery available.";
+---
+<BaseLayout {title} {description}>
+  <section class="relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 py-16 md:py-24 grid md:grid-cols-2 gap-10 items-center">
+      <div>
+        <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-5">Professional Upholstery for Clinics, Homes & Hospitality</h1>
+        <p class="text-lg mb-6">Trusted by dental offices, chiropractors, fitness clubs and homeowners. One‑week typical turnaround, weekend rush for dental available.</p>
+        <div class="flex gap-3">
+          <a href="/contact#quote" class="btn-primary">Get a Quote</a>
+          <a href="/services" class="inline-flex items-center justify-center rounded-xl px-5 py-3 font-medium bg-white border">See Services</a>
+        </div>
+      </div>
+      <div class="p-6 bg-white/70 rounded-2xl shadow-sm border">
+        <img src="/logo.png" alt="Nora's Upholstery logo" class="w-full h-auto" />
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 bg-white border-t">
+    <div class="max-w-6xl mx-auto px-4">
+      <h2 class="text-2xl font-semibold mb-6">Why choose us</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="p-6 rounded-xl border bg-gray-50"><h3 class="font-semibold mb-2">Medical‑grade expertise</h3><p>Dental chairs, chiropractic & exam tables, gym pads—antibacterial vinyls and precision fit.</p></div>
+        <div class="p-6 rounded-xl border bg-gray-50"><h3 class="font-semibold mb-2">Fast turnaround</h3><p>Typical one‑week completion; weekend rush available for dental jobs.</p></div>
+        <div class="p-6 rounded-xl border bg-gray-50"><h3 class="font-semibold mb-2">Pickup & delivery</h3><p>We serve the GTA with flexible pickup and delivery options.</p></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
