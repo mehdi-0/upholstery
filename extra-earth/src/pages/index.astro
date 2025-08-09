@@ -4,49 +4,37 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const title = "Nora's Upholstery — Precision Upholstery for Clinics, Fitness & Hospitality";
 const description = "Dental chairs, chiropractic tables, gym pads, restaurant booths and fine home furniture. Pickup & delivery across the GTA.";
 
-const stories = [
-  {
-    img: '/after-chiro.jpg',
-    who: 'Dr. David Song',
-    quote: 'Awesome rates and beautiful workmanship for my chiropractic table. They also replaced some missing screws and cleaned up some nasty rust that I had going on with the table. Great communication as well.'
-  },
-  {
-    img: '/after-chiro.jpg',
-    who: 'Chiropractic Clinic — Toronto',
-    quote: 'Loaner bed kept us open; finish is flawless. Turnaround was faster than expected.'
-  },
-  {
-    img: '/before-chiro.jpg',
-    who: 'Dental Office — Vaughan',
-    quote: 'Chairs recovered over a weekend. Seam alignment and color match are perfect.'
-  },
-  {
-    img: '/after-chiro.jpg',
-    who: 'Fitness Studio — Richmond Hill',
-    quote: 'Our benches feel brand new. Durable, easy‑to‑clean vinyl and tight patterning.'
-  },
+/* 3 frames (images), 2 quotes (stacked & cross‑faded) */
+const frames = [
+  { img: '/after-chiro.jpg',  who: 'Chiropractic Clinic — Toronto' },
+  { img: '/before-chiro.jpg', who: 'Dental Office — Vaughan' },
+  { img: '/after-chiro.jpg',  who: 'Fitness Studio — Richmond Hill' },
+];
+const quotes = [
+  { who: 'Dr. David Song', quote: 'Awesome rates and beautiful workmanship for my chiropractic table. They also replaced some missing screws and cleaned up some nasty rust that I had going on with the table. Great communication as well.' },
+  { who: 'Dental Office — Vaughan', quote: 'Chairs recovered over a weekend. Seam alignment and color match are perfect.' },
 ];
 ---
 <BaseLayout {title} {description}>
 
-  <!-- Hero (reduced height so stories start sooner) -->
-  <section class="mx-auto max-w-7xl px-4 pt-28 md:pt-32 pb-10 min-h-[90vh] grid md:grid-cols-[1.2fr_.8fr] gap-10 items-center">
+  <!-- Hero (shortest yet so stories start sooner) -->
+  <section id="hero" class="mx-auto max-w-7xl px-4 pt-14 md:pt-14 pb-0 min-h-[46vh] grid md:grid-cols-[1.15fr_.85fr] gap-8 items-center">
     <div class="space-y-6">
       <h1 class="text-5xl md:text-6xl font-semibold leading-tight tracking-tight">
-        Upholstery engineered for <span class="ink">clinical use</span> and <span class="ink">high traffic</span>
+        Upholstery engineered for <span class="ink">clinical use</span> and <span class="ink gold-anim">high traffic</span>
       </h1>
       <p class="text-lg opacity-90">
         Medical‑grade vinyls, precision patterning, foam refurbishment and on‑time turnarounds.
-        Weekend rush available for <span class="gold-strong">dental</span>. We rebuild
-        <span class="gold-strong">foam</span>, match <span class="gold-strong">patterns</span>, and meet
-        <span class="gold-strong">tight deadlines</span>.
+        Weekend rush available for <span class="gold-anim">dental</span>. We rebuild
+        <span class="gold-anim">foam</span>, match <span class="gold-anim">patterns</span>, and meet
+        <span class="gold-anim">tight deadlines</span>.
       </p>
       <div class="flex flex-wrap gap-3">
         <a href="/contact" class="btn-primary">Get a Quote</a>
         <a href="/before-after" class="btn-gold">Before / After</a>
       </div>
 
-      <div class="flex flex-wrap gap-2 pt-2">
+      <div class="flex flex-wrap gap-2 pt-1">
         <span class="glass px-3 py-1 text-sm border hairline">Dental & Medical</span>
         <span class="glass px-3 py-1 text-sm border hairline">Chiropractic</span>
         <span class="glass px-3 py-1 text-sm border hairline">Fitness Clubs</span>
@@ -73,12 +61,12 @@ const stories = [
     </aside>
   </section>
 
-  <!-- ===== Client Stories: fixed-center quote; images move/alternate underneath ===== -->
-  <section class="stories mx-auto max-w-7xl px-4 py-10">
+  <!-- ===== Client Stories: fixed-center quote; images move underneath ===== -->
+  <section class="stories mx-auto max-w-7xl px-4 py-2">
     <!-- Sticky, centered quotes layer (overlaps images) -->
     <div class="stories-viewport">
       <div class="quote-stack">
-        {stories.map((s, i) => (
+        {quotes.map((s, i) => (
           <blockquote id={`quote-${i}`} class="quote-card">
             <p class="text-xl md:text-2xl italic">“{s.quote}”</p>
             <footer class="mt-3 text-sm opacity-80">— {s.who}</footer>
@@ -89,11 +77,11 @@ const stories = [
 
     <!-- Scrolling image track (under the quotes) -->
     <div class="stories-track">
-      {stories.map((s, i) => (
-        <section id={`frame-${i}`} class={`frame ${i % 2 === 1 ? 'frame--even' : ''}`}>
+      {frames.map((f, i) => (
+        <section id={`frame-${i}`} class={`frame ${i === 0 ? 'frame--first' : ''} ${i % 2 === 1 ? 'frame--even' : ''}`}>
           <div class="frame-inner">
             <div class="pic-wrap" id={`pic-${i}`}>
-              <img src={s.img} alt={s.who} class="pic" />
+              <img src={f.img} alt={f.who} class="pic" />
             </div>
             <div class="spacer"></div>
           </div>
@@ -102,10 +90,34 @@ const stories = [
     </div>
   </section>
 
-  <!-- Scrollytelling logic: overlap, earlier start, stronger nudge -->
+  <!-- Scroll logic: hero animations + earlier stories activation; map 3 frames -> 2 quotes -->
   <script is:inline>
+    /* ===== Hero: blue + gold animation ===== */
+    (function(){
+      const hero = document.getElementById('hero');
+      const inks = document.querySelectorAll('.ink');
+      const golds = document.querySelectorAll('.gold-anim');
+
+      function setHeadings(){
+        const r = hero.getBoundingClientRect();
+        const h = Math.max(1, r.height);
+        const win = (window.innerHeight || document.documentElement.clientHeight);
+
+        // Progress goes 0→1 between hero entering and you passing ~60% window height
+        const target = win * 0.60;
+        const p = 1 - Math.min(1, Math.max(0, (r.bottom - target) / (h*0.9)));
+
+        inks.forEach(el  => el.style.setProperty('--inkp',  p.toFixed(3)));
+        golds.forEach(el => el.style.setProperty('--goldp', p.toFixed(3)));
+      }
+      setHeadings();
+      window.addEventListener('scroll', setHeadings, { passive:true });
+      window.addEventListener('resize', setHeadings, { passive:true });
+    })();
+
+    /* ===== Stories scrollytelling ===== */
     const frames = Array.from(document.querySelectorAll('.frame'));
-    const quotes = frames.map((_, i) => document.getElementById(`quote-${i}`));
+    const quotes = Array.from(document.querySelectorAll('.quote-card'));
     const pics   = frames.map((_, i) => document.getElementById(`pic-${i}`));
 
     const vh = () => window.innerHeight || document.documentElement.clientHeight;
@@ -120,21 +132,24 @@ const stories = [
         const r = el.getBoundingClientRect();
         const center = r.top + r.height/2;
         const dist = Math.abs(center - mid);
-        const range = Math.max(1, r.height*0.6); // active zone width
+
+        // Larger range = quote starts earlier (reduces "empty space")
+        const range = Math.max(1, Math.max(r.height, vh()*1.2));
         let score = 1 - (dist / range);
         score = clamp(score, 0, 1);
         if (score > bestScore) { bestScore = score; bestIdx = i; }
 
-        // Local progress [-1..1] for parallax
-        const local = clamp((mid - r.top) / Math.max(1, r.height), 0, 1) * 2 - 1;
-        const shiftY = local * 30 * score; // stronger vertical motion
+        // Parallax on images
+        const local = clamp((mid - r.top) / Math.max(1, r.height), 0, 1) * 2 - 1; // [-1..1]
+        const shiftY = local * 26 * score;
         pics[i].style.setProperty('--parallax', `${-shiftY.toFixed(1)}px`);
       });
 
+      // Map 3 frames -> 2 quotes smoothly
+      const qIdx = Math.round(bestIdx * (quotes.length - 1) / Math.max(1, frames.length - 1));
       quotes.forEach((q, i) => {
-        const a = i === bestIdx ? ease(bestScore) : 0;
+        const a = i === qIdx ? ease(bestScore) : 0;
         q.style.opacity = a.toFixed(3);
-        q.style.transform = `translateY(${(1-a)*10}px)`;
       });
     }
 
