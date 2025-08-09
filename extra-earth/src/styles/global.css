@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Nora's Upholstery brand (tuned for contrast) ===== */
+:root{
+  --cream:#F3EADB; --charcoal:#1C252B; --navy:#154A6A; --steel:#4B6470; --gold:#C6912E;
+  --glass:255,255,255; --glass-alpha:.56; --hair:255,255,255;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --cream:#0A0F13; --charcoal:#E6EDF2; --navy:#6FB3DE; --steel:#8FB0BE; --gold:#F0C96A;
+    --glass:16,22,28; --glass-alpha:.38; --hair:255,255,255;
+  }
+}
+
+/* ===== Base ===== */
+html,body{ min-height:100%; }
+body{
+  background:
+    radial-gradient(900px 600px at 14% -8%, color-mix(in srgb, var(--cream) 70%, #fff 30%) 0%, var(--cream) 45%, transparent 70%),
+    radial-gradient(900px 600px at 110% 6%, color-mix(in srgb, var(--steel) 10%, var(--cream) 90%) 0%, transparent 60%),
+    var(--cream);
+  color:var(--charcoal); -webkit-font-smoothing:antialiased; position:relative; isolation:isolate;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.012) 0 1px, transparent 1px 2px),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.012) 0 1px, transparent 1px 2px);
+  opacity:.28;
+}
+
+/* ===== Liquid-glass ===== */
+.glass{
+  background:rgba(var(--glass), var(--glass-alpha));
+  backdrop-filter:blur(18px) saturate(140%); -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border:1px solid rgba(var(--hair), .22); border-radius:1rem; box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
+body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
+
+/* ===== Buttons ===== */
+.btn-primary{
+  display:inline-flex; align-items:center; gap:.5rem; border-radius:1rem; padding:.75rem 1.5rem;
+  font-weight:500; color:#fff;
+  background-image:linear-gradient(135deg, var(--navy), color-mix(in srgb, var(--navy) 60%, #0F2F44 40%));
+  box-shadow:0 10px 30px color-mix(in srgb, var(--navy) 28%, transparent);
+  transition:transform .18s ease, box-shadow .2s ease;
+}
+.btn-primary:hover{ transform:translateY(-2px); box-shadow:0 14px 36px color-mix(in srgb, var(--navy) 35%, transparent); }
+.btn-gold{
+  display:inline-flex; align-items:center; gap:.5rem; border-radius:1rem; padding:.75rem 1.5rem; font-weight:500; color:#fff;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--gold) 90%, #fff 10%), #B58225);
+  box-shadow:0 10px 28px color-mix(in srgb, var(--gold) 35%, transparent); transition:transform .18s ease, box-shadow .2s ease;
+}
+.btn-gold:hover{ transform:translateY(-2px); box-shadow:0 14px 34px color-mix(in srgb, var(--gold) 45%, transparent); }
+
+/* ===== Text effects ===== */
+.ink{
+  --inkp:0;
+  color:color-mix(in srgb, var(--charcoal) calc(100% - (var(--inkp)*100%)), var(--navy) calc(var(--inkp)*100%));
+  transition:color .18s linear, text-shadow .24s ease;
+}
+.gold-strong{ color:var(--gold); font-weight:700; }
+
+/* ===== Footer chips ===== */
+.areas-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:.5rem; }
+@media (min-width:640px){ .areas-grid{ grid-template-columns:repeat(3, minmax(0,1fr)); } }
+@media (min-width:1024px){ .areas-grid{ grid-template-columns:repeat(4, minmax(0,1fr)); } }
+.area-chip{
+  display:flex; align-items:center; gap:.5rem; padding:.5rem .75rem; border-radius:999px;
+  background:rgba(var(--glass), .45); border:1px solid rgba(var(--hair), .2);
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); font-size:.9rem;
+}
+.area-pin{
+  width:18px; height:18px; border-radius:999px;
+  background:color-mix(in srgb, var(--navy) 78%, white 22%);
+  box-shadow:0 0 0 2px rgba(255,255,255,.65) inset, 0 2px 6px rgba(0,0,0,.15);
+}
+
+/* ===== Before/After compare ===== */
+.compare{ --pos:50%; } .compare__img{ object-fit:cover; object-position:center; }
+.compare__after{ clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.compare__line{ left:var(--pos); transform:translateX(-50%); }
+.compare__handle{ left:var(--pos); transform:translate(-50%, -50%); }
+
+/* ===== STORIES: fixed-center quote, images move underneath & overlap ===== */
+.stories{ position:relative; }
+
+/* Sticky viewport layer with stacked quotes (above images) */
+.stories-viewport{
+  position:sticky; top:0; height:100vh; display:grid; place-items:center;
+  pointer-events:none; z-index:5;
+}
+.quote-stack{ position:relative; width:min(700px, 90vw); } /* tighter width centers bubble */
+.quote-card{
+  position:absolute; inset:0; pointer-events:auto;
+  padding:1rem 1.25rem; border-radius:1rem;
+  background:rgba(var(--glass), .62); border:1px solid rgba(var(--hair), .22);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 20px 60px rgba(0,0,0,.12);
+  opacity:0; transform:translateY(10px); transition:opacity .12s linear, transform .12s linear;
+}
+
+/* Scrolling track with frames (images under quotes) */
+.stories-track{ position:relative; z-index:1; }
+
+/* Taller frames create that moving-background feel (reduced slightly to start earlier) */
+.frame{
+  position:relative; min-height:110vh; display:grid; align-items:center;
+}
+.frame-inner{ display:grid; grid-template-columns:1fr; place-items:center; }
+@media (min-width:900px){
+  .frame-inner{ grid-template-columns:1fr 1fr; }
+  .frame--even .pic-wrap{ grid-column:2; justify-self:end; --shiftX:-10vw; }
+  .frame--even .spacer{ grid-column:1; }
+}
+
+/* Floating image card (15% larger & nudged inward for overlap) */
+.pic-wrap{
+  justify-self:start;
+  width:min(276px, 75vw); /* was 240px -> ~15% larger */
+  border-radius:1.25rem; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.18);
+  /* combine horizontal nudge + vertical parallax */
+  --shiftX: 10vw;        /* default nudge toward center for odd frames */
+  --parallax: 0px;
+  transform: translate3d(var(--shiftX), var(--parallax), 0);
+  transition: transform .06s linear;
+}
+.pic{ display:block; width:100%; height:auto; aspect-ratio:4/5; object-fit:cover; }
+
+/* Helper */
+.hairline{ border-width:.5px; }

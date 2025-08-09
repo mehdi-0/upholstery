@@ -1,0 +1,97 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title = "Before / After — Nora's Upholstery";
+const description = "See transformations from worn to like‑new on clinical and commercial equipment.";
+---
+<BaseLayout {title} {description}>
+  <section class="mx-auto max-w-7xl px-4 pt-28 md:pt-36 pb-14 space-y-8">
+    <header class="space-y-2">
+      <p class="kicker-gold">Transformations</p>
+      <h1 class="text-3xl md:text-4xl font-semibold">Before / After</h1>
+      <div class="gold-hr"></div>
+    </header>
+
+    <!-- Smaller, square compare slider -->
+    <article class="glass p-4 md:p-6 border hairline">
+      <div
+        id="compare"
+        class="compare relative w-full max-w-md mx-auto overflow-hidden rounded-xl border hairline bg-white/60 select-none"
+        style="aspect-ratio: 1 / 1;"
+      >
+        <!-- BEFORE -->
+        <img
+          src="/before-chiro.jpg"
+          alt="Chiropractic table before reupholstery"
+          class="compare__img absolute inset-0 w-full h-full"
+          draggable="false"
+        />
+
+        <!-- AFTER (masked) -->
+        <img
+          id="afterImg"
+          src="/after-chiro.jpg"
+          alt="Chiropractic table after reupholstery"
+          class="compare__img compare__after absolute inset-0 w-full h-full"
+          style="--pos:50%"
+          draggable="false"
+        />
+
+        <!-- Divider line -->
+        <div class="compare__line absolute top-0 h-full w-[2px] bg-[color:var(--navy)] opacity-80"></div>
+
+        <!-- Handle -->
+        <button
+          id="handle"
+          type="button"
+          aria-label="Drag to compare"
+          class="compare__handle absolute top-1/2 -translate-y-1/2 w-9 h-9 rounded-full border-2"
+          style="border-color: var(--gold); background: color-mix(in srgb, var(--gold) 20%, white 80%); box-shadow: 0 6px 16px rgba(0,0,0,.18);"
+        ></button>
+      </div>
+
+      <div class="flex justify-between text-xs mt-3 opacity-70 max-w-md mx-auto">
+        <span>Before</span><span>After</span>
+      </div>
+    </article>
+  </section>
+
+  <script is:inline>
+    const box   = document.getElementById('compare');
+    const after = document.getElementById('afterImg');
+    const knob  = document.getElementById('handle');
+
+    const setPos = (px) => {
+      const rect = box.getBoundingClientRect();
+      const x = Math.min(Math.max(px - rect.left, 0), rect.width);
+      const p = (x / rect.width) * 100;
+      box.style.setProperty('--pos', `${p}%`);
+      after.style.setProperty('--pos', `${p}%`);
+      box.querySelectorAll('.compare__line, .compare__handle').forEach(el => {
+        el.style.left = `${p}%`;
+      });
+    };
+
+    // Start centered
+    const rect = box.getBoundingClientRect();
+    setPos(rect.left + rect.width / 2);
+
+    // Drag / touch support
+    let dragging = false;
+    const start = (e) => { dragging = true; move(e); e.preventDefault(); };
+    const end   = () => { dragging = false; };
+    const move  = (e) => {
+      if (!dragging) return;
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      setPos(clientX);
+    };
+
+    knob.addEventListener('mousedown', start);
+    knob.addEventListener('touchstart', start, {passive:false});
+    window.addEventListener('mousemove', move, {passive:true});
+    window.addEventListener('touchmove', move, {passive:false});
+    window.addEventListener('mouseup', end);
+    window.addEventListener('touchend', end);
+    box.addEventListener('mousedown', start);
+    box.addEventListener('touchstart', start, {passive:false});
+  </script>
+</BaseLayout>

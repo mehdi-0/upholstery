@@ -1,0 +1,218 @@
+---
+import '../styles/global.css';
+
+const {
+  title = "Nora's Upholstery",
+  description = "Professional Upholstery for Clinics, Homes & Hospitality in the Greater Toronto Area.",
+  seoImage = '/logo.png'
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" href="/logo.png" />
+    <title>{title}</title>
+
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={seoImage} />
+  </head>
+  <body class="min-h-screen flex flex-col font-sans">
+    <!-- Ambient blobs -->
+    <div aria-hidden="true" class="pointer-events-none fixed inset-0 -z-10">
+      <div class="absolute -top-28 -left-24 h-80 w-80 rounded-full blur-3xl"
+           style="background: color-mix(in srgb, var(--navy) 30%, white 70%);"></div>
+      <div class="absolute -top-32 right-0 h-96 w-96 rounded-full blur-3xl"
+           style="background: color-mix(in srgb, var(--gold) 28%, white 72%);"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-4 z-50">
+      <div class="mx-auto max-w-7xl px-4">
+        <div class="glass glass-nav px-4 py-2 flex items-center justify-between border hairline">
+          <a href="/" class="flex items-center gap-3">
+            <img src="/logo.png" alt="Nora's Upholstery logo" class="h-9 w-9 rounded-lg shadow-sm" />
+            <span class="font-semibold">Nora's Upholstery</span>
+          </a>
+
+          <!-- Desktop nav -->
+          <nav class="hidden md:flex items-center gap-6 relative">
+            <a href="/">Home</a>
+
+            <!-- SERVICES: link + caret; menu stays open on hover OR click with grace delay -->
+            <div class="relative" id="svcRoot">
+              <a href="/services" id="svcLink"
+                 class="inline-flex items-center gap-1 px-2 py-1 hover:underline"
+                 aria-haspopup="true" aria-expanded="false">
+                <span>Services</span>
+                <svg class="ml-1 h-4 w-4 transition-transform" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clip-rule="evenodd"/>
+                </svg>
+              </a>
+              <button id="svcToggle" type="button" aria-label="Open services menu"
+                      class="absolute inset-0" style="pointer-events:none;"></button>
+
+              <div id="svcMenu"
+                   class="invisible opacity-0 pointer-events-none transition
+                          absolute left-0 mt-2 w-64 glass border hairline p-2 z-50">
+                <a href="/services/medical"     class="block px-3 py-2 rounded-md hover:bg-black/5">Medical</a>
+                <a href="/services/dental"      class="block px-3 py-2 rounded-md hover:bg-black/5">Dental</a>
+                <a href="/services/residential" class="block px-3 py-2 rounded-md hover:bg-black/5">Residential</a>
+                <a href="/services/commercial"  class="block px-3 py-2 rounded-md hover:bg-black/5">Commercial</a>
+              </div>
+            </div>
+
+            <a href="/about">About</a>
+            <a href="/testimonials">Testimonials</a>
+            <a href="/before-after">Before/After</a>
+            <a href="/contact" class="btn-primary">Get a Quote</a>
+          </nav>
+
+          <!-- Mobile: menu button -->
+          <button id="mobileOpen" class="md:hidden btn-primary" aria-controls="mobileSheet" aria-expanded="false" aria-label="Open menu">
+            Menu
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile sheet (slides down) -->
+    <div id="mobileSheet" class="fixed inset-x-0 top-0 z-[60] translate-y-[-110%] opacity-0 transition duration-300">
+      <div class="mx-auto max-w-7xl px-4 pt-4">
+        <div class="glass border hairline p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <img src="/logo.png" alt="" class="h-8 w-8 rounded-lg" />
+              <span class="font-semibold">Menu</span>
+            </div>
+            <button id="mobileClose" class="btn-gold" aria-label="Close menu">Close</button>
+          </div>
+
+          <nav class="mt-4 space-y-2">
+            <a href="/" class="block px-3 py-2 rounded-md hover:bg-black/5">Home</a>
+            <details class="rounded-md">
+              <summary class="list-none cursor-pointer px-3 py-2 rounded-md hover:bg-black/5 flex items-center justify-between">
+                <span>Services</span><span>▾</span>
+              </summary>
+              <div class="pl-3 pt-1 pb-2 space-y-1">
+                <a href="/services"            class="block px-3 py-2 rounded-md hover:bg-black/5">All Services</a>
+                <a href="/services/medical"    class="block px-3 py-2 rounded-md hover:bg-black/5">Medical</a>
+                <a href="/services/dental"     class="block px-3 py-2 rounded-md hover:bg-black/5">Dental</a>
+                <a href="/services/residential"class="block px-3 py-2 rounded-md hover:bg-black/5">Residential</a>
+                <a href="/services/commercial" class="block px-3 py-2 rounded-md hover:bg-black/5">Commercial</a>
+              </div>
+            </details>
+            <a href="/about"         class="block px-3 py-2 rounded-md hover:bg-black/5">About</a>
+            <a href="/testimonials"  class="block px-3 py-2 rounded-md hover:bg-black/5">Testimonials</a>
+            <a href="/before-after"  class="block px-3 py-2 rounded-md hover:bg-black/5">Before/After</a>
+            <a href="/contact"       class="block px-3 py-2 rounded-md hover:bg-black/5">Contact / Quote</a>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="mt-20">
+      <div class="mx-auto max-w-7xl px-4">
+        <div class="glass p-6 md:p-8 grid md:grid-cols-3 gap-6 border hairline">
+          <div>
+            <div class="flex items-center gap-3 mb-3">
+              <img src="/logo.png" class="h-9 w-9 rounded-lg" alt="Logo" />
+              <div class="font-semibold">Nora's Upholstery</div>
+            </div>
+            <p class="text-sm/6 opacity-90">Serving the GTA with professional upholstery for medical, fitness, hospitality and home furniture.</p>
+          </div>
+
+          <!-- Redesigned Areas We Cover -->
+          <div class="md:col-span-2">
+            <h3 class="font-semibold mb-2">Areas We Cover</h3>
+            <div class="areas-grid">
+              <div class="area-chip"><span class="area-pin"></span>Toronto</div>
+              <div class="area-chip"><span class="area-pin"></span>Richmond Hill</div>
+              <div class="area-chip"><span class="area-pin"></span>Vaughan</div>
+              <div class="area-chip"><span class="area-pin"></span>Markham</div>
+              <div class="area-chip"><span class="area-pin"></span>Mississauga</div>
+              <div class="area-chip"><span class="area-pin"></span>Oak Ridges</div>
+              <div class="area-chip"><span class="area-pin"></span>Newmarket</div>
+              <div class="area-chip"><span class="area-pin"></span>King</div>
+            </div>
+          </div>
+        </div>
+        <div class="text-xs text-center py-4 opacity-70">© {new Date().getFullYear()} Nora's Upholstery</div>
+      </div>
+    </footer>
+
+    <!-- Behaviors -->
+    <script is:inline>
+      // Header shadow on scroll
+      const onScroll = () => document.body.classList.toggle('is-scrolled', window.scrollY > 8);
+      onScroll(); window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Smooth ink transitions (used across pages)
+      const inks = document.querySelectorAll('.ink');
+      const thresholds = Array.from({length:41}, (_,i)=>i/40);
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(({target, isIntersecting, intersectionRatio}) => {
+          const r = isIntersecting ? intersectionRatio : 0;
+          const eased = Math.pow(r, 0.65);
+          target.style.setProperty('--inkp', eased.toFixed(3));
+        });
+      }, { threshold: thresholds, rootMargin: '-20% 0px -20% 0px' });
+      inks.forEach(el => io.observe(el));
+
+      // Desktop Services dropdown with hover+click and grace delay
+      const root = document.getElementById('svcRoot');
+      const link = document.getElementById('svcLink');
+      const menu = document.getElementById('svcMenu');
+      let show = false, hoverTimeout;
+
+      const open = (v) => {
+        show = v;
+        menu.style.visibility = v ? 'visible' : 'hidden';
+        menu.style.opacity = v ? '1' : '0';
+        menu.style.pointerEvents = v ? 'auto' : 'none';
+        link.setAttribute('aria-expanded', String(v));
+      };
+
+      // Hover intent with small grace
+      root.addEventListener('mouseenter', () => { clearTimeout(hoverTimeout); open(true); });
+      root.addEventListener('mouseleave', () => { hoverTimeout = setTimeout(()=>open(false), 150); });
+
+      // Click toggles
+      link.addEventListener('click', (e) => {
+        // If menu is open and the user clicks "Services", let it navigate.
+        if (!show) { e.preventDefault(); open(true); }
+      });
+
+      // Outside click closes
+      document.addEventListener('click', (e) => {
+        if (!root.contains(e.target)) open(false);
+      });
+
+      // Mobile sheet open/close
+      const mOpen  = document.getElementById('mobileOpen');
+      const mClose = document.getElementById('mobileClose');
+      const sheet  = document.getElementById('mobileSheet');
+      const setSheet = (s) => {
+        sheet.style.transform = s ? 'translateY(0%)' : 'translateY(-110%)';
+        sheet.style.opacity   = s ? '1' : '0';
+        mOpen?.setAttribute('aria-expanded', s);
+        document.body.style.overflow = s ? 'hidden' : '';
+      };
+      mOpen?.addEventListener('click', ()=> setSheet(true));
+      mClose?.addEventListener('click', ()=> setSheet(false));
+      document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') setSheet(false); });
+    </script>
+  </body>
+</html>
