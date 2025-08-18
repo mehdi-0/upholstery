@@ -4,7 +4,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const title = "Nora's Upholstery — Precision Upholstery for Clinics, Fitness & Hospitality";
 const description = "Dental chairs, chiropractic tables, gym pads, restaurant booths and fine home furniture. Pickup & delivery across the GTA.";
 
-/* 3 frames (images), 2 quotes (stacked & cross‑faded) */
+/* === Scroll Stepper content === */
+const stepperItems = [
+  {
+    title: "Medical-grade upholstery, built to last",
+    sub: "Antibacterial vinyls • Seam alignment • Foam refurbishment",
+    bullets: ["Tear-resistant stitching", "Color-match replacements", "Warranty support"],
+    img: "/after-chiro.jpg"
+  },
+  {
+    title: "Fast turnarounds with weekend rush",
+    sub: "Minimize downtime for clinics and studios",
+    bullets: ["Pickup Friday • Return Monday", "Loaner pads by request", "After-hours installs"],
+    img: "/before-chiro.jpg"
+  },
+  {
+    title: "Color-matching & pattern precision",
+    sub: "From dental chairs to restaurant booths",
+    bullets: ["Pattern templating", "Foam rebuilds", "Edge piping & quilting"],
+    img: "/after-chiro.jpg"
+  }
+];
+
+/* Client stories */
 const frames = [
   { img: '/after-chiro.jpg',  who: 'Chiropractic Clinic — Toronto' },
   { img: '/before-chiro.jpg', who: 'Dental Office — Vaughan' },
@@ -13,18 +35,19 @@ const frames = [
 const quotes = [
   { who: 'Dr. David Song', quote: 'Awesome rates and beautiful workmanship for my chiropractic table. They also replaced some missing screws and cleaned up some nasty rust that I had going on with the table. Great communication as well.' },
   { who: 'Dental Office — Vaughan', quote: 'Chairs recovered over a weekend. Seam alignment and color match are perfect.' },
+  { who: 'Restaurant — North York', quote: 'Booth seating looks brand new. Stitching is clean and durable; color match is spot on.' },
 ];
 ---
 <BaseLayout {title} {description}>
 
-  <!-- Hero (shortest yet so stories start sooner) -->
-  <section id="hero" class="mx-auto max-w-7xl px-4 pt-14 md:pt-14 pb-0 min-h-[46vh] grid md:grid-cols-[1.15fr_.85fr] gap-8 items-center">
-    <div class="space-y-6">
+  <!-- HERO -->
+  <section id="hero" class="w-full max-w-[1200px] mx-auto px-5 md:px-8 pt-12 pb-0 min-h-[46vh] grid md:grid-cols-2 gap-8 items-center">
+    <div class="space-y-6 min-w-0">
       <h1 class="text-5xl md:text-6xl font-semibold leading-tight tracking-tight">
         Upholstery engineered for <span class="ink">clinical use</span> and <span class="ink gold-anim">high traffic</span>
       </h1>
       <p class="text-lg opacity-90">
-        Medical‑grade vinyls, precision patterning, foam refurbishment and on‑time turnarounds.
+        Medical-grade vinyls, precision patterning, foam refurbishment and on-time turnarounds.
         Weekend rush available for <span class="gold-anim">dental</span>. We rebuild
         <span class="gold-anim">foam</span>, match <span class="gold-anim">patterns</span>, and meet
         <span class="gold-anim">tight deadlines</span>.
@@ -43,7 +66,7 @@ const quotes = [
       </div>
     </div>
 
-    <aside class="glass p-6 md:p-8 border hairline">
+    <aside class="glass p-6 md:p-8 border hairline min-w-0">
       <div class="flex items-center gap-3 mb-4">
         <img src="/logo.png" alt="Nora's Upholstery" class="h-10 w-10 rounded-xl shadow" />
         <div>
@@ -61,10 +84,70 @@ const quotes = [
     </aside>
   </section>
 
-  <!-- ===== Client Stories: fixed-center quote; images move underneath ===== -->
-  <section class="stories mx-auto max-w-7xl px-4 py-2">
-    <!-- Sticky, centered quotes layer (overlaps images) -->
-    <div class="stories-viewport">
+  <!-- ===================== SCROLL-PINNED STEPPER ===================== -->
+  <!-- Mobile-safe heights (uses dvh when available); text left-aligned & vertically centered -->
+  <section id="scroll-stepper" class="stepper-wrap stepper-wrap--tight">
+    <div class="stepper-sticky">
+      <div class="w-full max-w-[1200px] mx-auto px-5 md:px-8 h-full grid lg:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center">
+        <!-- LEFT (text) -->
+        <div class="flex min-w-0">
+          <div class="glass border hairline w-full rounded-2xl stepper--glass">
+            <!-- NOTE: heights are tuned in CSS for mobile via dvh; md+ uses vh -->
+            <div class="stepper-left grid content-center p-5 md:p-8">
+              <div class="relative w-full">
+                <!-- track + bar -->
+                <div class="stepper__track" aria-hidden="true">
+                  <div id="stepperBar" class="stepper__bar"></div>
+                </div>
+
+                <div class="flex gap-4 items-start">
+                  <div class="stepper__dots">
+                    {stepperItems.map((_, i) => (
+                      <span class="stepper__dot stitch" data-dot={i} aria-hidden="true"></span>
+                    ))}
+                  </div>
+
+                  <div class="stepper__stage">
+                    {stepperItems.map((s, i) => (
+                      <div class="stepper__pane" data-pane={i}>
+                        <h3 class="stepper__title tone-ink" data-title={i}>{s.title}</h3>
+                        <p class="stepper__sub tone-gold" data-sub={i}>{s.sub}</p>
+                        <ul class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-[0.95rem] opacity-95">
+                          {s.bullets.map((b) => <li>• {b}</li>)}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT (image) -->
+        <div class="flex min-w-0">
+          <div class="glass border hairline overflow-hidden rounded-2xl w-full">
+            <div class="stepper-imgbox relative">
+              {stepperItems.map((s, i) => (
+                <img
+                  src={s.img}
+                  alt={s.title}
+                  class="stepper__img"
+                  data-img={i}
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CLIENT STORIES (pulled up for mobile) ===================== -->
+  <section class="stories w-full max-w-[1200px] mx-auto px-5 md:px-8 stories-gap-fix">
+    <div class="stories-viewport stories-viewport--tight">
       <div class="quote-stack">
         {quotes.map((s, i) => (
           <blockquote id={`quote-${i}`} class="quote-card">
@@ -75,10 +158,9 @@ const quotes = [
       </div>
     </div>
 
-    <!-- Scrolling image track (under the quotes) -->
     <div class="stories-track">
       {frames.map((f, i) => (
-        <section id={`frame-${i}`} class={`frame ${i === 0 ? 'frame--first' : ''} ${i % 2 === 1 ? 'frame--even' : ''}`}>
+        <section id={`frame-${i}`} class={`frame ${i === 0 ? 'frame--first-tight' : ''} ${i % 2 === 1 ? 'frame--even' : ''}`}>
           <div class="frame-inner">
             <div class="pic-wrap" id={`pic-${i}`}>
               <img src={f.img} alt={f.who} class="pic" />
@@ -90,73 +172,104 @@ const quotes = [
     </div>
   </section>
 
-  <!-- Scroll logic: hero animations + earlier stories activation; map 3 frames -> 2 quotes -->
+  <!-- ===================== Scripts ===================== -->
   <script is:inline>
-    /* ===== Hero: blue + gold animation ===== */
+    /* ==== Scroll-pinned Stepper ==== */
     (function(){
-      const hero = document.getElementById('hero');
-      const inks = document.querySelectorAll('.ink');
-      const golds = document.querySelectorAll('.gold-anim');
+      const host    = document.getElementById('scroll-stepper');
+      if(!host) return;
 
-      function setHeadings(){
-        const r = hero.getBoundingClientRect();
-        const h = Math.max(1, r.height);
-        const win = (window.innerHeight || document.documentElement.clientHeight);
+      const dots    = Array.from(host.querySelectorAll('.stepper__dot'));
+      const panes   = Array.from(host.querySelectorAll('.stepper__pane'));
+      const titles  = Array.from(host.querySelectorAll('[data-title]'));
+      const subs    = Array.from(host.querySelectorAll('[data-sub]'));
+      const imgs    = Array.from(host.querySelectorAll('.stepper__img'));
+      const bar     = host.querySelector('#stepperBar');
+      const steps   = dots.length;
 
-        // Progress goes 0→1 between hero entering and you passing ~60% window height
-        const target = win * 0.60;
-        const p = 1 - Math.min(1, Math.max(0, (r.bottom - target) / (h*0.9)));
+      const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
+      const lerp  = (a,b,t)=> a + (b-a)*t;
 
-        inks.forEach(el  => el.style.setProperty('--inkp',  p.toFixed(3)));
-        golds.forEach(el => el.style.setProperty('--goldp', p.toFixed(3)));
+      function setActive(stepIdx, t){
+        dots.forEach((d,i)=>{
+          const active = i === stepIdx;
+          d.classList.toggle('is-active', active);
+          d.style.setProperty('--stitchP', active ? t.toFixed(3) : '0');
+        });
+
+        panes.forEach((p,i)=>{
+          const on = i === stepIdx;
+          p.style.opacity = on ? '1' : '0';
+          p.style.transform = on ? 'translateY(0px)' : 'translateY(10px)';
+          p.style.pointerEvents = on ? 'auto' : 'none';
+        });
+
+        titles.forEach((el,i)=> el.style.setProperty('--toneP', (i===stepIdx? t : 0)));
+        subs.forEach((el,i)=>   el.style.setProperty('--toneQ', (i===stepIdx? t : 0)));
+
+        const pct = (stepIdx/(steps-1))*100;
+        bar.style.height = pct + '%';
+
+        imgs.forEach((im,i)=>{
+          const on = i === stepIdx;
+          im.style.opacity = on ? '1' : '0';
+          const zoom = on ? lerp(1.03, 1.0, t) : 1.01;
+          const y    = on ? lerp(8, 0, t) : 0;
+          im.style.transform = `scale(${zoom}) translateY(${y}px)`;
+        });
       }
-      setHeadings();
-      window.addEventListener('scroll', setHeadings, { passive:true });
-      window.addEventListener('resize', setHeadings, { passive:true });
+
+      function onScroll(){
+        const r   = host.getBoundingClientRect();
+        const win = window.innerHeight || document.documentElement.clientHeight;
+
+        const totalScrollable = (host.offsetHeight - win) || 1;
+        const SPEED = window.matchMedia('(max-width: 768px)').matches ? 2.3 : 2.1;
+        const baseP = (-r.top) / totalScrollable;   // 0..1
+        const p     = clamp(baseP * SPEED, 0, 1);
+
+        const x   = p * steps;
+        const idx = clamp(Math.floor(x), 0, steps-1);
+        const t   = clamp(x - idx, 0, 1);
+
+        setActive(idx, t);
+      }
+
+      setActive(0, 0);
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive:true });
+      window.addEventListener('resize', onScroll, { passive:true });
     })();
 
-    /* ===== Stories scrollytelling ===== */
+    /* ==== Stories (unchanged logic; mobile gap tightened via CSS) ==== */
     const frames = Array.from(document.querySelectorAll('.frame'));
     const quotes = Array.from(document.querySelectorAll('.quote-card'));
     const pics   = frames.map((_, i) => document.getElementById(`pic-${i}`));
-
     const vh = () => window.innerHeight || document.documentElement.clientHeight;
-    const clamp = (v,min,max)=> Math.max(min, Math.min(max, v));
+    const clamp2 = (v,min,max)=> Math.max(min, Math.min(max, v));
     const ease = (t)=> t<.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
-
-    function update(){
-      const mid = vh()*0.5; // viewport center
+    function updateStories(){
+      const mid = vh()*0.5;
       let bestIdx = 0, bestScore = -Infinity;
-
       frames.forEach((el, i) => {
         const r = el.getBoundingClientRect();
         const center = r.top + r.height/2;
         const dist = Math.abs(center - mid);
-
-        // Larger range = quote starts earlier (reduces "empty space")
         const range = Math.max(1, Math.max(r.height, vh()*1.2));
         let score = 1 - (dist / range);
-        score = clamp(score, 0, 1);
+        score = clamp2(score, 0, 1);
         if (score > bestScore) { bestScore = score; bestIdx = i; }
-
-        // Parallax on images
-        const local = clamp((mid - r.top) / Math.max(1, r.height), 0, 1) * 2 - 1; // [-1..1]
-        const shiftY = local * 26 * score;
+        const local = clamp2((mid - r.top) / Math.max(1, r.height), 0, 1) * 2 - 1;
+        const shiftY = local * 22 * score;
         pics[i].style.setProperty('--parallax', `${-shiftY.toFixed(1)}px`);
       });
-
-      // Map 3 frames -> 2 quotes smoothly
       const qIdx = Math.round(bestIdx * (quotes.length - 1) / Math.max(1, frames.length - 1));
-      quotes.forEach((q, i) => {
-        const a = i === qIdx ? ease(bestScore) : 0;
-        q.style.opacity = a.toFixed(3);
-      });
+      quotes.forEach((q, i) => { q.style.opacity = (i===qIdx ? ease(bestScore).toFixed(3) : 0); });
     }
-
     let ticking=false;
-    function onScroll(){ if(!ticking){ requestAnimationFrame(()=>{ ticking=false; update(); }); ticking=true; } }
-    update();
-    window.addEventListener('scroll', onScroll, { passive:true });
-    window.addEventListener('resize', update, { passive:true });
+    function onScrollStories(){ if(!ticking){ requestAnimationFrame(()=>{ ticking=false; updateStories(); }); ticking=true; } }
+    updateStories();
+    window.addEventListener('scroll', onScrollStories, { passive:true });
+    window.addEventListener('resize', updateStories, { passive:true });
   </script>
 </BaseLayout>

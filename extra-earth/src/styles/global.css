@@ -39,6 +39,9 @@ body::before{
 }
 body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 
+/* Optional lift for glass cards */
+.stepper--glass{ border-radius:1rem; box-shadow:0 18px 50px rgba(0,0,0,.12); }
+
 /* ===== Buttons ===== */
 .btn-primary{
   display:inline-flex; align-items:center; gap:.5rem; border-radius:1rem; padding:.75rem 1.5rem; font-weight:500; color:#fff;
@@ -54,13 +57,12 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 }
 .btn-gold:hover{ transform:translateY(-2px); box-shadow:0 14px 34px color-mix(in srgb, var(--gold) 45%, transparent); }
 
-/* ===== Scroll‑reactive headline ===== */
+/* ===== Scroll-reactive headline (hero) ===== */
 .ink{
   --inkp: 0; /* 0..1 set by JS */
   color: color-mix(in srgb, var(--charcoal) calc(100% - (var(--inkp)*100%)), var(--navy) calc(var(--inkp)*100%));
   transition: color .12s linear;
 }
-/* Animated gold (0..1 via --goldp) */
 .gold-anim{
   --goldp: 0;
   color: color-mix(in srgb, color-mix(in srgb, var(--gold) 55%, #6b5b2e 45%) calc(100% - (var(--goldp)*100%)), var(--gold) calc(var(--goldp)*100%));
@@ -89,9 +91,10 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 .compare__line{ left:var(--pos); transform:translateX(-50%); }
 .compare__handle{ left:var(--pos); transform:translate(-50%, -50%); }
 
-/* ===== STORIES bits you already had ===== */
+/* ===== STORIES ===== */
 .stories{ position:relative; }
 .stories-viewport{ position:sticky; top:0; height:100vh; display:grid; place-items:center; pointer-events:none; z-index:5; }
+.stories-viewport--tight{ top: 0; } /* keep pinned, but we'll start content sooner via frames below */
 .quote-stack{ position:relative; width:min(720px, 92vw); }
 .quote-card{
   position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);
@@ -102,7 +105,7 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 }
 .stories-track{ position:relative; z-index:1; }
 .frame{ position:relative; min-height:72vh; display:grid; align-items:center; }
-.frame--first{ min-height:56vh; }
+.frame--first-tight{ min-height:36vh; }   /* was 56/72 — start quotes sooner */
 .frame-inner{ display:grid; grid-template-columns:1fr; place-items:center; }
 @media (min-width:900px){
   .frame-inner{ grid-template-columns:1fr 1fr; }
@@ -124,3 +127,112 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 /* Accents */
 .kicker-gold{ font-size:.85rem; letter-spacing:.08em; text-transform:uppercase; color:var(--gold); }
 .gold-hr{ height:2px; width:64px; background:var(--gold); border-radius:999px; }
+
+/* =========================================================
+   SCROLL-PINNED STEPPER — HALF-HEIGHT LEFT, LEFT-ALIGNED, TIGHT GAP
+   (Desktop/tablet behavior retained)
+   ========================================================= */
+.stepper-wrap{
+  position:relative;
+  height: 140vh;
+  padding-block: 0;
+}
+.stepper-wrap--tight .stepper-sticky{
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  align-items: center;
+}
+
+/* Track + stitched bar */
+.stepper__track{
+  position:absolute; left:10px; top:6px; bottom:6px; width:2px;
+  background:linear-gradient(to bottom, rgba(0,0,0,.10), rgba(0,0,0,.06));
+  border-radius:2px; overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.4);
+}
+.stepper__bar{
+  position:absolute; left:0; top:0; width:100%; height:0%;
+  background:
+   repeating-linear-gradient(180deg, color-mix(in srgb, var(--gold) 85%, #fff 15%) 0 8px, transparent 8px 14px),
+   linear-gradient(to bottom, color-mix(in srgb, var(--navy) 85%, #0f2f44 15%), var(--navy));
+  transition: height .22s ease;
+  border-radius:2px;
+}
+
+/* Notches column */
+.stepper__dots{ display:flex; flex-direction:column; gap:1.75rem; padding-top:.25rem; }
+.stepper__dot{
+  --stitchP: 0;
+  display:block; width:22px; height:22px; border-radius:999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.85) 0 68%, rgba(255,255,255,0) 70%),
+    repeating-conic-gradient(from calc(var(--stitchP)*1turn),
+      color-mix(in srgb, var(--gold) 92%, #fff 8%) 0 6deg, transparent 6deg 12deg);
+  border:1px solid rgba(0,0,0,.18);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.65), 0 2px 10px rgba(0,0,0,.15);
+  transition: transform .25s ease, border-color .25s ease, background-position .2s linear;
+}
+.stepper__dot.is-active{ transform: scale(1.08); border-color: color-mix(in srgb, var(--navy) 70%, white 30%); }
+
+/* Text stage */
+.stepper__stage{ position:relative; flex:1; min-height: 200px; display:grid; align-content:center; }
+.stepper__pane{
+  position:absolute; inset:0;
+  opacity:0; transform: translateY(12px);
+  transition: opacity .28s ease, transform .28s ease;
+  color: var(--charcoal);
+  text-align:left; padding-inline: 0;
+}
+.stepper__title{ font-size: clamp(1.35rem, 2.2vw, 1.9rem); line-height: 1.2; font-weight: 700; margin-bottom: .35rem; }
+.stepper__sub{ font-size: 1rem; opacity: .95; }
+
+/* Lift for the glass card */
+.stepper--glass{ box-shadow:0 18px 50px rgba(0,0,0,.12); }
+
+/* Image stack */
+.stepper__img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; object-position:center;
+  opacity:0; transition: opacity .35s ease, transform .6s ease;
+  transform: scale(1.02);
+  will-change: opacity, transform;
+}
+.stepper__img[data-img="0"]{ opacity:1; }
+
+/* =========================================================
+   RESPONSIVE / MOBILE-SAFE TUNING (keeps desktop features intact)
+   ========================================================= */
+
+/* Use dynamic viewport units when supported to avoid iOS URL-bar jumps */
+@supports (height: 100dvh){
+  .stepper-sticky{ height: 100dvh; }
+  .stories-viewport{ height: 100dvh; }
+}
+
+/* Mobile sizes: shorten section, center text, reduce image height, pull Stories up */
+@media (max-width: 768px){
+  .stepper-wrap{ height: 120dvh; }                 /* shorter stepper on phones */
+  .stepper-left{ height: 42dvh; }                  /* text panel ~ half the image */
+  .stepper-imgbox{ height: 70dvh; }                /* image box */
+  .stories-viewport{ height: 88dvh; }              /* slightly shorter sticky area */
+  .frame{ min-height: 56dvh; }
+  .frame--first-tight{ min-height: 16dvh; }
+  .stories-gap-fix{ margin-top: -6dvh; padding-top: .5rem; }
+}
+
+/* Tablet mid-range: comfortable spacing */
+@media (min-width: 769px) and (max-width: 1024px){
+  .stepper-wrap{ height: 135vh; }
+  .stepper-left{ height: 40vh; }
+  .stepper-imgbox{ height: 74vh; }
+  .stories-gap-fix{ margin-top: -6vh; }
+}
+
+/* Large desktop: original look preserved, slight polish */
+@media (min-width: 1280px){
+  .stepper-wrap{ height: 140vh; }
+  .stepper-left{ height: 38vh; }
+  .stepper-imgbox{ height: 76vh; }
+}
