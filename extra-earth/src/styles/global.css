@@ -94,7 +94,7 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 /* ===== STORIES ===== */
 .stories{ position:relative; }
 .stories-viewport{ position:sticky; top:0; height:100vh; display:grid; place-items:center; pointer-events:none; z-index:5; }
-.stories-viewport--tight{ top: 0; } /* keep pinned, but we'll start content sooner via frames below */
+.stories-viewport--tight{ top: 0; }
 .quote-stack{ position:relative; width:min(720px, 92vw); }
 .quote-card{
   position:absolute; left:50%; top:50%; transform:translate(-50%, -50%);
@@ -104,22 +104,54 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
   box-shadow:0 20px 60px rgba(0,0,0,.12); opacity:0; transition:opacity .12s linear;
 }
 .stories-track{ position:relative; z-index:1; }
-.frame{ position:relative; min-height:72vh; display:grid; align-items:center; }
-.frame--first-tight{ min-height:36vh; }   /* was 56/72 — start quotes sooner */
-.frame-inner{ display:grid; grid-template-columns:1fr; place-items:center; }
+
+/* 🔧 Frames – tighter & image aligned higher */
+.frame{
+  position:relative;
+  min-height:60vh;                 /* was 72vh */
+  display:grid;
+  align-items:flex-start;          /* was center – moves image up */
+}
+.frame--first-tight{
+  min-height:8vh;                  /* was 36vh – ~80% less gap before 1st quote */
+}
+.frame-inner{
+  display:grid;
+  grid-template-columns:1fr;
+  place-items:start;               /* image starts near top */
+}
 @media (min-width:900px){
   .frame-inner{ grid-template-columns:1fr 1fr; }
   .frame--even .pic-wrap{ grid-column:2; justify-self:end; --shiftX: 6vw; margin-right: clamp(16px, 2.5vw, 28px); }
   .frame--even .spacer{ grid-column:1; }
 }
 .pic-wrap{
-  justify-self:start; width:min(360px, 86vw); border-radius:1.25rem; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.18);
-  --shiftX: -6vw; --parallax: 0px; transform: translate3d(var(--shiftX), var(--parallax), 0);
-  transition: transform .06s linear; margin-left: clamp(16px, 2.5vw, 28px);
+  justify-self:start;
+  width:min(360px, 86vw);
+  border-radius:1.25rem;
+  overflow:hidden;
+  box-shadow:0 16px 40px rgba(0,0,0,.18);
+  --shiftX: -6vw;
+  --parallax: 0px;
+  transform: translate3d(var(--shiftX), var(--parallax), 0);
+  transition: transform .06s linear;
+  margin-left: clamp(16px, 2.5vw, 28px);
 }
-@media (max-width: 1024px){ .pic-wrap{ --shiftX: -3vw; } .frame--even .pic-wrap{ --shiftX: 3vw; } }
-@media (min-width: 1280px){ .pic-wrap{ --shiftX: -7vw; } .frame--even .pic-wrap{ --shiftX: 7vw; } }
-.pic{ display:block; width:100%; height:auto; aspect-ratio:4/5; object-fit:cover; }
+@media (max-width: 1024px){
+  .pic-wrap{ --shiftX: -3vw; }
+  .frame--even .pic-wrap{ --shiftX: 3vw; }
+}
+@media (min-width: 1280px){
+  .pic-wrap{ --shiftX: -7vw; }
+  .frame--even .pic-wrap{ --shiftX: 7vw; }
+}
+.pic{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:4/5;
+  object-fit:cover;
+}
 
 /* Helpers */
 .hairline{ border-width:.5px; }
@@ -130,11 +162,10 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 
 /* =========================================================
    SCROLL-PINNED STEPPER — HALF-HEIGHT LEFT, LEFT-ALIGNED, TIGHT GAP
-   (Desktop/tablet behavior retained)
    ========================================================= */
 .stepper-wrap{
   position:relative;
-  height: 140vh;
+  height: 130vh;                    /* was 140vh – start Stories earlier */
   padding-block: 0;
 }
 .stepper-wrap--tight .stepper-sticky{
@@ -202,7 +233,7 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 .stepper__img[data-img="0"]{ opacity:1; }
 
 /* =========================================================
-   RESPONSIVE / MOBILE-SAFE TUNING (keeps desktop features intact)
+   RESPONSIVE / MOBILE-SAFE TUNING
    ========================================================= */
 
 /* Use dynamic viewport units when supported to avoid iOS URL-bar jumps */
@@ -213,10 +244,10 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
 
 /* Mobile sizes: shorten section, center text, reduce image height, pull Stories up */
 @media (max-width: 768px){
-  .stepper-wrap{ height: 120dvh; }                 /* shorter stepper on phones */
-  .stepper-left{ height: 42dvh; }                  /* text panel ~ half the image */
-  .stepper-imgbox{ height: 70dvh; }                /* image box */
-  .stories-viewport{ height: 88dvh; }              /* slightly shorter sticky area */
+  .stepper-wrap{ height: 120dvh; }
+  .stepper-left{ height: 42dvh; }
+  .stepper-imgbox{ height: 70dvh; }
+  .stories-viewport{ height: 88dvh; }
   .frame{ min-height: 56dvh; }
   .frame--first-tight{ min-height: 16dvh; }
   .stories-gap-fix{ margin-top: -6dvh; padding-top: .5rem; }
@@ -230,9 +261,7 @@ body.is-scrolled .glass-nav{ box-shadow:0 16px 40px rgba(0,0,0,.08); }
   .stories-gap-fix{ margin-top: -6vh; }
 }
 
-/* Large desktop: original look preserved, slight polish */
+/* Large desktop: small polish (heights already reduced above) */
 @media (min-width: 1280px){
-  .stepper-wrap{ height: 140vh; }
-  .stepper-left{ height: 38vh; }
   .stepper-imgbox{ height: 76vh; }
-}
+} 
