@@ -249,13 +249,13 @@ const quotes = [
     const clamp2 = (v,min,max)=> Math.max(min, Math.min(max, v));
     const ease = (t)=> t<.5 ? 2*t*t : 1 - Math.pow(-2*t+2,2)/2;
     function updateStories(){
-      const mid = vh()*0.5;
+      const mid = vh()*0.34;
       let bestIdx = 0, bestScore = -Infinity;
       frames.forEach((el, i) => {
         const r = el.getBoundingClientRect();
         const center = r.top + r.height/2;
         const dist = Math.abs(center - mid);
-        const range = Math.max(1, Math.max(r.height, vh()*1.2));
+        const range = Math.max(1, Math.max(r.height, vh()*0.75));
         let score = 1 - (dist / range);
         score = clamp2(score, 0, 1);
         if (score > bestScore) { bestScore = score; bestIdx = i; }
