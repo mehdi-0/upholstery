@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-const title = "About — Nora's Upholstery";
+import PhotoStrip from '../components/PhotoStrip.astro';
+const title = "About | Nora's Upholstery";
 const description = "Family‑run upholstery in Richmond Hill serving clinics, fitness, hospitality and homes across the GTA.";
 ---
 <BaseLayout {title} {description}>
@@ -20,5 +21,9 @@ const description = "Family‑run upholstery in Richmond Hill serving clinics, f
         </ul>
       </aside>
     </div>
+    <PhotoStrip heading="Inside the craft" photos={[
+      { src: '/images/about-workshop.webp', label: 'In the workshop', note: 'Hands cutting, sewing or fitting upholstery', alt: "Upholstery work underway in Nora's workshop" },
+      { src: '/images/about-materials.webp', label: 'Materials & details', note: 'Vinyl, fabric, thread or careful seam work', alt: 'Upholstery materials and stitching details' },
+    ]} />
   </section>
 </BaseLayout>

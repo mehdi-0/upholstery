@@ -1,27 +1,34 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const title = "Commercial & Hospitality Upholstery — Nora's Upholstery";
-const description = "Restaurant booths, banquettes, reception seating and more.";
-const items = [
-  "Restaurant booths & banquettes",
-  "Reception & waiting room seating",
-  "On‑site re‑cover options",
-  "Durable, cleanable commercial materials",
+const title = "Commercial Upholstery for Restaurants, Gyms & Venues | Nora's Upholstery";
+const description = "Restaurant booths, gym pads, bowling seating, hospitality furniture, office seating and specialty commercial upholstery.";
+const categories = [
+  { number: '01', title: 'Restaurants & cafés', copy: 'Frequently used dining seating restored in durable materials selected for cleaning, comfort and the character of the space.', examples: ['Booths & banquettes', 'Dining chairs', 'Bar & counter stools'], image: '/images/commercial-restaurants.webp', photo: 'Restaurant seating', alt: 'Restored restaurant booths and dining seating' },
+  { number: '02', title: 'Gyms & fitness', copy: 'Close-fitting performance upholstery for equipment that must withstand movement, sweat and frequent sanitation.', examples: ['Weight-bench pads', 'Machine pads', 'Stretching & treatment benches'], image: '/images/commercial-fitness.webp', photo: 'Fitness equipment', alt: 'Reupholstered commercial fitness equipment pads' },
+  { number: '03', title: 'Bowling & recreation', copy: 'Specialty venue seating renewed to handle continuous public use while keeping a coordinated appearance.', examples: ['Bowling centre seating', 'Recreation benches', 'Lounge & spectator seating'], image: '/images/commercial-bowling.webp', photo: 'Bowling or recreation', alt: 'Restored bowling centre and recreation seating' },
+  { number: '04', title: 'Hospitality', copy: 'Guest-facing furniture restored for hotels, event spaces and entertainment venues.', examples: ['Lobby seating', 'Hotel chairs & benches', 'Event venue furniture'], image: '/images/commercial-hospitality.webp', photo: 'Hospitality furniture', alt: 'Restored hospitality and hotel seating' },
+  { number: '05', title: 'Offices & reception', copy: 'Professional seating for customer-facing areas, staff spaces and shared workplaces.', examples: ['Reception seating', 'Waiting-room chairs', 'Office & conference chairs'], image: '/images/commercial-offices.webp', photo: 'Office or reception', alt: 'Restored office and reception seating' },
+  { number: '06', title: 'Specialty commercial', copy: 'Unusual built-in or freestanding seating assessed individually, including on-site options where practical.', examples: ['Custom built-ins', 'Other venue seating', 'On-site re-covering'], image: '/images/commercial-specialty.webp', photo: 'Specialty seating', alt: 'Custom specialty commercial upholstery project' },
 ];
 ---
 <BaseLayout {title} {description}>
-  <section class="mx-auto max-w-7xl px-4 pt-28 md:pt-36 pb-14 space-y-6">
-    <header class="space-y-2">
-      <p class="kicker-gold">Services</p>
-      <h1 class="text-3xl font-semibold">Commercial</h1>
-      <div class="gold-hr"></div>
+  <section class="individual-service shell">
+    <header class="individual-service__hero">
+      <p class="kicker-gold">Commercial upholstery</p>
+      <h1>Made for every<br /><em>kind of venue.</em></h1>
+      <p>Commercial upholstery extends far beyond restaurant booths. We adapt materials, construction and scheduling to each business and the way its seating is used.</p>
     </header>
-
-    <article class="glass p-6 border hairline">
-      <ul class="list-disc pl-6 space-y-2">
-        {items.map(i => <li>{i}</li>)}
-      </ul>
-      <a href="/contact" class="btn-primary mt-6 inline-flex">Get a Quote</a>
-    </article>
+    <div class="individual-service__grid individual-service__grid--commercial">
+      {categories.map(category => (
+        <article class="individual-service__card glass">
+          <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" onerror="this.hidden=true" /></div>
+          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul></div>
+        </article>
+      ))}
+    </div>
+    <div class="individual-service__cta glass-dark">
+      <div><p class="eyebrow">One piece or a coordinated rollout</p><h2>Let’s plan around your operation.</h2></div>
+      <a href="tel:+16479812622" class="button button--light">Call about commercial seating</a>
+    </div>
   </section>
 </BaseLayout>

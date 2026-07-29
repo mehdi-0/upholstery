@@ -1,27 +1,32 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const title = "Dental Upholstery — Nora's Upholstery";
-const description = "Dental chairs and stools with weekend rush options and precise patterning.";
-const items = [
-  "Dental chair re‑covering & foam repair",
-  "Operator & assistant stools",
-  "Weekend rush scheduling available",
-  "Color‑matching to practice branding",
+const title = "Dental Upholstery | Nora's Upholstery";
+const description = "Dental chair, stool and operatory upholstery with cleanable clinical materials and weekend rush options.";
+const categories = [
+  { number: '01', title: 'Patient chairs', copy: 'Full or partial reupholstering for dental treatment chairs, including headrests, backrests, seats, leg rests and arm pads.', examples: ['Treatment chairs', 'Headrests & cushions', 'Arm & leg pads'], image: '/images/dental-patient-chairs.webp', photo: 'Completed patient chair', alt: 'Reupholstered dental patient chair in a professional operatory' },
+  { number: '02', title: 'Dentist & assistant seating', copy: 'Supportive, cleanable upholstery for dentist chairs and dental assistant stools used throughout the operatory.', examples: ['Dentist chairs', 'Dental assistant stools', 'Saddle stools'], image: '/images/dental-operator-seating.webp', photo: 'Dentist chair or dental assistant stool', alt: 'Professionally reupholstered dentist chair and dental assistant stool' },
+  { number: '03', title: 'Repairs & rebuilding', copy: 'More than a surface change: damaged foam and contours can be rebuilt before new material is fitted.', examples: ['Foam replacement', 'Contour shaping', 'Seam & panel repair'], image: '/images/dental-repairs.webp', photo: 'Foam or contour repair', alt: 'Dental chair foam and upholstery repair in progress' },
+  { number: '04', title: 'Practice coordination', copy: 'Colour selection, scheduling and pickup are planned around the needs of an active dental practice.', examples: ['Brand colour matching', 'Weekend rush options', 'Pickup & delivery'], image: '/images/dental-practice.webp', photo: 'Coordinated clinic finish', alt: 'Coordinated upholstered dental seating in a professional clinic' },
 ];
 ---
 <BaseLayout {title} {description}>
-  <section class="mx-auto max-w-7xl px-4 pt-28 md:pt-36 pb-14 space-y-6">
-    <header class="space-y-2">
-      <p class="kicker-gold">Services</p>
-      <h1 class="text-3xl font-semibold">Dental</h1>
-      <div class="gold-hr"></div>
+  <section class="individual-service shell">
+    <header class="individual-service__hero">
+      <p class="kicker-gold">Dental upholstery</p>
+      <h1>Every surface in<br /><em>the operatory.</em></h1>
+      <p>From the patient chair to dentist chairs and dental assistant stools, we restore the pieces your team and patients depend on using precise patterns and materials appropriate for healthcare settings.</p>
     </header>
-
-    <article class="glass p-6 border hairline">
-      <ul class="list-disc pl-6 space-y-2">
-        {items.map(i => <li>{i}</li>)}
-      </ul>
-      <a href="/contact" class="btn-primary mt-6 inline-flex">Get a Quote</a>
-    </article>
+    <div class="individual-service__grid">
+      {categories.map(category => (
+        <article class="individual-service__card glass">
+          <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" onerror="this.hidden=true" /></div>
+          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul></div>
+        </article>
+      ))}
+    </div>
+    <div class="individual-service__cta glass-dark">
+      <div><p class="eyebrow">Keep your operatory moving</p><h2>Send photos of the chair or parts.</h2></div>
+      <a href="tel:+16479812622" class="button button--light">Call about dental upholstery</a>
+    </div>
   </section>
 </BaseLayout>

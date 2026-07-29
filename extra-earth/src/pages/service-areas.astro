@@ -1,59 +1,121 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PhotoStrip from '../components/PhotoStrip.astro';
+import { serviceAreas } from '../data/serviceAreas';
 
-const title = "Service Areas — Nora's Upholstery (GTA & 100 km Radius)";
-const description = "Core service areas across the GTA plus a wider 100 km radius around Toronto. Contact us for rush jobs or special trips.";
+const title = "Service Areas | Nora's Upholstery | GTA & Southern Ontario";
+const description = "Upholstery service across Toronto, York Region, Peel Region and Southern Ontario, based in Richmond Hill.";
 
-const coreAreas = [
-  "Toronto", "North York", "York Region", "Richmond Hill",
-  "Vaughan", "Markham", "Scarborough", "Mississauga"
+const linkedAreas = new Map(serviceAreas.map((area) => [area.name, area.slug]));
+const regularAreas = [
+  "Richmond Hill", "Toronto", "Vaughan", "Brampton", "King City", "Markham",
+  "Mississauga", "Newmarket", "Oak Ridges", "Scarborough", "Woodbridge"
 ];
 
-const widerAreas = [
-  "Brampton", "Oakville", "Burlington", "Hamilton",
-  "Aurora", "Newmarket", "King City", "Pickering",
-  "Ajax", "Whitby", "Oshawa", "Milton"
-];
+const extendedAreas = ["Hamilton", "Burlington", "Oakville", "Guelph", "Kitchener and Waterloo", "Barrie", "Niagara Region"];
 ---
 <BaseLayout {title} {description}>
-  <section class="mx-auto max-w-5xl px-4 pt-28 md:pt-32 pb-12">
-    <h1 class="text-4xl md:text-5xl font-semibold mb-3">Service Areas</h1>
-    <p class="opacity-90 mb-8">We’re based in the GTA and regularly serve the locations below. We also take projects across a wider radius—reach out to confirm pickup/delivery windows.</p>
-
-    <div class="glass border hairline p-5 mb-8">
-      <h2 class="text-xl font-semibold mb-2">Core Areas</h2>
-      <div class="areas-grid">
-        {coreAreas.map((a) => <div class="area-chip"><span class="area-pin"></span>{a}</div>)}
-      </div>
+  <header class="service-area-hero">
+    <div class="shell">
+      <p class="eyebrow">Based in Richmond Hill · Working across Southern Ontario</p>
+      <h1>Service areas,<br /><em>without rigid boundaries.</em></h1>
+      <p>We regularly serve clinics, businesses and homes throughout the Greater Toronto Area. We also welcome projects from across Southern Ontario, with pickup, delivery and travel planned around each project.</p>
     </div>
+  </header>
 
-    <div class="glass border hairline p-5">
-      <h2 class="text-xl font-semibold mb-2">Within ~100 km of Toronto</h2>
-      <p class="text-sm opacity-85 mb-3">Typical weekly runs. Occasional special trips are available by request.</p>
+  <section class="service-area-content">
+    <div class="shell service-area-stack">
+      <article class="glass service-area-card service-area-card--regular">
+        <div class="service-area-card__heading">
+          <div><p class="eyebrow">Close to home</p><h2>Regular service areas</h2></div>
+          <p>These are some of the communities we serve most often. Nearby areas are welcome too.</p>
+        </div>
       <div class="areas-grid">
-        {widerAreas.map((a) => <div class="area-chip"><span class="area-pin"></span>{a}</div>)}
+        {regularAreas.map((area) => linkedAreas.has(area)
+          ? <a class="area-chip area-chip--link" href={`/service-areas/${linkedAreas.get(area)}/`}><span class="area-pin"></span>{area}<span aria-hidden="true">↗</span></a>
+          : <div class="area-chip"><span class="area-pin"></span>{area}</div>
+        )}
       </div>
+      </article>
+
+      <PhotoStrip heading="Work that travels well" photos={[
+        { src: '/images/service-area-clinical.webp', label: 'Clinical projects', note: 'A completed chair or table ready for return', alt: "Completed clinical upholstery project by Nora's Upholstery" },
+        { src: '/images/service-area-delivery.webp', label: 'Pickup & delivery', note: 'Protected furniture being prepared for transport', alt: 'Upholstered furniture carefully prepared for pickup or delivery' },
+      ]} />
+
+      <article class="glass-dark service-area-card service-area-card--extended">
+        <div class="service-area-card__heading">
+          <div><p class="eyebrow">Beyond the GTA</p><h2>Southern Ontario projects are welcome.</h2></div>
+          <p>We often travel beyond our regular service area. Tell us where you are and what you would like restored, and we’ll plan the most practical way to complete the work.</p>
+        </div>
+        <ul class="extended-areas" aria-label="Southern Ontario areas served">
+          {extendedAreas.map((area) => <li>{area}</li>)}
+        </ul>
+        <div class="service-area-actions">
+          <a class="button button--light" href="tel:+16479812622">Call 647 981 2622</a>
+          <a class="text-link text-link--light" href="/contact#estimate-form">Send your project through our form <span>↗</span></a>
+        </div>
+      </article>
     </div>
   </section>
 
-  <!-- SEO: express a service radius (GeoCircle) around Toronto -->
   <script type="application/ld+json" is:inline>
   {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "name": "Nora's Upholstery",
-    "url": "https://YOUR-DOMAIN/",
-    "areaServed": {
-      "@type": "GeoCircle",
-      "geoMidpoint": {
-        "@type": "GeoCoordinates",
-        "latitude": 43.6532,
-        "longitude": -79.3832
-      },
-      "geoRadius": 100000
-    },
-    "servesCuisine": "Upholstery",
-    "address": { "@type": "PostalAddress", "addressLocality": "Toronto", "addressRegion": "ON", "addressCountry": "CA" }
+    "telephone": "+1-647-981-2622",
+    "email": "norasupholstery@gmail.com",
+    "areaServed": [
+      { "@type": "AdministrativeArea", "name": "Greater Toronto Area" },
+      { "@type": "AdministrativeArea", "name": "Southern Ontario" },
+      { "@type": "City", "name": "Richmond Hill" },
+      { "@type": "City", "name": "Toronto" },
+      { "@type": "City", "name": "Scarborough" },
+      { "@type": "City", "name": "Vaughan" },
+      { "@type": "City", "name": "Woodbridge" },
+      { "@type": "City", "name": "Markham" },
+      { "@type": "City", "name": "Brampton" },
+      { "@type": "City", "name": "Mississauga" }
+    ],
+    "address": { "@type": "PostalAddress", "addressLocality": "Richmond Hill", "addressRegion": "ON", "addressCountry": "CA" }
   }
   </script>
 </BaseLayout>
+
+<style>
+  .service-area-hero { padding: 11rem 0 4.5rem; }
+  .service-area-hero h1 { max-width: 980px; margin: .6rem 0 1.8rem; font-family: var(--serif); font-size: clamp(4rem, 8vw, 8rem); font-weight: 400; letter-spacing: -.048em; line-height: .82; }
+  .service-area-hero h1 em { color: var(--saddle); font-weight: 400; }
+  .service-area-hero > .shell > p:last-child { max-width: 760px; margin: 0; color: rgba(8,30,39,.68); font-size: clamp(.98rem, 1.5vw, 1.15rem); }
+  .service-area-content { padding: 0 0 clamp(5rem, 9vw, 8rem); }
+  .service-area-stack { display: grid; gap: 1rem; }
+  .service-area-card { padding: clamp(1.5rem, 4vw, 3.25rem); border-radius: var(--radius); }
+  .service-area-card__heading { display: grid; grid-template-columns: 1.1fr .75fr; gap: 2rem 7vw; align-items: end; margin-bottom: 2.5rem; }
+  .service-area-card__heading .eyebrow { color: var(--saddle); }
+  .service-area-card__heading h2 { max-width: 720px; margin: 0; font-family: var(--serif); font-size: clamp(2.8rem, 5vw, 5rem); font-weight: 400; line-height: .9; }
+  .service-area-card__heading > p { max-width: 450px; margin: 0; color: rgba(8,30,39,.64); font-size: .86rem; }
+  .areas-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  .area-chip { display: flex; min-height: 4.25rem; align-items: center; gap: .7rem; padding: .85rem 1rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.22); font-size: .78rem; }
+  .area-pin { width: .42rem; height: .42rem; flex: 0 0 auto; border-radius: 50%; background: var(--brass); box-shadow: 0 0 0 4px rgba(183,138,71,.12); }
+  .area-chip--link { transition: color .2s ease, border-color .2s ease, transform .2s ease; }
+  .area-chip--link > span:last-child { margin-left: auto; }
+  .area-chip--link:hover { color: var(--saddle); border-color: rgba(155,105,75,.35); transform: translateY(-2px); }
+  .service-area-card--extended { overflow: hidden; }
+  .service-area-card--extended .service-area-card__heading, .service-area-card--extended .extended-areas, .service-area-card--extended .service-area-actions { position: relative; z-index: 1; }
+  .service-area-card--extended .eyebrow { color: #e8cfa8; }
+  .service-area-card--extended .service-area-card__heading > p { color: rgba(255,255,255,.68); }
+  .extended-areas { display: flex; flex-wrap: wrap; gap: .55rem; margin: 0; padding: 0; list-style: none; }
+  .extended-areas li { padding: .55rem .8rem; border: 1px solid rgba(255,255,255,.2); border-radius: 999px; background: rgba(255,255,255,.07); color: rgba(255,255,255,.82); font-size: .7rem; }
+  .service-area-actions { display: flex; align-items: center; gap: 1.4rem; margin-top: 2.5rem; }
+  @media (max-width: 820px) {
+    .service-area-hero { padding: 8.5rem 0 3rem; }
+    .service-area-hero h1 { font-size: clamp(3.7rem, 16vw, 5.6rem); }
+    .service-area-card__heading { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.7rem; }
+    .areas-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .area-chip { min-height: 3.8rem; padding: .75rem; font-size: .7rem; }
+    .service-area-actions { display: grid; align-items: stretch; }
+    .service-area-actions .button { width: 100%; }
+  }
+  @media (max-width: 390px) { .areas-grid { grid-template-columns: 1fr; } }
+</style>

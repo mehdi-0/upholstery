@@ -1,27 +1,32 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const title = "Medical Upholstery — Nora's Upholstery";
-const description = "Chiropractic & exam tables, stools and clinic seating with medical‑grade materials.";
-const items = [
-  "Chiropractic & exam tables (loaner bed on request)",
-  "Operator stools & waiting room seating",
-  "Foam rebuild & contour shaping",
-  "Antibacterial, cleanable vinyls",
+const title = "Medical & Chiropractic Upholstery | Nora's Upholstery";
+const description = "Medical tables, chiropractic beds, clinic stools and waiting seating restored with cleanable healthcare materials.";
+const categories = [
+  { number: '01', title: 'Medical exam tables', copy: 'Professional reupholstering for examination and treatment surfaces in clinics and allied health practices.', examples: ['Exam tables', 'Treatment tables', 'Procedure chair cushions'], image: '/images/medical-exam-tables.webp', photo: 'Exam or treatment table', alt: 'Professionally reupholstered medical examination table' },
+  { number: '02', title: 'Chiropractic tables', copy: 'Segmented cushions and adjustment table components carefully patterned to preserve movement and fit.', examples: ['Adjustment tables', 'Drop section cushions', 'Head & ankle sections'], image: '/images/medical-chiropractic-tables.webp', photo: 'Chiropractic table', alt: 'Reupholstered chiropractic adjustment table with segmented cushions' },
+  { number: '03', title: 'Clinic seating', copy: 'Durable upholstery for staff, patients and visitors throughout the clinic.', examples: ['Practitioner stools', 'Waiting room chairs', 'Reception seating'], image: '/images/medical-clinic-seating.webp', photo: 'Clinic or waiting seating', alt: 'Restored seating in a professional medical clinic' },
+  { number: '04', title: 'Clinical rebuilding', copy: 'Worn foam, split vinyl and damaged contours can be repaired with cleanable finishes appropriate for healthcare settings.', examples: ['Foam rebuilding', 'Antibacterial vinyls', 'Loaner bed by request'], image: '/images/medical-rebuilding.webp', photo: 'Clinical rebuilding detail', alt: 'Medical upholstery foam rebuilding and vinyl repair' },
 ];
 ---
 <BaseLayout {title} {description}>
-  <section class="mx-auto max-w-7xl px-4 pt-28 md:pt-36 pb-14 space-y-6">
-    <header class="space-y-2">
-      <p class="kicker-gold">Services</p>
-      <h1 class="text-3xl font-semibold">Medical</h1>
-      <div class="gold-hr"></div>
+  <section class="individual-service shell">
+    <header class="individual-service__hero">
+      <p class="kicker-gold">Medical & chiropractic</p>
+      <h1>Built around<br /><em>patient care.</em></h1>
+      <p>We restore the tables, beds, stools and waiting seating used across medical and chiropractic environments, with materials chosen for frequent cleaning.</p>
     </header>
-
-    <article class="glass p-6 border hairline">
-      <ul class="list-disc pl-6 space-y-2">
-        {items.map(i => <li>{i}</li>)}
-      </ul>
-      <a href="/contact" class="btn-primary mt-6 inline-flex">Get a Quote</a>
-    </article>
+    <div class="individual-service__grid">
+      {categories.map(category => (
+        <article class="individual-service__card glass">
+          <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" onerror="this.hidden=true" /></div>
+          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul></div>
+        </article>
+      ))}
+    </div>
+    <div class="individual-service__cta glass-dark">
+      <div><p class="eyebrow">Minimize clinic downtime</p><h2>Tell us what your practice needs.</h2></div>
+      <a href="tel:+16479812622" class="button button--light">Call about medical upholstery</a>
+    </div>
   </section>
 </BaseLayout>

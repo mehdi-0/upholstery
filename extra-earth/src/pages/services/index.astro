@@ -1,29 +1,37 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const title = "Services — Nora's Upholstery";
-const description = "Medical, dental, residential and commercial upholstery for the GTA.";
+const title = "Services | Nora's Upholstery";
+const description = "Dental, medical, residential and commercial upholstery across the GTA and Southern Ontario by request.";
 const cards = [
-  { href: '/services/medical',      name: 'Medical',      blurb: 'Exam & chiropractic tables, stools — cleanable, clinical vinyls.' },
-  { href: '/services/dental',       name: 'Dental',       blurb: 'Dental chairs & stools, weekend rush available.' },
-  { href: '/services/residential',  name: 'Residential',  blurb: 'Sofas, dining chairs, ottomans, cushions.' },
-  { href: '/services/commercial',   name: 'Commercial',   blurb: 'Restaurant booths, hospitality seating, reception areas.' },
+  { href: '/services/dental', number: '01', name: 'Dental', image: '/images/service-dental-v2.png', blurb: 'Dental chairs, dentist chairs and dental assistant stools, with weekend rush service available.' },
+  { href: '/services/medical', number: '02', name: 'Medical & Chiropractic', image: '/images/service-medical-v2.png', blurb: 'Exam tables, chiropractic beds and stools finished in cleanable clinical vinyls.' },
+  { href: '/services/residential', number: '03', name: 'Residential & Marine', image: '/images/service-residential.png', blurb: 'Sofas, dining chairs and selected boat seating or marine cushions renewed with care.' },
+  { href: '/services/commercial', number: '04', name: 'Commercial', image: '/images/service-commercial.png', blurb: 'Restaurants, gyms, bowling centres, hospitality and other specialty venue seating.' },
 ];
 ---
 <BaseLayout {title} {description}>
-  <section class="mx-auto max-w-7xl px-4 pt-28 md:pt-36 pb-14">
-    <header class="space-y-2 mb-6">
+  <section class="services-page shell pt-28 md:pt-36 pb-20">
+    <header class="services-page__header">
       <p class="kicker-gold">What we do</p>
-      <h1 class="text-3xl md:text-4xl font-semibold">Services</h1>
-      <div class="gold-hr"></div>
+      <h1>Made for the way<br /><em>your seating works.</em></h1>
+      <p>Clinical work is our specialty, with the same material knowledge and careful finish applied to homes and commercial spaces.</p>
     </header>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+    <div class="service-image-grid">
       {cards.map(c => (
-        <a href={c.href} class="glass p-4 border hairline transition hover:-translate-y-0.5">
-          <div class="font-semibold">{c.name}</div>
-          <p class="text-sm opacity-90 mt-1">{c.blurb}</p>
+        <a href={c.href} class="service-image-card">
+          <!-- Generic service illustration: replace with a wide photo of Nora's real work in this category when available. -->
+          <img src={c.image} alt="" loading="lazy" />
+          <span class="service-image-card__wash" aria-hidden="true"></span>
+          <div class="service-image-card__glass">
+            <span>{c.number}</span>
+            <h2>{c.name}</h2>
+            <p>{c.blurb}</p>
+            <strong>Explore service <i aria-hidden="true">↗</i></strong>
+          </div>
         </a>
       ))}
     </div>
+    <p class="service-image-note">Category images are illustrative placeholders and are not presented as completed Nora’s Upholstery projects.</p>
   </section>
 </BaseLayout>
