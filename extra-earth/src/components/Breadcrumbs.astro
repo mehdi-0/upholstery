@@ -1,0 +1,65 @@
+---
+import { absoluteUrl } from '../data/business';
+
+type BreadcrumbItem = {
+  name: string;
+  href?: string;
+};
+
+const { items } = Astro.props as { items: BreadcrumbItem[] };
+const siteOrigin = (Astro.site ?? Astro.url).origin;
+const structuredData = {
+  '@type': 'BreadcrumbList',
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    ...(item.href ? { item: absoluteUrl(siteOrigin, item.href) } : {}),
+  })),
+};
+---
+
+<nav class="page-breadcrumbs" aria-label="Breadcrumb">
+  {items.map((item, index) => (
+    <>
+      {index > 0 && <span aria-hidden="true">/</span>}
+      {item.href ? <a href={item.href}>{item.name}</a> : <span aria-current="page">{item.name}</span>}
+    </>
+  ))}
+</nav>
+
+<script
+  type="application/ld+json"
+  set:html={JSON.stringify({ '@context': 'https://schema.org', ...structuredData })}
+/>
+
+<style>
+  .page-breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    margin-bottom: 1rem;
+    color: rgba(8, 30, 39, .52);
+    font-size: .68rem;
+    line-height: 1.4;
+  }
+
+  .page-breadcrumbs a {
+    transition: color .2s ease;
+  }
+
+  .page-breadcrumbs a:hover {
+    color: var(--saddle);
+  }
+
+  .page-breadcrumbs [aria-current='page'] {
+    color: rgba(8, 30, 39, .72);
+  }
+
+  @media (max-width: 820px) {
+    .page-breadcrumbs {
+      margin-bottom: .8rem;
+      font-size: .64rem;
+    }
+  }
+</style>

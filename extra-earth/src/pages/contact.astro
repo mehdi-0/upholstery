@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { business, travelContact, whatsappUrl } from '../data/business';
 const title = "Request an Estimate | Nora's Upholstery";
 const description = "Send photos and details for an upholstery estimate across the Greater Toronto Area.";
 ---
@@ -8,7 +9,14 @@ const description = "Send photos and details for an upholstery estimate across t
     <div class="shell">
       <p class="eyebrow">Choose what works for you</p>
       <h1>Let’s talk about<br /><em>your project.</em></h1>
-      <p>Call, email or use the contact form, whichever is most convenient. You can include photos when they are helpful, but they are not required to get started.</p>
+      <p>Call, email, message us on WhatsApp or use the contact form, whichever is most convenient. You can include photos when they are helpful, but they are not required to get started.</p>
+      {travelContact.enabled && (
+        <div class="travel-contact-card glass">
+          <strong>{travelContact.notice}</strong>
+          <a href={whatsappUrl} target="_blank" rel="noopener">Message us on WhatsApp <span>↗</span></a>
+          <a href={`mailto:${business.email}`}>Email us <span>↗</span></a>
+        </div>
+      )}
     </div>
   </header>
 
@@ -16,15 +24,20 @@ const description = "Send photos and details for an upholstery estimate across t
     <div class="shell form-shell">
       <aside>
         <p class="eyebrow">Contact options</p>
-        <h2 class="display-heading contact-heading">Three easy ways<br /><em>to get started.</em></h2>
+        <h2 class="display-heading contact-heading">Choose how you would<br /><em>like to get started.</em></h2>
         <div class="contact-list">
           <a href="tel:+16479812622"><small>Call</small><span>647 981 2622</span></a>
           <a href="mailto:norasupholstery@gmail.com"><small>Email</small><span>norasupholstery@gmail.com</span></a>
+          <a href={whatsappUrl} target="_blank" rel="noopener"><small>WhatsApp</small><span>Message Nora’s Upholstery</span></a>
           <div><small>Based in</small><span>Richmond Hill, Ontario</span></div>
         </div>
         <div class="form-note">
           <strong>Typical response time</strong>
           <p>We aim to reply within one business day. Weekend dental work should be requested as early as possible.</p>
+        </div>
+        <div class="form-note">
+          <strong>Planning a visit</strong>
+          <p>Please call or email before visiting so we can arrange a time and prepare for your project.</p>
         </div>
       </aside>
 
@@ -52,7 +65,7 @@ const description = "Send photos and details for an upholstery estimate across t
           <label class="honeypot" aria-hidden="true">Leave this blank<input name="website" tabindex="-1" autocomplete="off" /></label>
           <div class="full form-submit">
             <button class="button button--dark" type="submit">Send estimate request</button>
-            <p data-form-status aria-live="polite">Your details are only used to respond to this project.</p>
+            <p data-form-status aria-live="polite"></p>
           </div>
         </form>
       </div>
@@ -77,15 +90,18 @@ const description = "Send photos and details for an upholstery estimate across t
 
 <style>
   .page-hero h1 em, .contact-heading em { color: var(--saddle); font-weight: 400; }
-  .contact-heading { margin-bottom: 2rem; font-size: clamp(3.2rem, 6vw, 5.5rem); }
-  .contact-list { display: grid; margin-bottom: 2rem; border-top: 1px solid var(--line); }
-  .contact-list a, .contact-list > div { display: grid; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  .contact-heading { margin-bottom: 1.5rem; font-size: clamp(3.2rem, 6vw, 5.5rem); }
+  .contact-list { display: grid; margin-bottom: 1.5rem; border-top: 1px solid var(--line); }
+  .contact-list a, .contact-list > div { display: grid; padding: .85rem 0; border-bottom: 1px solid var(--line); }
   .contact-list small { color: rgba(8,30,39,.5); font-size: .65rem; text-transform: uppercase; }
   .contact-list span { font-size: .88rem; }
-  .optional-form-heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 1.4rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); }
+  .travel-contact-card { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; max-width: 760px; margin-top: 1.25rem; padding: 1rem 1.15rem; border-radius: 1rem; font-size: .72rem; }
+  .travel-contact-card strong { width: 100%; }
+  .travel-contact-card a { padding-bottom: .15rem; border-bottom: 1px solid var(--saddle); font-weight: 600; }
+  .optional-form-heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.1rem; padding-bottom: .8rem; border-bottom: 1px solid var(--line); }
   .optional-form-heading .eyebrow, .optional-form-heading > p:last-child { margin: 0; }
   .optional-form-heading > p:last-child { max-width: 340px; color: rgba(8,30,39,.58); font-size: .72rem; }
-  .upload-field input { padding: 1.4rem; border-style: dashed; }
+  .upload-field input { padding: 1.15rem; border-style: dashed; }
   #estimate-form { scroll-margin-top: 7rem; }
   .upload-field > span { color: rgba(8,30,39,.48); font-size: .62rem; font-weight: 400; }
   .honeypot { position: absolute; left: -10000px; }

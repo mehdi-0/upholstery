@@ -26,6 +26,8 @@ No page code needs to be edited. Prepare a photo with the exact filename below a
 | Exact filename | Upload folder | Where it appears | Photograph needed | Recommended crop |
 | --- | --- | --- | --- | --- |
 | `hero-workshop.webp` | `extra-earth/public/images/` | Homepage opening section | Hands pulling, cutting or stitching deep navy upholstery in a real workshop; leave the left side visually quiet | Landscape, 2200 × 1500 px |
+| `home-dental-before.jpg` | `extra-earth/public/images/` | Homepage featured transformation | Dental chair before restoration with the upholstery damage clearly visible | Portrait, 1120 × 1400 px |
+| `home-dental-after.jpg` | `extra-earth/public/images/` | Homepage featured transformation | The restored dental chair, straightened and framed to complement the Before photograph | Portrait, 1120 × 1400 px |
 | `dining-chair-before.webp` | `extra-earth/public/images/` | Projects, residential slider | Dining chair, armchair or ottoman before restoration | Landscape, 1800 × 1200 px |
 | `dining-chair-after.webp` | `extra-earth/public/images/` | Projects, residential slider | The exact same piece after restoration | Identical crop to its before image |
 | `commercial-before.webp` | `extra-earth/public/images/` | Projects, commercial slider | Restaurant booth, reception seat, fitness pad or specialty seating before restoration | Landscape, 1800 × 1200 px |
@@ -40,7 +42,7 @@ Upload these images to `extra-earth/public/images/`. They appear in the rotating
 | Exact filename | Photograph needed | Recommended crop |
 | --- | --- | --- |
 | `gallery-clinical-detail.webp` | Close-up of clean seams, contours or finished medical-grade vinyl | Landscape, 1800 × 1200 px |
-| `gallery-dental.webp` | Completed dental patient chair or operator seating | Landscape, 1800 × 1200 px |
+| `gallery-dental.webp` | Completed dental patient chair, dentist chair or dental assistant stool | Landscape, 1800 × 1200 px |
 | `gallery-chiropractic.webp` | Finished segmented chiropractic or treatment table | Landscape, 1800 × 1200 px |
 | `gallery-residential.webp` | Completed sofa, armchair, dining seating or cushions | Landscape, 1800 × 1200 px |
 | `gallery-restaurant.webp` | Restaurant booth, banquette, stool or dining seating | Landscape, 1800 × 1200 px |
@@ -52,8 +54,8 @@ The gallery advances automatically, can be moved with the arrow controls or a sw
 
 | Exact filename | Upload folder | Where it appears | Photograph needed |
 | --- | --- | --- | --- |
-| `before-chiro.jpg` | `extra-earth/public/` | Homepage and Projects clinical slider | Chiropractic table before restoration |
-| `after-chiro.jpg` | `extra-earth/public/` | Homepage and Projects clinical slider | The matching table after restoration |
+| `before-chiro.jpg` | `extra-earth/public/` | Homepage medical and Projects clinical slider | Medical examination table before restoration |
+| `after-chiro.jpg` | `extra-earth/public/` | Homepage medical and Projects clinical slider | The matching table after restoration |
 | `service-dental-v2.png` | `extra-earth/public/images/` | Services category page | Professional dental operatory chair or completed clinic work |
 | `service-medical-v2.png` | `extra-earth/public/images/` | Services category page | Professional exam table, chiropractic table or clinical seating |
 | `service-residential.png` | `extra-earth/public/images/` | Services category page | Finished sofa, dining chair, armchair or ottoman in a home |
@@ -72,9 +74,9 @@ Upload all of the following to `extra-earth/public/images/`. These slots display
 | `service-area-clinical.webp` | Service Areas | A completed clinical chair or table ready to return to a customer |
 | `service-area-delivery.webp` | Service Areas | Furniture carefully wrapped, protected or prepared for transportation |
 | `dental-patient-chairs.webp` | Dental | Completed patient chair in a clean, professional operatory |
-| `dental-operator-seating.webp` | Dental | Dentist, assistant or saddle stool |
+| `dental-operator-seating.webp` | Dental | Dentist chair, dental assistant stool or saddle stool |
 | `dental-repairs.webp` | Dental | Foam, contour or panel repair in progress |
-| `dental-practice.webp` | Dental | Coordinated patient chair and operator seating in a clinic |
+| `dental-practice.webp` | Dental | Coordinated patient chair, dentist chair and dental assistant stool in a clinic |
 | `medical-exam-tables.webp` | Medical & Chiropractic | Finished examination or treatment table in a professional clinic |
 | `medical-chiropractic-tables.webp` | Medical & Chiropractic | Finished chiropractic table showing segmented cushions |
 | `medical-clinic-seating.webp` | Medical & Chiropractic | Practitioner stool, waiting chair or reception seating |
@@ -82,7 +84,7 @@ Upload all of the following to `extra-earth/public/images/`. These slots display
 | `residential-sofas.webp` | Residential | Completed sofa or sectional in a comfortable room setting |
 | `residential-chairs.webp` | Residential | Completed armchair, accent chair or recliner |
 | `residential-dining.webp` | Residential | Coordinated dining chairs, kitchen bench or counter stools |
-| `residential-cushions.webp` | Residential | Ottoman, bench cushion or custom seat and back cushions |
+| `residential-marine.webp` | Residential & Outdoor | Outdoor seating, patio cushions, boat seating or a fitted marine cushion |
 | `commercial-restaurants.webp` | Commercial | Restaurant booths, banquettes, dining chairs or stools |
 | `commercial-fitness.webp` | Commercial | Finished gym or fitness-equipment pads in a professional facility |
 | `commercial-bowling.webp` | Commercial | Bowling-centre, recreation or spectator seating |
@@ -99,7 +101,7 @@ Recommended export size is approximately 1400 × 1400 px. A square or gently por
 | `logo.png` | `extra-earth/public/` | New digital chair logo used in the header and footer |
 | `craft-mark.png` | `extra-earth/public/` | Optional needle/sewing mark retained for physical-brand references |
 | `legacy-logo-original.png` | `extra-earth/public/` | Untouched March 2020 legacy logo retained as the source asset |
-| `legacy-logo-glass.png` | `extra-earth/public/` | Ivory-and-gold transparent version used in the homepage proof card |
+| `legacy-logo-glass.png` | `extra-earth/public/` | Ivory-and-gold transparent version used in the homepage proof card and footer |
 
 Use a transparent background for both brand files when possible and keep generous, even spacing around the mark.
 

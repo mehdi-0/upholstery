@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import PhotoStrip from '../../../components/PhotoStrip.astro';
+import { serviceSchema } from '../../../data/business';
+
+const title = "Outdoor Cushion & Patio Upholstery | Nora's Upholstery";
+const description = "Outdoor cushion and patio furniture upholstery for homes across the GTA and Southern Ontario, including selected fitted boat seating projects.";
+const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
+  name: 'Outdoor cushion and patio furniture upholstery',
+  description,
+  path: '/services/residential/outdoor-upholstery/',
+  serviceTypes: ['Outdoor cushion upholstery', 'Patio furniture upholstery', 'Fitted outdoor cushions', 'Selected boat seating upholstery'],
+});
+const faq = [
+  ['Can you reuse the existing outdoor foam?', 'Sometimes. We assess its shape, support, condition and exposure before recommending whether it should be reused or replaced.'],
+  ['What materials are suitable for outdoor seating?', 'The best choice depends on sun, moisture, storage and frequency of use. We can discuss outdoor-rated fabrics or vinyls suited to the project.'],
+  ['Do you make replacement cushion covers?', 'Yes, fitted replacement covers may be possible when the existing cushions or accurate dimensions are available for patterning.'],
+  ['Do you work on boat seating?', 'We accept selected boat seating and interior marine pieces. Photos help us confirm the shape, construction, access and materials required.'],
+];
+---
+
+<BaseLayout {title} {description} {structuredData}>
+  <section class="individual-service shell">
+    <header class="individual-service__hero">
+      <Breadcrumbs items={[
+        { name: 'Home', href: '/' },
+        { name: 'Services', href: '/services' },
+        { name: 'Residential, Outdoor & Boat', href: '/services/residential' },
+        { name: 'Outdoor Upholstery' },
+      ]} />
+      <p class="kicker-gold">Outdoor upholstery</p>
+      <h1>Comfort made for<br /><em>life outside.</em></h1>
+      <p>We restore patio seating, fitted outdoor cushions and selected boat seating with careful patterning and materials chosen around how and where each piece will be used.</p>
+    </header>
+
+    <PhotoStrip heading="Outdoor work, made personal" photos={[
+      { src: '/images/residential-marine.webp', label: 'Patio & outdoor seating', note: 'Use this same image in Our Work when the completed project is added', alt: 'Restored outdoor cushions and patio seating' },
+      { src: '/images/outdoor-detail.webp', label: 'Materials & details', note: 'Outdoor fabric, fitted seams or fastening details', alt: 'Outdoor upholstery material and fitted cushion details' },
+    ]} />
+
+    <section class="detail-service-grid">
+      <article class="glass"><p class="eyebrow">What we restore</p><h2>Patio and outdoor seating</h2><p>Replacement covers, fitted cushions and renewed seating for patios, balconies, porches and other outdoor living spaces.</p></article>
+      <article class="glass"><p class="eyebrow">Selected projects</p><h2>Boat seating</h2><p>Selected marine seating and interior pieces are assessed individually based on shape, access, construction and intended exposure.</p></article>
+      <article class="glass"><p class="eyebrow">Before we begin</p><h2>Materials that fit the setting</h2><p>Sun, moisture, storage and cleaning needs all influence the most practical fabric, vinyl, foam and construction choices.</p></article>
+    </section>
+
+    <section class="detail-faq">
+      <div><p class="eyebrow">Common questions</p><h2>Planning an outdoor project</h2></div>
+      <div>{faq.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}</div>
+    </section>
+
+    <div class="individual-service__cta glass-dark">
+      <div><p class="eyebrow">Start with the setting</p><h2>Show us where the pieces will live.</h2></div>
+      <a href="/contact#estimate-form" class="button button--light">Discuss outdoor upholstery</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .detail-service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin-top: 1rem; }
+  .detail-service-grid article { padding: clamp(1.4rem, 3vw, 2.2rem); border-radius: var(--radius); }
+  .detail-service-grid h2, .detail-faq h2 { margin: .6rem 0 .8rem; font-family: var(--serif); font-size: clamp(2.1rem, 3.5vw, 3.5rem); font-weight: 400; line-height: .95; }
+  .detail-service-grid article > p:last-child, .detail-faq details p { color: rgba(8,30,39,.64); font-size: .78rem; }
+  .detail-faq { display: grid; grid-template-columns: .75fr 1.25fr; gap: 2rem 6vw; padding: clamp(2.5rem, 5vw, 4.5rem) 0; }
+  .detail-faq details { padding: .9rem 0; border-top: 1px solid var(--line); }
+  .detail-faq details:last-child { border-bottom: 1px solid var(--line); }
+  .detail-faq summary { cursor: pointer; font-weight: 600; }
+  @media (max-width: 820px) { .detail-service-grid, .detail-faq { grid-template-columns: 1fr; } .detail-faq { gap: 1rem; padding-block: 2.5rem; } }
+</style>

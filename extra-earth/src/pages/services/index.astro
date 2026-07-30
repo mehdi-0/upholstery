@@ -3,14 +3,14 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 const title = "Services | Nora's Upholstery";
 const description = "Dental, medical, residential and commercial upholstery across the GTA and Southern Ontario by request.";
 const cards = [
-  { href: '/services/dental', number: '01', name: 'Dental', image: '/images/service-dental-v2.png', blurb: 'Dental chairs, dentist chairs and dental assistant stools, with weekend rush service available.' },
-  { href: '/services/medical', number: '02', name: 'Medical & Chiropractic', image: '/images/service-medical-v2.png', blurb: 'Exam tables, chiropractic beds and stools finished in cleanable clinical vinyls.' },
-  { href: '/services/residential', number: '03', name: 'Residential & Marine', image: '/images/service-residential.png', blurb: 'Sofas, dining chairs and selected boat seating or marine cushions renewed with care.' },
-  { href: '/services/commercial', number: '04', name: 'Commercial', image: '/images/service-commercial.png', blurb: 'Restaurants, gyms, bowling centres, hospitality and other specialty venue seating.' },
+  { href: '/services/dental', number: '01', name: 'Dental', image: '/images/service-dental-v2.png', blurb: 'Dental chairs, dentist chairs and dental assistant stools, with weekend rush service available.', action: 'View dental services' },
+  { href: '/services/medical', number: '02', name: 'Medical & Chiropractic', image: '/images/service-medical-v2.png', blurb: 'Exam tables, chiropractic beds and stools finished in cleanable clinical vinyls.', action: 'View medical services' },
+  { href: '/services/residential', number: '03', name: 'Residential & Outdoor', image: '/images/service-residential.png', blurb: 'Sofas, dining chairs, outdoor cushions and boat seating, including selected marine projects.', action: 'View residential services' },
+  { href: '/services/commercial', number: '04', name: 'Commercial', image: '/images/service-commercial.png', blurb: 'Restaurants, gyms, bowling centres, hospitality and other specialty venue seating.', action: 'View commercial services' },
 ];
 ---
 <BaseLayout {title} {description}>
-  <section class="services-page shell pt-28 md:pt-36 pb-20">
+  <section class="services-page shell pt-28 md:pt-32 pb-14">
     <header class="services-page__header">
       <p class="kicker-gold">What we do</p>
       <h1>Made for the way<br /><em>your seating works.</em></h1>
@@ -19,7 +19,7 @@ const cards = [
 
     <div class="service-image-grid">
       {cards.map(c => (
-        <a href={c.href} class="service-image-card">
+        <a href={c.href} class="service-image-card" aria-label={`${c.action}: services, materials and examples`}>
           <!-- Generic service illustration: replace with a wide photo of Nora's real work in this category when available. -->
           <img src={c.image} alt="" loading="lazy" />
           <span class="service-image-card__wash" aria-hidden="true"></span>
@@ -27,11 +27,11 @@ const cards = [
             <span>{c.number}</span>
             <h2>{c.name}</h2>
             <p>{c.blurb}</p>
-            <strong>Explore service <i aria-hidden="true">↗</i></strong>
+            <span class="service-image-card__tap">Tap to see services, materials and examples</span>
+            <strong><span>{c.action}</span><i aria-hidden="true">→</i></strong>
           </div>
         </a>
       ))}
     </div>
-    <p class="service-image-note">Category images are illustrative placeholders and are not presented as completed Nora’s Upholstery projects.</p>
   </section>
 </BaseLayout>

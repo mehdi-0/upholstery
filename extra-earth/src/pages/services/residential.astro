@@ -1,32 +1,45 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-const title = "Residential & Marine Upholstery | Nora's Upholstery";
-const description = "Sofas, chairs, dining seating and selected marine upholstery projects across the GTA and Southern Ontario by request.";
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { serviceSchema } from '../../data/business';
+const title = "Residential, Outdoor & Boat Upholstery | Nora's Upholstery";
+const description = "Sofas, chairs, dining seating, outdoor cushions and selected boat upholstery projects across the GTA and Southern Ontario by request.";
+const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
+  name: 'Residential, outdoor and boat upholstery',
+  description,
+  path: '/services/residential/',
+  serviceTypes: ['Sofa upholstery', 'Chair upholstery', 'Dining chair upholstery', 'Outdoor cushion upholstery', 'Boat seating upholstery'],
+});
 const categories = [
   { number: '01', title: 'Sofas & sectionals', copy: 'Renew the comfort and appearance of larger living-room pieces without replacing a frame you already love.', examples: ['Sofas & loveseats', 'Sectionals', 'Chaise lounges'], image: '/images/residential-sofas.webp', photo: 'Sofa or sectional', alt: 'Residential sofa restored by Nora’s Upholstery' },
   { number: '02', title: 'Chairs & recliners', copy: 'From a favourite everyday chair to a distinctive accent piece, each shape is individually patterned.', examples: ['Armchairs', 'Accent chairs', 'Recliners & rockers'], image: '/images/residential-chairs.webp', photo: 'Chair or recliner', alt: 'Residential armchair restored by Nora’s Upholstery' },
   { number: '03', title: 'Dining seating', copy: 'Coordinated upholstery for the seating around dining rooms, kitchens and breakfast areas.', examples: ['Dining chairs', 'Kitchen benches', 'Counter stools'], image: '/images/residential-dining.webp', photo: 'Dining seating', alt: 'Coordinated dining chairs restored by Nora’s Upholstery' },
-  { number: '04', title: 'Marine & boat upholstery', copy: 'Selected boat seating, fitted cushions and marine interior pieces restored with materials suited to the project.', examples: ['Boat seating', 'Fitted cushions', 'Marine interior pieces'], image: '/images/residential-marine.webp', photo: 'Boat seating or marine cushions', alt: 'Restored marine seating and fitted boat cushions' },
+  { number: '04', title: 'Outdoor & boat seating', copy: 'Outdoor seating, fitted cushions and selected marine pieces restored with materials suited to the project.', examples: ['Patio seating', 'Outdoor cushions', 'Boat seating'], image: '/images/residential-marine.webp', photo: 'Outdoor or boat seating', alt: 'Restored outdoor seating and fitted boat cushions' },
 ];
 ---
-<BaseLayout {title} {description}>
+<BaseLayout {title} {description} {structuredData}>
   <section class="individual-service shell">
     <header class="individual-service__hero">
-      <p class="kicker-gold">Residential & marine upholstery</p>
+      <Breadcrumbs items={[
+        { name: 'Home', href: '/' },
+        { name: 'Services', href: '/services' },
+        { name: 'Residential, Outdoor & Boat' },
+      ]} />
+      <p class="kicker-gold">Residential, outdoor & boat upholstery</p>
       <h1>Keep the piece.<br /><em>Change the story.</em></h1>
-      <p>We help homeowners preserve furniture that is comfortable and well made. We also accept selected marine projects for boat seating, fitted cushions and interior pieces.</p>
+      <p>We help homeowners preserve furniture that is comfortable and well made. We also accept outdoor seating and selected marine projects for boat seating, fitted cushions and interior pieces.</p>
     </header>
     <div class="individual-service__grid">
       {categories.map(category => (
         <article class="individual-service__card glass">
           <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" onerror="this.hidden=true" /></div>
-          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul></div>
+          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul>{category.number === '04' && <a class="individual-service__detail-link" href="/services/residential/outdoor-upholstery"><span>Explore outdoor upholstery</span><span aria-hidden="true">→</span></a>}</div>
         </article>
       ))}
     </div>
     <div class="individual-service__cta glass-dark">
       <div><p class="eyebrow">Start with a few photos</p><h2>Show us the furniture you love.</h2></div>
-      <a href="tel:+16479812622" class="button button--light">Call about furniture or marine seating</a>
+      <a href="tel:+16479812622" class="button button--light">Call about furniture, outdoor or boat seating</a>
     </div>
   </section>
 </BaseLayout>

@@ -1,29 +1,38 @@
 ---
 import '../styles/global.css';
 import '../styles/mobile.css';
+import { business, organizationSchema, travelContact, websiteSchema, whatsappUrl } from '../data/business';
 
 const {
   title = "Nora's Upholstery",
   description = "Precision upholstery for clinics, homes and hospitality across the Greater Toronto Area.",
-  seoImage
+  seoImage,
+  includeSiteSchema = false,
+  structuredData = [],
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
-const googleProfileUrl = 'https://share.google/hH6pGfzI1YAUH9HLG';
-const instagramUrl = 'https://www.instagram.com/norasupholstery/';
-const facebookUrl = 'https://www.facebook.com/p/Nora-Upholstery-100010883763180/';
+const siteOrigin = (Astro.site ?? Astro.url).origin;
+const pageStructuredData = Array.isArray(structuredData) ? structuredData : [structuredData];
+const schemaGraph = [
+  ...(includeSiteSchema ? [organizationSchema(siteOrigin), websiteSchema(siteOrigin)] : []),
+  ...pageStructuredData,
+];
+const googleProfileUrl = business.googleProfileUrl;
+const instagramUrl = business.instagramUrl;
+const facebookUrl = business.facebookUrl;
 const navItems = [
   { href: '/', label: 'Home' },
   { href: '/before-after', label: 'Our Work' },
   { href: '/testimonials', label: 'Reviews' },
   { href: '/service-areas', label: 'Service Areas' },
-  { href: '/about', label: 'About' },
+  { href: '/about', label: 'Our Story' },
   { href: '/contact', label: 'Contact' },
 ];
 const serviceItems = [
   { href: '/services/dental', label: 'Dental' },
   { href: '/services/medical', label: 'Medical & Chiropractic' },
-  { href: '/services/residential', label: 'Residential' },
+  { href: '/services/residential', label: 'Residential & Outdoor' },
   { href: '/services/commercial', label: 'Commercial' },
 ];
 const isActive = (href: string) => href === '/' ? currentPath === '/' : currentPath.startsWith(href);
@@ -43,10 +52,24 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {seoImage && <meta property="og:image" content={seoImage} />}
+    {schemaGraph.length > 0 && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': schemaGraph })}
+      />
+    )}
   </head>
-  <body>
+  <body class:list={{ 'travel-contact-active': travelContact.enabled }}>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
+
+    {travelContact.enabled && (
+      <aside class="travel-contact" aria-label="Temporary contact information">
+        <span>{travelContact.notice}</span>
+        <a href={whatsappUrl} target="_blank" rel="noopener">WhatsApp</a>
+        <a href={`mailto:${business.email}`}>Email</a>
+      </aside>
+    )}
 
     <header class="site-header" data-header>
       <div class="shell">
@@ -64,14 +87,16 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
                 <button type="button" aria-label="Show service links" aria-expanded="false" aria-controls="desktop-services" data-desktop-services-toggle><i aria-hidden="true"></i></button>
               </span>
               <div class="desktop-subnav__menu" id="desktop-services">
-                <a href="/services"><span>Overview</span><small>All services</small></a>
                 {serviceItems.map((item) => <a href={item.href}><span>{item.label}</span><small>Explore ↗</small></a>)}
               </div>
             </div>
             {navItems.slice(1).map((item) => <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a>)}
           </nav>
 
-          <a class="header-cta" href="tel:+16479812622">Call 647 981 2622</a>
+          {travelContact.enabled
+            ? <a class="header-cta" href={whatsappUrl} target="_blank" rel="noopener">Message on WhatsApp</a>
+            : <a class="header-cta" href="tel:+16479812622">Call 647 981 2622</a>
+          }
           <button class="menu-trigger" type="button" aria-controls="mobile-menu" aria-expanded="false" data-menu-open>
             <span>Menu</span><i aria-hidden="true"></i>
           </button>
@@ -102,6 +127,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
         <div class="mobile-menu__contact">
           <a href="tel:+16479812622">647 981 2622</a>
           <a href="mailto:norasupholstery@gmail.com">norasupholstery@gmail.com</a>
+          <a href={whatsappUrl} target="_blank" rel="noopener">WhatsApp</a>
         </div>
       </div>
     </div>
@@ -117,7 +143,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
           </div>
           <div>
             <p class="footer-label">Explore</p>
-            <a class="footer-priority-link" href="/contact">Contact Nora’s</a><a href="/services">Services</a><a href="/before-after">Our Work</a><a href="/testimonials">Client stories</a><a href="/service-areas">Service areas</a><a href="/about">About Nora’s</a>
+            <a class="footer-priority-link" href="/contact">Contact Nora’s</a><a href="/services">Services</a><a href="/before-after">Our Work</a><a href="/testimonials">Client stories</a><a href="/service-areas">Service areas</a><a href="/about">Our Story</a>
           </div>
           <div>
             <p class="footer-label">Visit & contact</p>
@@ -125,6 +151,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
             <div class="footer-socials" aria-label="Contact and social links">
               <a href="tel:+16479812622" aria-label="Call Nora's Upholstery" title="Call"><span aria-hidden="true">☎</span></a>
               <a href="mailto:norasupholstery@gmail.com" aria-label="Email Nora's Upholstery" title="Email"><span aria-hidden="true">@</span></a>
+              <a href={whatsappUrl} target="_blank" rel="noopener" aria-label="Message Nora's Upholstery on WhatsApp" title="WhatsApp"><img src="/icons/whatsapp.svg" alt="" /></a>
               <a href={googleProfileUrl} target="_blank" rel="noopener" aria-label="Nora's Upholstery on Google Business" title="Google Business"><img src="/icons/google.svg" alt="" /></a>
               <a href={instagramUrl} target="_blank" rel="noopener" aria-label="Nora's Upholstery on Instagram" title="Instagram"><img src="/icons/instagram.svg" alt="" /></a>
               <a href={facebookUrl} target="_blank" rel="noopener" aria-label="Nora's Upholstery on Facebook" title="Facebook"><img src="/icons/facebook.svg" alt="" /></a>
@@ -136,7 +163,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
     </footer>
 
     <div class="mobile-actions" aria-label="Quick contact actions">
-      <a href="tel:+16479812622"><span>Call</span><small>Speak with us</small></a>
+      <a href={travelContact.enabled ? whatsappUrl : 'tel:+16479812622'} target={travelContact.enabled ? '_blank' : undefined} rel={travelContact.enabled ? 'noopener' : undefined}><span>{travelContact.enabled ? 'WhatsApp' : 'Call'}</span><small>{travelContact.enabled ? 'Send a message' : 'Speak with us'}</small></a>
       <a href="mailto:norasupholstery@gmail.com"><span>Email</span><small>Send project details</small></a>
     </div>
 

@@ -1,7 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { serviceSchema } from '../../data/business';
 const title = "Dental Upholstery | Nora's Upholstery";
 const description = "Dental chair, stool and operatory upholstery with cleanable clinical materials and weekend rush options.";
+const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
+  name: 'Dental upholstery',
+  description,
+  path: '/services/dental/',
+  serviceTypes: ['Dental chair upholstery', 'Dentist chair upholstery', 'Dental assistant stool upholstery', 'Dental chair foam repair'],
+});
 const categories = [
   { number: '01', title: 'Patient chairs', copy: 'Full or partial reupholstering for dental treatment chairs, including headrests, backrests, seats, leg rests and arm pads.', examples: ['Treatment chairs', 'Headrests & cushions', 'Arm & leg pads'], image: '/images/dental-patient-chairs.webp', photo: 'Completed patient chair', alt: 'Reupholstered dental patient chair in a professional operatory' },
   { number: '02', title: 'Dentist & assistant seating', copy: 'Supportive, cleanable upholstery for dentist chairs and dental assistant stools used throughout the operatory.', examples: ['Dentist chairs', 'Dental assistant stools', 'Saddle stools'], image: '/images/dental-operator-seating.webp', photo: 'Dentist chair or dental assistant stool', alt: 'Professionally reupholstered dentist chair and dental assistant stool' },
@@ -9,9 +17,14 @@ const categories = [
   { number: '04', title: 'Practice coordination', copy: 'Colour selection, scheduling and pickup are planned around the needs of an active dental practice.', examples: ['Brand colour matching', 'Weekend rush options', 'Pickup & delivery'], image: '/images/dental-practice.webp', photo: 'Coordinated clinic finish', alt: 'Coordinated upholstered dental seating in a professional clinic' },
 ];
 ---
-<BaseLayout {title} {description}>
+<BaseLayout {title} {description} {structuredData}>
   <section class="individual-service shell">
     <header class="individual-service__hero">
+      <Breadcrumbs items={[
+        { name: 'Home', href: '/' },
+        { name: 'Services', href: '/services' },
+        { name: 'Dental' },
+      ]} />
       <p class="kicker-gold">Dental upholstery</p>
       <h1>Every surface in<br /><em>the operatory.</em></h1>
       <p>From the patient chair to dentist chairs and dental assistant stools, we restore the pieces your team and patients depend on using precise patterns and materials appropriate for healthcare settings.</p>

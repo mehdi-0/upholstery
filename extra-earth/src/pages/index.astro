@@ -8,7 +8,7 @@ const googleProfileUrl = 'https://share.google/hH6pGfzI1YAUH9HLG';
 const services = [
   { number: '01', title: 'Dental', detail: 'Dental chairs and stools with weekend turnaround available.', href: '/services/dental' },
   { number: '02', title: 'Medical & chiropractic', detail: 'Exam tables, chiropractic beds, stools and clinic seating.', href: '/services/medical' },
-  { number: '03', title: 'Residential', detail: 'Dining chairs, cushions, ottomans, sofas and statement pieces.', href: '/services/residential' },
+  { number: '03', title: 'Residential & outdoor', detail: 'Sofas, dining chairs, outdoor cushions and selected boat seating.', href: '/services/residential' },
   { number: '04', title: 'Commercial', detail: 'Restaurants, gyms, bowling centres, reception areas and hospitality seating.', href: '/services/commercial' },
 ];
 
@@ -18,7 +18,7 @@ const process = [
   ['03', 'We restore it', 'Pickup and delivery are available across the GTA.'],
 ];
 ---
-<BaseLayout {title} {description}>
+<BaseLayout {title} {description} includeSiteSchema>
   <section class="hero">
     <!--
       HERO IMAGE NEEDED
@@ -129,7 +129,7 @@ const process = [
       <div class="process-grid">
         {process.map(([number, heading, copy]) => <article><span>{number}</span><h3>{heading}</h3><p>{copy}</p></article>)}
       </div>
-      <div class="process-action"><a class="button button--dark" href="mailto:norasupholstery@gmail.com">Email photos for an estimate</a><p>Calling is fastest. Email three to five clear photos when convenient.</p></div>
+      <div class="process-action"><a class="button button--dark" href="mailto:norasupholstery@gmail.com">Email photos for an estimate</a></div>
     </div>
   </section>
 

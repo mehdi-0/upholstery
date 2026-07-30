@@ -1,7 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { serviceSchema } from '../../data/business';
 const title = "Medical & Chiropractic Upholstery | Nora's Upholstery";
 const description = "Medical tables, chiropractic beds, clinic stools and waiting seating restored with cleanable healthcare materials.";
+const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
+  name: 'Medical and chiropractic upholstery',
+  description,
+  path: '/services/medical/',
+  serviceTypes: ['Medical exam table upholstery', 'Chiropractic table upholstery', 'Clinic seating upholstery', 'Clinical foam rebuilding'],
+});
 const categories = [
   { number: '01', title: 'Medical exam tables', copy: 'Professional reupholstering for examination and treatment surfaces in clinics and allied health practices.', examples: ['Exam tables', 'Treatment tables', 'Procedure chair cushions'], image: '/images/medical-exam-tables.webp', photo: 'Exam or treatment table', alt: 'Professionally reupholstered medical examination table' },
   { number: '02', title: 'Chiropractic tables', copy: 'Segmented cushions and adjustment table components carefully patterned to preserve movement and fit.', examples: ['Adjustment tables', 'Drop section cushions', 'Head & ankle sections'], image: '/images/medical-chiropractic-tables.webp', photo: 'Chiropractic table', alt: 'Reupholstered chiropractic adjustment table with segmented cushions' },
@@ -9,9 +17,14 @@ const categories = [
   { number: '04', title: 'Clinical rebuilding', copy: 'Worn foam, split vinyl and damaged contours can be repaired with cleanable finishes appropriate for healthcare settings.', examples: ['Foam rebuilding', 'Antibacterial vinyls', 'Loaner bed by request'], image: '/images/medical-rebuilding.webp', photo: 'Clinical rebuilding detail', alt: 'Medical upholstery foam rebuilding and vinyl repair' },
 ];
 ---
-<BaseLayout {title} {description}>
+<BaseLayout {title} {description} {structuredData}>
   <section class="individual-service shell">
     <header class="individual-service__hero">
+      <Breadcrumbs items={[
+        { name: 'Home', href: '/' },
+        { name: 'Services', href: '/services' },
+        { name: 'Medical & Chiropractic' },
+      ]} />
       <p class="kicker-gold">Medical & chiropractic</p>
       <h1>Built around<br /><em>patient care.</em></h1>
       <p>We restore the tables, beds, stools and waiting seating used across medical and chiropractic environments, with materials chosen for frequent cleaning.</p>
