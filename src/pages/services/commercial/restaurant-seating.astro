@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import PhotoStrip from '../../../components/PhotoStrip.astro';
+import { serviceSchema } from '../../../data/business';
+
+const title = "Restaurant Booth & Banquette Upholstery | Nora's Upholstery";
+const description = "Restaurant booth, banquette, dining chair and bar stool upholstery for businesses across the GTA and Southern Ontario.";
+const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
+  name: 'Restaurant booth and banquette upholstery',
+  description,
+  path: '/services/commercial/restaurant-seating/',
+  serviceTypes: ['Restaurant booth upholstery', 'Banquette upholstery', 'Restaurant dining chair upholstery', 'Bar and counter stool upholstery'],
+});
+const faq = [
+  ['Can restaurant seating be restored outside business hours?', 'Scheduling depends on the size and construction of the project. We discuss access, removal and timing so the work can be planned around operations where practical.'],
+  ['Can you match an existing restaurant colour or finish?', 'We can review existing colours and materials and discuss the closest practical match or a coordinated new finish.'],
+  ['Do you work on fixed booths and banquettes?', 'Yes, many fixed or built-in pieces can be assessed. Photos of the full booth, seams, base and access points help determine the best approach.'],
+  ['Can a larger group of chairs or stools be completed together?', 'Yes. Quantity, condition and timing are considered together so finishes can remain coordinated across the space.'],
+];
+---
+
+<BaseLayout {title} {description} {structuredData}>
+  <section class="individual-service shell">
+    <header class="individual-service__hero">
+      <Breadcrumbs items={[
+        { name: 'Home', href: '/' },
+        { name: 'Services', href: '/services' },
+        { name: 'Commercial', href: '/services/commercial' },
+        { name: 'Restaurant Seating' },
+      ]} />
+      <p class="kicker-gold">Restaurant seating</p>
+      <h1>Ready for every<br /><em>guest and service.</em></h1>
+      <p>We restore booths, banquettes, dining chairs and stools with the character of the room, cleaning needs and daily traffic in mind.</p>
+    </header>
+
+    <PhotoStrip heading="Seating that supports the room" photos={[
+      { src: '/images/commercial-restaurants.webp', label: 'Booths & banquettes', note: 'Built-in seating finished for frequent use', alt: 'Restored restaurant booth and banquette seating' },
+      { src: '/images/gallery-restaurant-seating.jpg', label: 'Restaurant seating', note: 'Completed booth seating in its dining space', alt: 'Black upholstered restaurant booth seating against a reclaimed wood wall' },
+    ]} />
+
+    <section class="detail-service-grid">
+      <article class="glass"><p class="eyebrow">Built-in seating</p><h2>Booths and banquettes</h2><p>Fixed and removable seating assessed for access, construction, panel layout and the practical needs of the space.</p></article>
+      <article class="glass"><p class="eyebrow">Coordinated pieces</p><h2>Dining chairs and stools</h2><p>Groups of chairs, bar stools and counter seating restored with coordinated materials and consistent finishing.</p></article>
+      <article class="glass"><p class="eyebrow">Operational planning</p><h2>Timing that respects service</h2><p>Project quantity, access and business hours are considered early so the work can be organized around daily operations where practical.</p></article>
+    </section>
+
+    <section class="detail-faq">
+      <div><p class="eyebrow">Common questions</p><h2>Planning restaurant upholstery</h2></div>
+      <div>{faq.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}</div>
+    </section>
+
+    <div class="individual-service__cta glass-dark">
+      <div><p class="eyebrow">One section or a coordinated room</p><h2>Tell us how your seating is used.</h2></div>
+      <a href="/contact#estimate-form" class="button button--light">Discuss restaurant seating</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .detail-service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin-top: 1rem; }
+  .detail-service-grid article { padding: clamp(1.4rem, 3vw, 2.2rem); border-radius: var(--radius); }
+  .detail-service-grid h2, .detail-faq h2 { margin: .6rem 0 .8rem; font-family: var(--serif); font-size: clamp(2.1rem, 3.5vw, 3.5rem); font-weight: 400; line-height: .95; }
+  .detail-service-grid article > p:last-child, .detail-faq details p { color: rgba(8,30,39,.64); font-size: .78rem; }
+  .detail-faq { display: grid; grid-template-columns: .75fr 1.25fr; gap: 2rem 6vw; padding: clamp(2.5rem, 5vw, 4.5rem) 0; }
+  .detail-faq details { padding: .9rem 0; border-top: 1px solid var(--line); }
+  .detail-faq details:last-child { border-bottom: 1px solid var(--line); }
+  .detail-faq summary { cursor: pointer; font-weight: 600; }
+  @media (max-width: 820px) { .detail-service-grid, .detail-faq { grid-template-columns: 1fr; } .detail-faq { gap: 1rem; padding-block: 2.5rem; } }
+</style>

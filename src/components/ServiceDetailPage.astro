@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from './Breadcrumbs.astro';
+import { serviceSchema } from '../data/business';
+type Item={eyebrow:string;title:string;copy:string}; type Faq=[string,string]; type Crumb={name:string;href?:string};
+const p=Astro.props as {title:string;description:string;schemaName:string;path:string;serviceTypes:string[];breadcrumbs:Crumb[];kicker:string;heading:string;headingAccent:string;intro:string;image:string;imageAlt:string;imageLabel:string;highlights:Item[];faqHeading:string;faq:Faq[];ctaEyebrow:string;ctaHeading:string;ctaLabel:string};
+const origin=(Astro.site??Astro.url).origin;
+const structuredData=[serviceSchema(origin,{name:p.schemaName,description:p.description,path:p.path,serviceTypes:p.serviceTypes}),{'@type':'FAQPage','@id':new URL(`${p.path}#faq`,origin).toString(),mainEntity:p.faq.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))}];
+---
+<BaseLayout title={p.title} description={p.description} {structuredData} seoImage={p.image}>
+  <section class="detail shell">
+    <header class="detail__hero"><Breadcrumbs items={p.breadcrumbs}/><p class="kicker-gold">{p.kicker}</p><h1>{p.heading}<br/><em>{p.headingAccent}</em></h1><p>{p.intro}</p></header>
+    <figure class="detail__feature glass"><img src={p.image} alt={p.imageAlt} loading="lazy" decoding="async"/><figcaption>{p.imageLabel}</figcaption></figure>
+    <section class="detail__grid">{p.highlights.map(x=><article class="glass"><p class="eyebrow">{x.eyebrow}</p><h2>{x.title}</h2><p>{x.copy}</p></article>)}</section>
+    <section class="detail__faq"><div><p class="eyebrow">Common questions</p><h2>{p.faqHeading}</h2></div><div>{p.faq.map(([q,a])=><details><summary>{q}</summary><p>{a}</p></details>)}</div></section>
+    <div class="individual-service__cta glass-dark"><div><p class="eyebrow">{p.ctaEyebrow}</p><h2>{p.ctaHeading}</h2></div><a href="/contact#estimate-form" class="button button--light">{p.ctaLabel}</a></div>
+  </section>
+</BaseLayout>
+<style>
+  .detail{padding-bottom:clamp(3rem,6vw,6rem)}.detail__hero{max-width:58rem;padding:clamp(7rem,11vw,10rem) 0 clamp(2rem,4vw,3.5rem)}.detail__hero h1{margin:.8rem 0 1rem;font-family:var(--serif);font-size:clamp(3.8rem,8vw,8.5rem);font-weight:400;line-height:.78;letter-spacing:-.045em}.detail__hero h1 em{color:var(--clay);font-weight:400}.detail__hero>p:last-child{max-width:48rem;color:rgba(8,30,39,.68)}
+  .detail__feature{position:relative;margin:0;padding:.55rem;border-radius:clamp(1.3rem,3vw,2.4rem);overflow:hidden}.detail__feature img{display:block;width:100%;height:clamp(25rem,58vw,47rem);object-fit:cover;border-radius:calc(clamp(1.3rem,3vw,2.4rem) - .4rem)}.detail__feature figcaption{position:absolute;left:1.5rem;bottom:1.5rem;padding:.65rem .9rem;border:1px solid rgba(255,255,255,.5);border-radius:999px;color:#fff;background:rgba(8,30,39,.68);backdrop-filter:blur(14px);font-size:.7rem;text-transform:uppercase;letter-spacing:.12em}
+  .detail__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;margin-top:.9rem}.detail__grid article{padding:clamp(1.4rem,3vw,2.3rem);border-radius:var(--radius)}.detail__grid h2,.detail__faq h2{margin:.6rem 0 .8rem;font-family:var(--serif);font-size:clamp(2rem,3.5vw,3.5rem);font-weight:400;line-height:.95}.detail__grid article>p:last-child,.detail__faq details p{color:rgba(8,30,39,.64);font-size:.8rem}.detail__faq{display:grid;grid-template-columns:.75fr 1.25fr;gap:2rem 6vw;padding:clamp(2.7rem,6vw,5rem) 0}.detail__faq details{padding:1rem 0;border-top:1px solid var(--line)}.detail__faq details:last-child{border-bottom:1px solid var(--line)}.detail__faq summary{cursor:pointer;font-weight:600}
+  @media(max-width:820px){.detail__hero{padding-top:7.5rem}.detail__hero h1{font-size:clamp(3.6rem,17vw,5.7rem)}.detail__feature img{height:min(115vw,36rem)}.detail__grid,.detail__faq{grid-template-columns:1fr}.detail__faq{gap:1rem}}
+</style>

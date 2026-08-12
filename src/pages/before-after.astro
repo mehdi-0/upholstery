@@ -1,0 +1,260 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+const title = "Our Work | Nora's Upholstery";
+const description = "Explore carefully restored clinical, residential and commercial upholstery projects by Nora's Upholstery.";
+const galleryPhotos = [
+  { src: '/images/gallery-dental-operatory.webp', label: 'Dental operatory', note: 'Patient chair and dentist seating finished for a busy practice', alt: 'Blue dental patient chair and dentist stool with renewed upholstery in a dental operatory', fit: 'contain' },
+  { src: '/images/gallery-chiropractic-table.webp', label: 'Chiropractic', note: 'Segmented table cushions renewed with a precise clinical fit', alt: 'Red chiropractic adjustment table with completed upholstery', fit: 'contain' },
+  { src: '/images/gallery-waiting-room-blue-chairs.webp', label: 'Waiting room seating', note: 'Comfortable clinic chairs renewed in durable blue upholstery', alt: 'Two blue upholstered clinic waiting room chairs' },
+  { src: '/images/gallery-waiting-room-fireplace.webp', label: 'Clinic seating', note: 'Cleanable seating coordinated for a welcoming patient space', alt: 'Blue upholstered clinic waiting room chairs beside a fireplace' },
+  { src: '/images/gallery-dining-chairs.webp', label: 'Dining chairs', note: 'A coordinated dining set renewed for everyday gatherings', alt: 'Eight reupholstered dining chairs around a dining table' },
+  { src: '/images/gallery-residential-chair.webp', label: 'Residential', note: 'Comfort and texture brought together for a personal space', alt: 'Grey upholstered accent chair and coordinating desk chair in a home office', fit: 'contain' },
+  { src: '/images/gallery-restaurant-seating.jpg', label: 'Restaurant seating', note: 'Built-in booth seating renewed for a welcoming dining space', alt: 'Black upholstered restaurant booth seating against a reclaimed wood wall' },
+  { src: '/images/gallery-restaurant-bench.webp', label: 'Restaurant seating', note: 'Custom bench seating prepared for daily commercial use', alt: 'Brown upholstered restaurant bench completed in the workshop', fit: 'contain' },
+];
+---
+<BaseLayout {title} {description}>
+  <header class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">Our work</p>
+      <h1>Care in every detail.<br /><em>A finish made to last.</em></h1>
+      <p>Every piece arrives with its own history, purpose and possibilities. Explore a selection of our work, then take a closer look at how thoughtful restoration can bring comfort and character back to frequently used seating.</p>
+    </div>
+  </header>
+
+  <section class="work-carousel-section">
+    <div class="shell">
+      <div class="section-heading section-heading--compact">
+        <div><p class="eyebrow">Completed work</p><h2 class="display-heading">Made with care<br /><em>for every setting.</em></h2></div>
+        <p>From clinical practices and family homes to restaurants and busy commercial spaces, each project receives the same careful attention to fit, finish and lasting use.</p>
+      </div>
+      <div class="work-carousel" data-work-carousel>
+        <div class="work-carousel__viewport" data-carousel-viewport tabindex="0" role="region" aria-roledescription="carousel" aria-label="Completed upholstery photo gallery. Use the arrow keys or controls to move between images.">
+          <div class="work-carousel__track">
+            {galleryPhotos.map((photo, index) => (
+              <figure class="work-carousel__slide" data-carousel-slide role="group" aria-label={`${index + 1} of ${galleryPhotos.length}: ${photo.label}`}>
+                <div class="work-carousel__fallback" aria-hidden="true"></div>
+                <img class="work-carousel__backdrop" src={photo.src} alt="" loading="lazy" decoding="async" aria-hidden="true" />
+                <img class:list={['work-carousel__image', photo.fit === 'contain' && 'work-carousel__image--contain']} src={photo.src} alt={photo.alt} loading="lazy" decoding="async" onerror="this.hidden=true" />
+                <figcaption>{photo.label}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+        <div class="work-carousel__controls">
+          <button type="button" data-carousel-prev aria-label="Show previous gallery image">←</button>
+          <span data-carousel-status aria-label={`Image 1 of ${galleryPhotos.length}`}>1 / {galleryPhotos.length}</span>
+          <button type="button" data-carousel-next aria-label="Show next gallery image">→</button>
+          <button type="button" class="work-carousel__toggle" data-carousel-toggle aria-pressed="false" aria-label="Pause automatic gallery rotation">Pause</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell project-gallery">
+      <article>
+        <div class="section-heading section-heading--compact">
+          <div><p class="eyebrow">01 · Dental</p><h2 class="display-heading">A patient chair,<br /><em>ready for care again.</em></h2></div>
+          <p>Heavily worn upholstery was replaced with a smooth, cleanable finish, renewing the patient surface and restoring a professional appearance to the operatory.</p>
+        </div>
+        <div class="project-stage">
+          <div class="compare compare--dental" data-compare style="--position: 50%">
+            <img src="/images/dental-gallery-before.webp" alt="Dental patient chair with torn upholstery before restoration" loading="lazy" decoding="async" />
+            <div class="compare__after"><img src="/images/dental-gallery-after.webp" alt="Dental patient chair with renewed orange upholstery after restoration" loading="lazy" decoding="async" /></div>
+            <span class="compare__label compare__label--before">Before</span><span class="compare__label compare__label--after">After</span>
+            <input type="range" min="0" max="100" value="50" aria-label="Compare the dental patient chair before and after restoration" data-compare-range />
+            <div class="compare__handle" aria-hidden="true"><span>↔</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article>
+        <div class="section-heading section-heading--compact">
+          <div><p class="eyebrow">02 · Medical & chiropractic</p><h2 class="display-heading">A precise fit<br /><em>for every section.</em></h2></div>
+          <p>This segmented chiropractic table was carefully reupholstered to preserve its shape, movement and clinical function while giving every patient surface a durable new finish.</p>
+        </div>
+        <div class="project-stage">
+          <div class="compare compare--chiropractic" data-compare style="--position: 50%">
+            <img src="/images/chiropractic-table-before.jpg" alt="Chiropractic table before reupholstery" loading="lazy" decoding="async" />
+            <div class="compare__after"><img src="/images/gallery-chiropractic-table.webp" alt="Red chiropractic adjustment table after completed upholstery" loading="lazy" decoding="async" /></div>
+            <span class="compare__label compare__label--before">Before</span><span class="compare__label compare__label--after">After</span>
+            <input type="range" min="0" max="100" value="50" aria-label="Compare the chiropractic table before and after restoration" data-compare-range />
+            <div class="compare__handle" aria-hidden="true"><span>↔</span></div>
+          </div>
+        </div>
+      </article>
+
+      <article>
+        <div class="section-heading section-heading--compact">
+          <div><p class="eyebrow">03 · Residential</p><h2 class="display-heading">A treasured chair,<br /><em>beautifully renewed.</em></h2></div>
+          <p>A familiar armchair was given a more distinctive finish while preserving the carved frame, traditional shape and character that made it worth keeping.</p>
+        </div>
+        <div class="project-stage">
+          <div class="compare compare--residential" data-compare style="--position: 50%">
+            <img src="/images/residential-chair-before.jpg" alt="Traditional residential armchair before reupholstery" loading="lazy" decoding="async" />
+            <div class="compare__after"><img src="/images/residential-chair-after.jpg" alt="Traditional residential armchair after patterned reupholstery" loading="lazy" decoding="async" /></div>
+            <span class="compare__label compare__label--before">Before</span><span class="compare__label compare__label--after">After</span>
+            <input type="range" min="0" max="100" value="50" aria-label="Compare the residential armchair before and after restoration" data-compare-range />
+            <div class="compare__handle" aria-hidden="true"><span>↔</span></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <script is:inline>
+    document.querySelectorAll('[data-compare]').forEach((comparison) => {
+      const range = comparison.querySelector('[data-compare-range]');
+      range?.addEventListener('input', () => comparison.style.setProperty('--position', `${range.value}%`));
+    });
+
+    const carousel = document.querySelector('[data-work-carousel]');
+    const viewport = carousel?.querySelector('[data-carousel-viewport]');
+    const slides = Array.from(carousel?.querySelectorAll('[data-carousel-slide]') || []);
+    const status = carousel?.querySelector('[data-carousel-status]');
+    const previousButton = carousel?.querySelector('[data-carousel-prev]');
+    const nextButton = carousel?.querySelector('[data-carousel-next]');
+    const toggleButton = carousel?.querySelector('[data-carousel-toggle]');
+    const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let activeSlide = 0;
+    let autoRotate;
+    let scrollTimer;
+    let isInView = false;
+    let isHovering = false;
+    let focusPaused = false;
+    let userPaused = reduceMotionQuery.matches;
+
+    const updateStatus = () => {
+      if (!status) return;
+      status.textContent = `${activeSlide + 1} / ${slides.length}`;
+      status.setAttribute('aria-label', `Image ${activeSlide + 1} of ${slides.length}`);
+    };
+    const updateToggle = () => {
+      if (!toggleButton) return;
+      const paused = userPaused || reduceMotionQuery.matches;
+      toggleButton.textContent = paused ? 'Play' : 'Pause';
+      toggleButton.setAttribute('aria-pressed', String(paused));
+      toggleButton.setAttribute('aria-label', paused ? 'Play automatic gallery rotation' : 'Pause automatic gallery rotation');
+    };
+    const showSlide = (index, userInitiated = false) => {
+      if (!viewport || !slides.length) return;
+      activeSlide = (index + slides.length) % slides.length;
+      viewport.scrollTo({
+        left: slides[activeSlide].offsetLeft,
+        behavior: reduceMotionQuery.matches || !userInitiated ? 'auto' : 'smooth',
+      });
+      updateStatus();
+    };
+    const stopRotation = () => {
+      window.clearInterval(autoRotate);
+      autoRotate = undefined;
+    };
+    const syncRotation = () => {
+      stopRotation();
+      if (userPaused || reduceMotionQuery.matches || !isInView || document.hidden || isHovering || focusPaused) return;
+      autoRotate = window.setInterval(() => showSlide(activeSlide + 1), 5000);
+    };
+    const updateActiveFromScroll = () => {
+      if (!slides.length) return;
+      activeSlide = slides.reduce((closest, slide, index) => Math.abs(slide.offsetLeft - viewport.scrollLeft) < Math.abs(slides[closest].offsetLeft - viewport.scrollLeft) ? index : closest, 0);
+      updateStatus();
+    };
+
+    previousButton?.addEventListener('click', () => showSlide(activeSlide - 1, true));
+    nextButton?.addEventListener('click', () => showSlide(activeSlide + 1, true));
+    toggleButton?.addEventListener('click', () => {
+      userPaused = !userPaused;
+      updateToggle();
+      syncRotation();
+    });
+    carousel?.addEventListener('mouseenter', () => { isHovering = true; syncRotation(); });
+    carousel?.addEventListener('mouseleave', () => { isHovering = false; syncRotation(); });
+    carousel?.addEventListener('focusin', (event) => { focusPaused = event.target !== toggleButton; syncRotation(); });
+    carousel?.addEventListener('focusout', () => requestAnimationFrame(() => {
+      focusPaused = carousel.contains(document.activeElement) && document.activeElement !== toggleButton;
+      syncRotation();
+    }));
+    carousel?.addEventListener('pointerdown', (event) => {
+      if (event.pointerType !== 'touch') return;
+      userPaused = true;
+      updateToggle();
+      syncRotation();
+    });
+    viewport?.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+        event.preventDefault();
+        showSlide(activeSlide + (event.key === 'ArrowRight' ? 1 : -1), true);
+      } else if (event.key === 'Home' || event.key === 'End') {
+        event.preventDefault();
+        showSlide(event.key === 'Home' ? 0 : slides.length - 1, true);
+      }
+    });
+    viewport?.addEventListener('scroll', () => {
+      window.clearTimeout(scrollTimer);
+      scrollTimer = window.setTimeout(updateActiveFromScroll, 100);
+    }, { passive: true });
+    viewport?.addEventListener('scrollend', updateActiveFromScroll);
+    document.addEventListener('visibilitychange', syncRotation);
+    reduceMotionQuery.addEventListener?.('change', (event) => {
+      if (event.matches) userPaused = true;
+      updateToggle();
+      syncRotation();
+    });
+    if (carousel && 'IntersectionObserver' in window) {
+      const carouselObserver = new IntersectionObserver(([entry]) => {
+        isInView = entry.isIntersecting;
+        syncRotation();
+      }, { threshold: .25 });
+      carouselObserver.observe(carousel);
+    } else {
+      isInView = true;
+    }
+    updateStatus();
+    updateToggle();
+    syncRotation();
+  </script>
+</BaseLayout>
+
+<style>
+  .page-hero h1 em { color: var(--saddle); font-weight: 400; }
+  .project-gallery { gap: clamp(2.75rem, 5vw, 3.5rem); }
+  .project-gallery .project-stage { width: min(100%, 900px); margin-inline: auto; }
+  .project-gallery article:nth-child(n + 2) .project-stage { width: min(100%, 650px); }
+  .project-gallery article:nth-child(even) .project-stage { margin-inline: auto; }
+  .project-gallery .compare { height: clamp(340px, 40vw, 520px); }
+  .project-gallery .compare--dental { height: auto; aspect-ratio: 5 / 4; }
+  .project-gallery .compare--chiropractic,
+  .project-gallery .compare--residential { height: auto; aspect-ratio: 3 / 4; }
+  .compare--chiropractic > img { object-position: 50% 50%; }
+  .compare--chiropractic .compare__after img { object-position: 50% 50%; }
+  .compare--residential > img { object-position: 50% 50%; }
+  .compare--residential .compare__after img { object-position: 50% 48%; }
+  .work-carousel-section { padding: .75rem 0 clamp(3.25rem, 5vw, 4.75rem); }
+  .work-carousel { position: relative; }
+  .work-carousel__viewport { overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .work-carousel__viewport::-webkit-scrollbar { display: none; }
+  .work-carousel__track { display: flex; gap: .8rem; }
+  .work-carousel__slide { position: relative; flex: 0 0 min(72vw, 760px); height: clamp(340px, 42vw, 520px); margin: 0; border: 1px solid rgba(255,255,255,.56); border-radius: 1.5rem; background: var(--ink); box-shadow: 0 24px 55px rgba(5,21,27,.13); overflow: hidden; scroll-snap-align: center; }
+  .work-carousel__slide::after { content: ''; position: absolute; z-index: 2; inset: auto 0 0; height: 44%; pointer-events: none; background: linear-gradient(transparent, rgba(3,17,23,.72)); }
+  .work-carousel__fallback { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: end; padding: 1.5rem; color: rgba(255,255,255,.76); background: radial-gradient(circle at 72% 22%, rgba(183,138,71,.3), transparent 25%), repeating-linear-gradient(98deg, rgba(255,255,255,.06) 0 1px, transparent 1px 7px), linear-gradient(145deg,#173e4b,#0a2029); }
+  .work-carousel__backdrop { position: absolute; z-index: 1; inset: -5%; width: 110%; height: 110%; object-fit: cover; filter: blur(20px) brightness(.42) saturate(.72); opacity: .72; transform: scale(1.04); }
+  .work-carousel__image { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .work-carousel__image--contain { inset: -2%; width: 104%; height: 104%; object-fit: contain; }
+  .work-carousel__slide figcaption { position: absolute; z-index: 3; right: 1.5rem; bottom: 1.35rem; color: #fff; font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+  .work-carousel__controls { display: flex; align-items: center; justify-content: end; gap: .8rem; margin-top: .75rem; }
+  .work-carousel__controls button { display: grid; width: 2.8rem; height: 2.8rem; place-items: center; border: 1px solid var(--line); border-radius: 50%; background: rgba(255,255,255,.5); cursor: pointer; }
+  .work-carousel__controls .work-carousel__toggle { width: auto; min-width: 4.6rem; padding-inline: .9rem; border-radius: 999px; font-size: .68rem; font-weight: 600; }
+  .work-carousel__controls span { min-width: 3.2rem; color: rgba(8,30,39,.55); font-size: .68rem; text-align: center; }
+  @media (max-width: 820px) {
+    .project-gallery .compare { height: min(56svh, 480px); min-height: 350px; }
+    .project-gallery .compare--dental,
+    .project-gallery .compare--chiropractic,
+    .project-gallery .compare--residential { height: auto; min-height: 0; }
+    .work-carousel-section { padding-bottom: 3.25rem; }
+    .work-carousel__slide { flex-basis: 86vw; height: min(55svh, 430px); }
+    .work-carousel__backdrop { display: none; }
+    .work-carousel__image--contain { inset: 0; width: 100%; height: 100%; }
+    .work-carousel__controls { justify-content: center; }
+  }
+</style>

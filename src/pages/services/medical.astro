@@ -1,0 +1,45 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { serviceSchema } from '../../data/business';
+const title = "Medical & Chiropractic Upholstery | Nora's Upholstery";
+const description = "Medical tables, chiropractic beds, clinic stools and waiting seating restored with cleanable healthcare materials.";
+const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
+  name: 'Medical and chiropractic upholstery',
+  description,
+  path: '/services/medical/',
+  serviceTypes: ['Medical exam table upholstery', 'Chiropractic table upholstery', 'Clinic seating upholstery', 'Clinical foam rebuilding'],
+});
+const categories = [
+  { number: '01', title: 'Medical exam tables', copy: 'Professional reupholstering for examination and treatment surfaces in clinics and allied health practices.', examples: ['Exam tables', 'Treatment tables', 'Procedure chair cushions'], image: '/images/medical-exam-tables.webp', photo: 'Exam or treatment table', alt: 'Professionally reupholstered medical examination table', href: '/services/medical/medical-exam-table-upholstery', linkLabel: 'Explore medical exam tables' },
+  { number: '02', title: 'Chiropractic tables', copy: 'Chiropractic tables, segmented cushions and adjustment table components require special care because they are adjusted for every patient. Trust us to repair, replace and restore them for lasting performance and durability.', examples: ['Adjustment tables', 'Drop section cushions', 'Head & ankle sections'], image: '/images/medical-chiropractic-tables.webp', photo: 'Chiropractic table', alt: 'Reupholstered chiropractic adjustment table with segmented cushions', href: '/services/medical/chiropractic-table-upholstery', linkLabel: 'Explore chiropractic tables' },
+  { number: '03', title: 'Clinic seating', copy: 'We have the highest respect for healthcare workers, through challenging times and the pressures of everyday care. We make sure the upholstery is durable and safe for staff, patients and visitors throughout the clinic.', examples: ['Practitioner stools', 'Waiting room chairs', 'Reception seating'], image: '/images/medical-clinic-seating.webp', photo: 'Clinic or waiting seating', alt: 'Restored seating in a professional medical clinic', href: '/services/medical/clinic-seating-upholstery', linkLabel: 'Explore clinic seating' },
+  { number: '04', title: 'Clinical rebuilding', copy: 'Worn foam, split vinyl and damaged contours can be repaired with cleanable finishes appropriate for healthcare settings.', examples: ['Foam rebuilding', 'Antibacterial vinyls', 'Loaner bed by request'], image: '/images/medical-rebuilding.webp', photo: 'Clinical rebuilding detail', alt: 'Medical upholstery foam rebuilding and vinyl repair', href: '/services/medical/clinical-upholstery-repair', linkLabel: 'Explore clinical rebuilding' },
+];
+---
+<BaseLayout {title} {description} {structuredData}>
+  <section class="individual-service shell">
+    <header class="individual-service__hero">
+      <Breadcrumbs items={[
+        { name: 'Home', href: '/' },
+        { name: 'Services', href: '/services' },
+        { name: 'Medical & Chiropractic' },
+      ]} />
+      <p class="kicker-gold">Medical & chiropractic</p>
+      <h1>Built around<br /><em>patient care.</em></h1>
+      <p>We restore the tables, beds, stools and waiting seating used across medical and chiropractic environments, with materials chosen for frequent cleaning.</p>
+    </header>
+    <div class="individual-service__grid">
+      {categories.map(category => (
+        <article class="individual-service__card glass">
+          <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" onerror="this.hidden=true" /></div>
+          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul>{category.href && <a class="individual-service__detail-link" href={category.href}><span>{category.linkLabel}</span><span aria-hidden="true">→</span></a>}</div>
+        </article>
+      ))}
+    </div>
+    <div class="individual-service__cta glass-dark">
+      <div><p class="eyebrow">Minimize clinic downtime</p><h2>Tell us what your practice needs.</h2></div>
+      <a href="tel:+16479812622" class="button button--light">Call about medical upholstery</a>
+    </div>
+  </section>
+</BaseLayout>

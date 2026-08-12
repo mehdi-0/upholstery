@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { serviceSchema } from '../../data/business';
+const title = "Commercial Upholstery for Restaurants, Gyms & Venues | Nora's Upholstery";
+const description = "Restaurant booths, gym pads, bowling seating, hospitality furniture, office seating and specialty commercial upholstery.";
+const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
+  name: 'Commercial upholstery',
+  description,
+  path: '/services/commercial/',
+  serviceTypes: ['Restaurant seating upholstery', 'Gym equipment upholstery', 'Bowling centre seating upholstery', 'Hospitality upholstery', 'Office seating upholstery'],
+});
+const categories = [
+  { number: '01', title: 'Restaurants & cafés', copy: 'Frequently used dining seating restored, with overnight upholstery available to minimize disruption to your business. Durable materials are selected for easy cleaning, lasting comfort and the character of your space.', examples: ['Booths & banquettes', 'Dining chairs', 'Bar & counter stools'], image: '/images/commercial-restaurants.webp', photo: 'Restaurant seating', alt: 'Restored restaurant booths and dining seating' },
+  { number: '02', title: 'Gyms & fitness', copy: 'Close-fitting performance upholstery for equipment that must withstand movement, sweat and frequent sanitation. We use high-quality vinyl selected to extend service life, with complimentary pickup and delivery in Richmond Hill.', examples: ['Weight-bench pads', 'Machine pads', 'Stretching & treatment benches'], image: '/images/commercial-fitness.webp', photo: 'Fitness equipment', alt: 'Reupholstered commercial fitness equipment pads', href: '/services/commercial/gym-equipment-upholstery', linkLabel: 'Explore gym equipment upholstery' },
+  { number: '03', title: 'Bowling & recreation', copy: 'Specialty venue seating renewed to handle continuous public use while keeping a coordinated appearance.', examples: ['Bowling centre seating', 'Recreation benches', 'Lounge & spectator seating'], image: '/images/commercial-bowling.webp', photo: 'Bowling or recreation', alt: 'Restored bowling centre and recreation seating', href: '/services/commercial/bowling-recreation-seating', linkLabel: 'Explore recreation seating' },
+  { number: '04', title: 'Hospitality', copy: 'Guest-facing furniture restored for hotels, event spaces and entertainment venues.', examples: ['Lobby seating', 'Hotel chairs & benches', 'Event venue furniture'], image: '/images/commercial-hospitality.webp', photo: 'Hospitality furniture', alt: 'Restored hospitality and hotel seating', href: '/services/commercial/hospitality-upholstery', linkLabel: 'Explore hospitality upholstery' },
+  { number: '05', title: 'Offices & reception', copy: 'Professional seating for customer-facing areas, staff spaces and shared workplaces.', examples: ['Reception seating', 'Waiting-room chairs', 'Office & conference chairs'], image: '/images/commercial-offices.webp', photo: 'Office or reception', alt: 'Restored office and reception seating', href: '/services/commercial/office-reception-upholstery', linkLabel: 'Explore office seating' },
+  { number: '06', title: 'Specialty commercial', copy: 'Our team includes woodworking, electrical and drapery specialists to help accommodate broader project needs. Unusual built-in or freestanding seating is assessed individually, including on-site options where practical.', examples: ['Custom built-ins', 'Other venue seating', 'On-site re-covering'], image: '/images/commercial-specialty.webp', photo: 'Specialty seating', alt: 'Custom specialty commercial upholstery project', href: '/services/commercial/specialty-commercial-upholstery', linkLabel: 'Explore specialty projects' },
+];
+---
+<BaseLayout {title} {description} {structuredData}>
+  <section class="individual-service shell">
+    <header class="individual-service__hero">
+      <Breadcrumbs items={[
+        { name: 'Home', href: '/' },
+        { name: 'Services', href: '/services' },
+        { name: 'Commercial' },
+      ]} />
+      <p class="kicker-gold">Commercial upholstery</p>
+      <h1>Made for every<br /><em>kind of venue.</em></h1>
+      <p>Commercial upholstery extends far beyond restaurant booths. We adapt materials, construction and scheduling to each business and the way its seating is used.</p>
+    </header>
+    <div class="individual-service__grid individual-service__grid--commercial">
+      {categories.map(category => (
+        <article class="individual-service__card glass">
+          <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" onerror="this.hidden=true" /></div>
+          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul>{category.number === '01' && <a class="individual-service__detail-link" href="/services/commercial/restaurant-seating"><span>Explore restaurant seating</span><span aria-hidden="true">→</span></a>}{category.href && <a class="individual-service__detail-link" href={category.href}><span>{category.linkLabel}</span><span aria-hidden="true">→</span></a>}</div>
+        </article>
+      ))}
+    </div>
+    <div class="individual-service__cta glass-dark">
+      <div><p class="eyebrow">One piece or a coordinated rollout</p><h2>Let’s plan around your operation.</h2></div>
+      <a href="tel:+16479812622" class="button button--light">Call about commercial seating</a>
+    </div>
+  </section>
+</BaseLayout>
