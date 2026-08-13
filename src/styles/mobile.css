@@ -127,8 +127,11 @@
   main::after { display: none; }
   .hero::after { width: 150vw; height: 78vw; left: 20%; top: 20%; opacity: .45; }
 
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem 1.2rem; }
-  .footer-brand { grid-column: 1 / -1; display: grid; }
+.footer-grid { grid-template-columns: 1fr 1fr; gap: 1.5rem 1.2rem; }
+  .footer-brand { grid-column: 1 / -1; display: grid; order: 1; }
+  .footer-contact { order: 2; }
+  .footer-explore { order: 3; }
+  .footer-contact-links a { overflow-wrap: anywhere; }
   .footer-mark { width: 170px; height: 90px; }
   .footer-bottom { align-items: start; flex-direction: column; gap: .6rem; }
   .footer-bottom { display: grid; gap: .25rem; }
@@ -155,5 +158,5 @@
   .hero-proof div:last-child { display: none; }
   .footer-grid { grid-template-columns: 1fr; }
   .footer-brand { grid-column: auto; }
-  .footer-grid { gap: 1.75rem; }
+.footer-grid { gap: 1.4rem; }
 }

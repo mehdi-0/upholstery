@@ -48,6 +48,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
     <meta name="theme-color" content="#102f3d" />
     <meta name="color-scheme" content="light" />
     <link rel="icon" type="image/webp" href="/logo-site.webp" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -153,13 +154,18 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
             <span class="footer-mark"><img src="/legacy-logo-glass.webp" alt="Nora's Upholstery legacy needle and medical upholstery mark" loading="lazy" decoding="async" /></span>
             <p>The chair is our digital signature. The needle is our maker’s mark and a quiet reminder that every project is finished by hand.</p>
           </div>
-          <div>
+          <div class="footer-explore">
             <p class="footer-label">Explore</p>
-            <a class="footer-priority-link" href="/contact">Contact Nora’s</a><a href="/services">Services</a><a href="/before-after">Our Work</a><a href="/testimonials">Client stories</a><a href="/service-areas">Service areas</a><a href="/about">Our Story</a>
+            <a class="footer-priority-link" href="/contact">Contact Nora’s</a><a href="/services">Services</a><a href="/before-after">Our Work</a><a href="/testimonials">Reviews</a><a href="/service-areas">Service areas</a><a href="/about">Our Story</a>
           </div>
-          <div>
-            <p class="footer-label">Visit & contact</p>
-            <p>Based in Richmond Hill, Ontario<br />Serving the GTA and Southern Ontario by request</p>
+          <div class="footer-contact">
+            <p class="footer-label">Contact</p>
+            <p class="footer-contact-copy">Based in Richmond Hill, Ontario<br />Serving the GTA and Southern Ontario by request</p>
+            <div class="footer-contact-links">
+              <a href="tel:+16479812622">647 981 2622</a>
+              <a href="mailto:norasupholstery@gmail.com">norasupholstery@gmail.com</a>
+            </div>
+            <p class="footer-visit-note">Please call or email before visiting so we can arrange a time and prepare for your project.</p>
             <div class="footer-socials" aria-label="Contact and social links">
               <a href="tel:+16479812622" aria-label="Call Nora's Upholstery" title="Call"><span aria-hidden="true">☎</span></a>
               <a href="mailto:norasupholstery@gmail.com" aria-label="Email Nora's Upholstery" title="Email"><span aria-hidden="true">@</span></a>
