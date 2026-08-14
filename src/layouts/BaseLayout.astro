@@ -50,9 +50,6 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
     <link rel="icon" type="image/webp" href="/logo-site.webp" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
     <title>{title}</title>
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -151,7 +148,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
       <div class="shell">
         <div class="footer-grid">
           <div class="footer-brand">
-            <span class="footer-mark"><img src="/legacy-logo-glass.webp" alt="Nora's Upholstery legacy needle and medical upholstery mark" loading="lazy" decoding="async" /></span>
+					<span class="footer-mark"><img src="/legacy-logo-glass.webp" alt="Nora's Upholstery legacy needle and medical upholstery mark" width="500" height="246" loading="lazy" decoding="async" /></span>
             <p>The chair is our digital signature. The needle is our maker’s mark and a quiet reminder that every project is finished by hand.</p>
           </div>
           <div class="footer-explore">
