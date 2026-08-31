@@ -14,7 +14,7 @@ const {
 const currentPath = Astro.url.pathname;
 const siteOrigin = (Astro.site ?? Astro.url).origin;
 const canonicalUrl = Astro.site ? new URL(currentPath, Astro.site).toString() : undefined;
-const socialImage = seoImage ? new URL(seoImage, siteOrigin).toString() : undefined;
+const socialImage = new URL(seoImage ?? '/logo.png', siteOrigin).toString();
 const pageStructuredData = Array.isArray(structuredData) ? structuredData : [structuredData];
 const schemaGraph = [
   ...(includeSiteSchema ? [organizationSchema(siteOrigin), websiteSchema(siteOrigin)] : []),
@@ -56,12 +56,12 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Nora's Upholstery" />
     {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
-    {socialImage && <meta property="og:image" content={socialImage} />}
-    {socialImage && <meta property="og:image:alt" content="Nora's Upholstery craftsmanship" />}
-    <meta name="twitter:card" content={socialImage ? 'summary_large_image' : 'summary'} />
+    <meta property="og:image" content={socialImage} />
+    <meta property="og:image:alt" content="Nora's Upholstery logo" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {socialImage && <meta name="twitter:image" content={socialImage} />}
+    <meta name="twitter:image" content={socialImage} />
     {schemaGraph.length > 0 && (
       <script
         type="application/ld+json"

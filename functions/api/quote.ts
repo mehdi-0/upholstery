@@ -6,8 +6,9 @@ interface Env {
 }
 
 const allowedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
-const maxPhotoSize = 8 * 1024 * 1024;
-const maxRequestSize = 26 * 1024 * 1024;
+const maxPhotoCount = 5;
+const maxPhotoSize = 5 * 1024 * 1024;
+const maxRequestSize = 28 * 1024 * 1024;
 const maxLengths = { name: 100, email: 254, phone: 30, city: 100, item: 160, message: 3000, referralSource: 100, referralDetail: 160 } as const;
 const referralSources = new Set(['Google', 'Instagram', 'Facebook', 'Referral', 'Returning customer', 'ODA or OCA magazine/advertisement', 'Other']);
 const referralSourcesWithDetail = new Set(['Referral', 'Other']);
@@ -60,7 +61,7 @@ const succeed = (request: Request) => {
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const contentLength = Number(request.headers.get('content-length') || 0);
   if (contentLength > maxRequestSize) {
-    return fail(request, 'The upload is too large. Choose up to three photos under 8 MB each.', 'large', 413);
+    return fail(request, 'The upload is too large. Choose up to five photos under 5 MB each.', 'large', 413);
   }
 
   let form: FormData;
@@ -130,8 +131,8 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   const photos = form.getAll('photos').filter((value): value is File => value instanceof File && value.size > 0);
-  if (photos.length > 3 || photos.some((photo) => photo.size > maxPhotoSize || !allowedImageTypes.has(photo.type))) {
-    return fail(request, 'Upload up to 3 supported photos, each under 8 MB.', 'files', 400);
+  if (photos.length > maxPhotoCount || photos.some((photo) => photo.size > maxPhotoSize || !allowedImageTypes.has(photo.type))) {
+    return fail(request, 'Upload up to 5 supported photos, each under 5 MB.', 'files', 400);
   }
   if ((await Promise.all(photos.map(hasValidImageSignature))).some((valid) => !valid)) {
     return fail(request, 'One or more files do not appear to be valid JPG, PNG, WebP, HEIC or HEIF images.', 'files', 400);
