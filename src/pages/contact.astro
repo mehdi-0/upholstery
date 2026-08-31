@@ -21,54 +21,59 @@ const initialFormStatus = formWasSent
 ---
 <BaseLayout {title} {description}>
   {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
-  <header class="page-hero">
-    <div class="shell">
-      <p class="eyebrow">Choose what works for you</p>
-      <h1>Let’s talk about<br /><em>your project.</em></h1>
-      <p>Call, email, message us on WhatsApp or use the contact form, whichever is most convenient. You can include photos when they are helpful, but they are not required to get started.</p>
-      {travelContact.enabled && (
-        <div class="travel-contact-card glass">
-          <strong>{travelContact.notice}</strong>
-          <a href={whatsappUrl} target="_blank" rel="noopener">Message us on WhatsApp <span>↗</span></a>
-          <a href={`mailto:${business.email}`}>Email us <span>↗</span></a>
-        </div>
-      )}
+  <header class="page-hero contact-page-hero">
+    <div class="shell contact-page-hero__inner">
+      <div>
+        <p class="eyebrow">Choose what works for you</p>
+        <h1>Let’s talk about<br /><em>your project.</em></h1>
+        <p>Call, email, message us on WhatsApp or use the contact form—whichever is most convenient. Photos are helpful, but not required to get started.</p>
+        {travelContact.enabled && (
+          <div class="travel-contact-card glass">
+            <strong>{travelContact.notice}</strong>
+            <a href={whatsappUrl} target="_blank" rel="noopener">Message us on WhatsApp <span>↗</span></a>
+            <a href={`mailto:${business.email}`}>Email us <span>↗</span></a>
+          </div>
+        )}
+      </div>
     </div>
   </header>
 
-  <section class="content-section">
-    <div class="shell form-shell">
-      <aside>
+  <section class="content-section contact-content">
+    <div class="shell form-shell contact-form-shell">
+      <aside class="contact-side">
         <p class="eyebrow">Contact options</p>
-        <h2 class="display-heading contact-heading">Choose how you would<br /><em>like to get started.</em></h2>
+        <h2 class="contact-heading">Reach us <em>directly.</em></h2>
         <div class="contact-list">
           <a href={phoneHref}><small>Call</small><span>{phoneDisplay}</span></a>
           <a href={`mailto:${business.email}`}><small>Email</small><span>{business.email}</span></a>
           <a href={whatsappUrl} target="_blank" rel="noopener"><small>WhatsApp</small><span>Message Nora’s Upholstery</span></a>
           <div><small>Based in</small><span>Richmond Hill, Ontario</span></div>
         </div>
-        <div class="form-note">
-          <strong>Typical response time</strong>
-          <p>We aim to reply within one business day. Weekend dental work should be requested as early as possible.</p>
-        </div>
-        <div class="form-note">
-          <strong>Planning a visit</strong>
-          <p>Please call or email before visiting so we can arrange a time and prepare for your project.</p>
+        <div class="contact-practical-note">
+          <div>
+            <strong>Typical response time</strong>
+            <p>We aim to reply within one business day. Weekend dental work should be requested as early as possible.</p>
+          </div>
+          <div>
+            <strong>Planning a visit</strong>
+            <p>Please call or email before visiting so we can arrange a time and prepare for your project.</p>
+          </div>
         </div>
       </aside>
 
-      <div>
+      <div class="contact-form-card">
         <div class="optional-form-heading"><p class="eyebrow">Request an estimate</p><p>Send your contact details and project description, with photos if you have them.</p></div>
         <div class="estimate-reassurance" aria-label="Estimate request information">
-          <div><strong>Free, no-obligation estimates</strong><span>Tell us about your project and we’ll help you understand the next step.</span></div>
-          <div><strong>Reply within one business day</strong><span>Weekend dental work should be requested as early as possible.</span></div>
-          <div><strong>Photos are helpful, not required</strong><span>Include them when you can for a faster, more accurate estimate.</span></div>
+          <div><strong><span aria-hidden="true">✓</span> Free, no-obligation estimates</strong><span>Tell us about your project and we’ll help you understand the next step.</span></div>
+          <div><strong><span aria-hidden="true">✓</span> Reply within one business day</strong><span>Weekend dental work should be requested as early as possible.</span></div>
+          <div><strong><span aria-hidden="true">✓</span> Photos are helpful, not required</strong><span>Include them when you can for a faster, more accurate estimate.</span></div>
         </div>
         <!--
           CLOUDFLARE FORM NOTE
           This form posts to /api/quote, implemented in functions/api/quote.ts.
-          In Cloudflare Pages, add RESEND_API_KEY, QUOTE_TO_EMAIL and
-          QUOTE_FROM_EMAIL as secrets. Never commit their values.
+          In Cloudflare Pages, add RESEND_API_KEY, QUOTE_TO_EMAIL,
+          QUOTE_FROM_EMAIL and TURNSTILE_SECRET_KEY as secrets. Never
+          commit their values.
           Photo uploads are limited to three files and 8 MB per file.
         -->
         <form class="quote-form" id="estimate-form" method="POST" action="/api/quote" enctype="multipart/form-data" data-quote-form>
@@ -99,8 +104,10 @@ const initialFormStatus = formWasSent
           <label class="honeypot" aria-hidden="true">Leave this blank<input name="website" tabindex="-1" autocomplete="off" /></label>
           <div class="full form-submit">
             {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-action="estimate_request" data-theme="light" data-appearance="interaction-only"></div>}
-            <button class="button button--dark" type="submit">Send estimate request</button>
-            <p class:list={{ 'is-success': formWasSent, 'is-error': Boolean(formError) }} data-form-status role="status" aria-live="polite" tabindex="-1">{initialFormStatus}</p>
+            <div class="form-submit__actions">
+              <button class="button button--dark" type="submit">Send estimate request</button>
+              <p class:list={{ 'is-success': formWasSent, 'is-error': Boolean(formError) }} data-form-status role="status" aria-live="polite" tabindex="-1">{initialFormStatus}</p>
+            </div>
           </div>
         </form>
       </div>
@@ -174,32 +181,54 @@ const initialFormStatus = formWasSent
 
 <style>
   .page-hero h1 em, .contact-heading em { color: var(--saddle); font-weight: 400; }
-  .contact-heading { margin-bottom: 1.5rem; font-size: clamp(3.2rem, 6vw, 5.5rem); }
-  .contact-list { display: grid; margin-bottom: 1.5rem; border-top: 1px solid var(--line); }
+  .contact-page-hero { padding-block: clamp(7rem, 7vw, 8rem) clamp(2.25rem, 3vw, 3rem); }
+  .contact-page-hero h1 { max-width: 760px; font-size: clamp(3.8rem, 7.4vw, 6.8rem); }
+  .contact-content { padding-block: clamp(2.25rem, 4vw, 4rem); }
+  .contact-form-shell { align-items: start; gap: clamp(2.5rem, 5vw, 5.5rem); }
+  .contact-heading { margin: .45rem 0 1.35rem; font-family: var(--serif); font-size: clamp(2.65rem, 4.2vw, 4.35rem); font-weight: 400; letter-spacing: -.04em; line-height: .9; }
+  .contact-list { display: grid; margin-bottom: 1.35rem; border-top: 1px solid var(--line); }
   .contact-list a, .contact-list > div { display: grid; padding: .85rem 0; border-bottom: 1px solid var(--line); }
   .contact-list small { color: rgba(8,30,39,.5); font-size: .65rem; text-transform: uppercase; }
   .contact-list span { font-size: .88rem; }
-  .form-note + .form-note { margin-top: .65rem; }
+  .contact-practical-note { display: grid; gap: 1rem; padding: 1.15rem; border-left: 2px solid var(--brass); background: rgba(238,226,205,.7); }
+  .contact-practical-note > div + div { padding-top: 1rem; border-top: 1px solid rgba(8,30,39,.13); }
+  .contact-practical-note strong { font-size: .78rem; }
+  .contact-practical-note p { margin: .3rem 0 0; color: rgba(8,30,39,.72); font-size: .72rem; line-height: 1.5; }
   .travel-contact-card { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; max-width: 760px; margin-top: 1.25rem; padding: 1rem 1.15rem; border-radius: 1rem; font-size: .72rem; }
   .travel-contact-card strong { width: 100%; }
   .travel-contact-card a { padding-bottom: .15rem; border-bottom: 1px solid var(--saddle); font-weight: 600; }
-  .optional-form-heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.1rem; padding-bottom: .8rem; border-bottom: 1px solid var(--line); }
+  .contact-form-card { padding: clamp(1.15rem, 2.5vw, 2rem); border: 1px solid var(--line); border-radius: 1.2rem; background: rgba(255,255,255,.35); box-shadow: 0 1rem 3.5rem rgba(8,30,39,.05); }
+  .optional-form-heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1rem; padding-bottom: .8rem; border-bottom: 1px solid var(--line); }
   .optional-form-heading .eyebrow, .optional-form-heading > p:last-child { margin: 0; }
   .optional-form-heading > p:last-child { max-width: 340px; color: rgba(8,30,39,.58); font-size: .72rem; }
-  .estimate-reassurance { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin: 0 0 1.15rem; }
-  .estimate-reassurance > div { display: grid; gap: .35rem; padding: .85rem .9rem; border: 1px solid var(--line); border-radius: .85rem; background: rgba(255,255,255,.38); }
-  .estimate-reassurance strong { font-size: .68rem; line-height: 1.35; }
+  .estimate-reassurance { display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem; margin: 0 0 1.1rem; }
+  .estimate-reassurance > div { display: grid; gap: .3rem; padding: .75rem .8rem; border: 1px solid var(--line); border-radius: .7rem; background: rgba(255,255,255,.38); }
+  .estimate-reassurance strong { display: flex; gap: .35rem; font-size: .66rem; line-height: 1.35; }
+  .estimate-reassurance strong > span { flex: 0 0 auto; color: var(--saddle); font-weight: 700; }
   .estimate-reassurance span { color: rgba(8,30,39,.58); font-size: .61rem; line-height: 1.45; }
   .quote-form label small { color: rgba(8,30,39,.5); font-size: .62rem; font-weight: 400; }
+  .quote-form select { height: 3.5rem; min-height: 3.5rem; }
   .field-label { display: flex; align-items: baseline; gap: .35rem; }
   .upload-field input { padding: 1.15rem; border-style: dashed; }
-  #estimate-form { scroll-margin-top: 7rem; }
+  #estimate-form { scroll-margin-top: 8.5rem; }
   .upload-field > span { color: rgba(8,30,39,.48); font-size: .62rem; font-weight: 400; }
   .honeypot { position: absolute; left: -10000px; }
-  .form-submit { display: flex; align-items: center; gap: 1rem; }
+  .form-submit { display: grid; gap: .7rem; margin-top: .1rem; }
+  .form-submit__actions { display: flex; align-items: center; gap: 1rem; }
+  .form-submit .button { min-width: 12.75rem; border-radius: .85rem; }
   .form-submit p { margin: 0; color: rgba(8,30,39,.52); font-size: .65rem; }
   .form-submit p.is-success { color: #27623b; }
   .form-submit p.is-error { color: #9b3029; }
   .form-submit button:disabled { cursor: wait; opacity: .68; }
-  @media (max-width: 820px) { .optional-form-heading, .form-submit { display: grid; } .estimate-reassurance { grid-template-columns: 1fr; } .form-submit .button { width: 100%; } }
+  @media (max-width: 820px) {
+    .contact-page-hero { padding-bottom: 2rem; }
+    .contact-form-shell { gap: 2.25rem; }
+    .contact-side { display: contents; }
+    .contact-side > .eyebrow, .contact-side > .contact-heading, .contact-side > .contact-list { order: 0; }
+    .contact-practical-note { order: 2; }
+    .contact-form-card { order: 1; }
+    .optional-form-heading, .form-submit__actions { display: grid; }
+    .estimate-reassurance { grid-template-columns: 1fr; }
+    .form-submit .button { width: 100%; }
+  }
 </style>
