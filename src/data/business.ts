@@ -1,6 +1,6 @@
 export const business = {
   name: "Nora's Upholstery",
-  telephone: '+1-647-981-2622',
+  telephone: '+1-647-613-1500',
   email: 'norasupholstery@gmail.com',
   logoPath: '/logo-site.webp',
   googleProfileUrl: 'https://share.google/hH6pGfzI1YAUH9HLG',
@@ -23,6 +23,10 @@ export const business = {
   ],
 } as const;
 
+const phoneDigits = business.telephone.replace(/\D/g, '');
+export const phoneDisplay = business.telephone.replace(/^\+1-/, '');
+export const phoneHref = `tel:+${phoneDigits}`;
+
 /*
  * TRAVEL CONTACT MODE
  * Leave enabled as false during normal operations.
@@ -31,7 +35,7 @@ export const business = {
  */
 export const travelContact = {
   enabled: false,
-  whatsappNumber: '16479812622',
+  whatsappNumber: phoneDigits,
   whatsappMessage: "Hello Nora's Upholstery, I would like to discuss an upholstery project.",
   notice: 'We are currently travelling. WhatsApp and email are the best ways to reach us.',
 } as const;

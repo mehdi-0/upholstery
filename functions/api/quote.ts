@@ -2,12 +2,16 @@ interface Env {
   RESEND_API_KEY?: string;
   QUOTE_TO_EMAIL?: string;
   QUOTE_FROM_EMAIL?: string;
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 const allowedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
 const maxPhotoSize = 8 * 1024 * 1024;
 const maxRequestSize = 26 * 1024 * 1024;
-const maxLengths = { name: 100, email: 254, phone: 30, city: 100, item: 160, message: 3000 } as const;
+const maxLengths = { name: 100, email: 254, phone: 30, city: 100, item: 160, message: 3000, referralSource: 100, referralDetail: 160 } as const;
+const referralSources = new Set(['Google', 'Instagram', 'Facebook', 'Referral', 'Returning customer', 'ODA or OCA magazine/advertisement', 'Other']);
+const referralSourcesWithDetail = new Set(['Referral', 'Other']);
+type TurnstileVerification = { success: boolean; action?: string };
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => ({
   '&': '&amp;',
@@ -77,15 +81,52 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   const city = String(form.get('city') || '').trim();
   const item = String(form.get('item') || '').trim();
   const message = String(form.get('message') || '').trim();
-  const fields = { name, email, phone, city, item, message };
-  if (Object.values(fields).some((value) => !value)) {
+  const referralSource = String(form.get('referralSource') || '').trim();
+  const referralDetail = referralSourcesWithDetail.has(referralSource)
+    ? String(form.get('referralDetail') || '').trim()
+    : '';
+  const fields = { name, email, phone, city, item, message, referralSource, referralDetail };
+  const requiredFields = { name, email, phone, city, item, message };
+  if (Object.values(requiredFields).some((value) => !value)) {
     return fail(request, 'Please complete every required field.', 'missing', 400);
   }
   if (Object.entries(fields).some(([key, value]) => value.length > maxLengths[key as keyof typeof maxLengths])) {
     return fail(request, 'One or more fields are longer than allowed.', 'invalid', 400);
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^[+()\d\s.-]{7,30}$/.test(phone)) {
+  const phoneDigits = phone.replace(/\D/g, '');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^[+()\d\s.-]{7,30}$/.test(phone) || phoneDigits.length < 7 || phoneDigits.length > 15) {
     return fail(request, 'Enter a valid email address and phone number.', 'invalid', 400);
+  }
+  if (referralSource && !referralSources.has(referralSource)) {
+    return fail(request, 'Choose a valid answer for how you heard about us.', 'invalid', 400);
+  }
+
+  if (!env.TURNSTILE_SECRET_KEY) {
+    return fail(request, 'The contact form is temporarily unavailable. Please call, email or message us on WhatsApp.', 'unavailable', 503);
+  }
+  const turnstileToken = String(form.get('cf-turnstile-response') || '').trim();
+  if (!turnstileToken || turnstileToken.length > 2048) {
+    return fail(request, 'Please complete the security check and try again.', 'verification', 400);
+  }
+  try {
+    const verificationData = new URLSearchParams({
+      secret: env.TURNSTILE_SECRET_KEY,
+      response: turnstileToken,
+      idempotency_key: crypto.randomUUID(),
+    });
+    const visitorIp = request.headers.get('CF-Connecting-IP');
+    if (visitorIp) verificationData.set('remoteip', visitorIp);
+    const verificationResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: verificationData,
+    });
+    const verification = await verificationResponse.json() as TurnstileVerification;
+    if (!verificationResponse.ok || !verification.success || verification.action !== 'estimate_request') {
+      return fail(request, 'Please complete the security check and try again.', 'verification', 400);
+    }
+  } catch {
+    return fail(request, 'We could not verify the security check. Please try again in a moment.', 'unavailable', 503);
   }
 
   const photos = form.getAll('photos').filter((value): value is File => value instanceof File && value.size > 0);
@@ -107,6 +148,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
     })));
     const safe = Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, escapeHtml(value)])) as typeof fields;
     const submittedAt = new Date().toISOString();
+    const submittedAtDisplay = new Intl.DateTimeFormat('en-CA', {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+      timeZone: 'America/Toronto',
+    }).format(new Date(submittedAt));
+    const contactPhoneDigits = phoneDigits.replace(/^1?(\d{10})$/, '1$1');
+    const replySubject = encodeURIComponent('Regarding your Nora’s Upholstery estimate request');
+    const sourceDetail = safe.referralDetail ? ` — ${safe.referralDetail}` : '';
+    const referralRow = safe.referralSource
+      ? `<tr><td style="padding:8px 0;color:#6a6258;font-size:13px">How they found us</td><td style="padding:8px 0;color:#102f3d;font-size:14px;font-weight:600;text-align:right">${safe.referralSource}${sourceDetail}</td></tr>`
+      : '';
     const upstream = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -120,19 +172,53 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         reply_to: email,
         subject: `New upholstery request from ${name}`,
         html: `
-          <h1>New upholstery request</h1>
-          <table style="border-collapse:collapse">
-            <tr><th style="text-align:left;padding:6px 16px 6px 0">Name</th><td>${safe.name}</td></tr>
-            <tr><th style="text-align:left;padding:6px 16px 6px 0">Phone</th><td>${safe.phone}</td></tr>
-            <tr><th style="text-align:left;padding:6px 16px 6px 0">Email</th><td>${safe.email}</td></tr>
-            <tr><th style="text-align:left;padding:6px 16px 6px 0">City</th><td>${safe.city}</td></tr>
-            <tr><th style="text-align:left;padding:6px 16px 6px 0">Item or project</th><td>${safe.item}</td></tr>
-          </table>
-          <h2>Project details</h2>
-          <p style="white-space:pre-wrap">${safe.message}</p>
-          <p><small>Submitted ${submittedAt}. ${photos.length} photo${photos.length === 1 ? '' : 's'} attached.</small></p>
+          <div style="margin:0;padding:32px 16px;background:#f7f3eb;color:#102f3d;font-family:Arial,Helvetica,sans-serif">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:640px;margin:0 auto;border-collapse:separate;border-spacing:0;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(16,47,61,.10)">
+              <tr>
+                <td style="padding:28px 32px 25px;background:#102f3d;color:#ffffff">
+                  <p style="margin:0 0 8px;color:#dfc9a8;font-size:11px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase">Nora’s Upholstery</p>
+                  <h1 style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:30px;font-weight:400;line-height:1.1">New estimate request</h1>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:30px 32px 10px">
+                  <p style="margin:0 0 4px;color:#6a6258;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase">From</p>
+                  <h2 style="margin:0;color:#102f3d;font-family:Georgia,'Times New Roman',serif;font-size:27px;font-weight:400;line-height:1.2">${safe.name}</h2>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:16px 32px 28px">
+                  <a href="tel:${contactPhoneDigits}" style="display:inline-block;margin:0 8px 8px 0;padding:11px 15px;border-radius:8px;background:#102f3d;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none">Call ${safe.phone}</a>
+                  <a href="mailto:${encodeURIComponent(email)}?subject=${replySubject}" style="display:inline-block;margin:0 8px 8px 0;padding:11px 15px;border:1px solid #cbb28d;border-radius:8px;color:#102f3d;font-size:13px;font-weight:700;text-decoration:none">Reply by email</a>
+                  <a href="https://wa.me/${contactPhoneDigits}" style="display:inline-block;margin:0 0 8px;padding:11px 15px;border:1px solid #cbb28d;border-radius:8px;color:#102f3d;font-size:13px;font-weight:700;text-decoration:none">WhatsApp</a>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:0 32px 28px">
+                  <div style="padding:19px 20px;border-radius:12px;background:#f7f3eb">
+                    <p style="margin:0 0 10px;color:#8c6a43;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase">Project snapshot</p>
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse:collapse">
+                      <tr><td style="padding:8px 0;color:#6a6258;font-size:13px">City</td><td style="padding:8px 0;color:#102f3d;font-size:14px;font-weight:600;text-align:right">${safe.city}</td></tr>
+                      <tr><td style="padding:8px 0;border-top:1px solid #e7ddce;color:#6a6258;font-size:13px">Project</td><td style="padding:8px 0;border-top:1px solid #e7ddce;color:#102f3d;font-size:14px;font-weight:600;text-align:right">${safe.item}</td></tr>
+                      ${referralRow}
+                      <tr><td style="padding:8px 0;border-top:1px solid #e7ddce;color:#6a6258;font-size:13px">Photos attached</td><td style="padding:8px 0;border-top:1px solid #e7ddce;color:#102f3d;font-size:14px;font-weight:600;text-align:right">${photos.length}</td></tr>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:0 32px 30px">
+                  <p style="margin:0 0 10px;color:#8c6a43;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase">Project details</p>
+                  <div style="padding:19px 20px;border-left:3px solid #b78a47;border-radius:0 10px 10px 0;background:#fbf9f5;color:#273d46;font-size:15px;line-height:1.65;white-space:pre-wrap">${safe.message}</div>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:18px 32px;border-top:1px solid #eee7dc;color:#81796f;font-size:12px;line-height:1.5">Received ${submittedAtDisplay} · ${photos.length} photo${photos.length === 1 ? '' : 's'} attached</td>
+              </tr>
+            </table>
+          </div>
         `,
-        text: `New upholstery request\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nCity: ${city}\nItem or project: ${item}\n\nProject details:\n${message}\n\nSubmitted ${submittedAt}. ${photos.length} photo${photos.length === 1 ? '' : 's'} attached.`,
+        text: `New upholstery request\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nCity: ${city}\nItem or project: ${item}${referralSource ? `\nHow they found us: ${referralSource}${referralDetail ? ` — ${referralDetail}` : ''}` : ''}\n\nProject details:\n${message}\n\nReceived ${submittedAtDisplay}. ${photos.length} photo${photos.length === 1 ? '' : 's'} attached.`,
         attachments,
       }),
     });

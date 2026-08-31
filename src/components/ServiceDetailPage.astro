@@ -1,10 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
-import { serviceSchema } from '../data/business';
+import { phoneDisplay, phoneHref, serviceSchema } from '../data/business';
 type Item={eyebrow:string;title:string;copy:string}; type Faq=[string,string]; type Crumb={name:string;href?:string};
 const p=Astro.props as {title:string;description:string;schemaName:string;path:string;serviceTypes:string[];breadcrumbs:Crumb[];kicker:string;heading:string;headingAccent:string;intro:string;image:string;imageAlt:string;imageLabel:string;highlights:Item[];faqHeading:string;faq:Faq[];ctaEyebrow:string;ctaHeading:string;ctaLabel:string};
 const origin=(Astro.site??Astro.url).origin;
+const callLabel = p.kicker.toLowerCase().includes('dental')
+  ? `Call ${phoneDisplay} about weekend turnaround`
+  : `Prefer to talk? Call ${phoneDisplay}`;
 const structuredData=[serviceSchema(origin,{name:p.schemaName,description:p.description,path:p.path,serviceTypes:p.serviceTypes}),{'@type':'FAQPage','@id':new URL(`${p.path}#faq`,origin).toString(),mainEntity:p.faq.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))}];
 ---
 <BaseLayout title={p.title} description={p.description} {structuredData} seoImage={p.image}>
@@ -13,7 +16,7 @@ const structuredData=[serviceSchema(origin,{name:p.schemaName,description:p.desc
     <figure class="detail__feature glass"><img src={p.image} alt={p.imageAlt} loading="lazy" decoding="async"/><figcaption>{p.imageLabel}</figcaption></figure>
     <section class="detail__grid">{p.highlights.map(x=><article class="glass"><p class="eyebrow">{x.eyebrow}</p><h2>{x.title}</h2><p>{x.copy}</p></article>)}</section>
     <section class="detail__faq"><div><p class="eyebrow">Common questions</p><h2>{p.faqHeading}</h2></div><div>{p.faq.map(([q,a])=><details><summary>{q}</summary><p>{a}</p></details>)}</div></section>
-    <div class="individual-service__cta glass-dark"><div><p class="eyebrow">{p.ctaEyebrow}</p><h2>{p.ctaHeading}</h2></div><a href="/contact#estimate-form" class="button button--light">{p.ctaLabel}</a></div>
+    <div class="individual-service__cta glass-dark"><div><p class="eyebrow">{p.ctaEyebrow}</p><h2>{p.ctaHeading}</h2></div><div class="individual-service__cta-actions"><a href="/contact#estimate-form" class="button button--light">{p.ctaLabel}</a><a href={phoneHref} class="text-link text-link--light">{callLabel}</a></div></div>
   </section>
 </BaseLayout>
 <style>

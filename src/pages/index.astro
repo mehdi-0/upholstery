@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { phoneHref } from '../data/business';
 
 const title = "Nora's Upholstery | Precision restoration across the GTA";
 const description = "Medical, commercial and residential upholstery rebuilt with careful patterning, durable materials and pickup across the Greater Toronto Area.";
@@ -21,7 +22,20 @@ const process = [
 <BaseLayout {title} {description} includeSiteSchema>
   <section class="hero">
     <div class="hero__media hero__media--placeholder" aria-hidden="true">
-      <span class="hero__stitched-line hero__stitched-line--two"></span>
+      <span class="hero__fabric-plane"></span>
+      <svg class="hero__craft-visual" viewBox="0 0 1600 900" preserveAspectRatio="none">
+        <defs>
+          <mask id="hero-thread-reveal" maskUnits="userSpaceOnUse">
+            <path class="hero__thread-mask" pathLength="1" d="M 934 432 C 825 399, 758 319, 648 270 C 526 215, 398 237, 294 307" />
+          </mask>
+        </defs>
+        <path class="hero__thread" mask="url(#hero-thread-reveal)" d="M 934 432 C 825 399, 758 319, 648 270 C 526 215, 398 237, 294 307" />
+        <path class="hero__thread-double" d="M 924 446 C 844 418, 790 362, 726 326" />
+        <g class="hero__needle" transform="translate(932 432) rotate(-19)">
+          <path class="hero__needle-body" d="M 0 0 L 94 0" />
+          <ellipse class="hero__needle-eye" cx="89" cy="0" rx="5.5" ry="2.3" />
+        </g>
+      </svg>
     </div>
     <div class="hero__wash" aria-hidden="true"></div>
     <div class="shell hero__content">
@@ -30,14 +44,15 @@ const process = [
         <h1>Precision<br />upholstery,<br /><em>shaped by hand.</em></h1>
         <p class="hero__intro">Backed by over 40 years of experience, we bring exceptional craftsmanship to dental, medical, residential and commercial upholstery. Once you trust us with your pieces, you are part of the Nora’s family.</p>
         <div class="hero__actions">
-          <a class="button button--light" href="tel:+16479812622">Call for an estimate</a>
-          <a class="button hero__form-button" href="/contact#estimate-form">Contact form</a>
+          <a class="button button--light" href={phoneHref}>Call for an estimate</a>
+          <a class="button hero__form-button" href="/contact#estimate-form">Get a free estimate</a>
           <a class="text-link text-link--light" href="/before-after">Explore our work <span>↗</span></a>
         </div>
       </div>
 
       <aside class="hero-proof glass-clear reveal" aria-label="Service information">
 				<img class="hero-proof__legacy-logo" src="/legacy-logo-glass.webp" alt="Nora's Upholstery legacy medical, chiropractic and dental upholstery logo" width="500" height="246" decoding="async" />
+        <div><strong>40+ years of experience</strong><span>Family run in Richmond Hill</span></div>
         <div><strong>Weekend dental turnaround</strong><span>Pickup Friday · Return Monday</span></div>
         <div><strong>Pickup across the GTA</strong><span>Based in Richmond Hill</span></div>
       </aside>
@@ -118,7 +133,7 @@ const process = [
       <div class="process-grid">
         {process.map(([number, heading, copy]) => <article><span>{number}</span><h3>{heading}</h3><p>{copy}</p></article>)}
       </div>
-      <div class="process-action"><a class="button button--dark" href="mailto:norasupholstery@gmail.com">Email photos for an estimate</a></div>
+      <div class="process-action"><a class="button button--dark" href="/contact#estimate-form">Request a free estimate</a></div>
     </div>
   </section>
 

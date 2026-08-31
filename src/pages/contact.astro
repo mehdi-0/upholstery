@@ -1,13 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { business, travelContact, whatsappUrl } from '../data/business';
+import { business, phoneDisplay, phoneHref, travelContact, whatsappUrl } from '../data/business';
 const title = "Request an Estimate | Nora's Upholstery";
 const description = "Send photos and details for an upholstery estimate across the Greater Toronto Area.";
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const formMessages: Record<string, string> = {
   missing: 'Please complete every required field.',
   invalid: 'Please check your email address and phone number.',
   files: 'Choose up to 3 valid JPG, PNG, WebP, HEIC or HEIF photos, each under 8 MB.',
   large: 'The upload is too large. Choose up to 3 photos under 8 MB each.',
+  verification: 'Please complete the security check and try again.',
   unavailable: 'The contact form is temporarily unavailable. Please call, email or message us on WhatsApp.',
   send: 'We could not send your request. Please try again or use one of the contact options.',
 };
@@ -18,6 +20,7 @@ const initialFormStatus = formWasSent
   : formMessages[formError] || '';
 ---
 <BaseLayout {title} {description}>
+  {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
   <header class="page-hero">
     <div class="shell">
       <p class="eyebrow">Choose what works for you</p>
@@ -39,8 +42,8 @@ const initialFormStatus = formWasSent
         <p class="eyebrow">Contact options</p>
         <h2 class="display-heading contact-heading">Choose how you would<br /><em>like to get started.</em></h2>
         <div class="contact-list">
-          <a href="tel:+16479812622"><small>Call</small><span>647 981 2622</span></a>
-          <a href="mailto:norasupholstery@gmail.com"><small>Email</small><span>norasupholstery@gmail.com</span></a>
+          <a href={phoneHref}><small>Call</small><span>{phoneDisplay}</span></a>
+          <a href={`mailto:${business.email}`}><small>Email</small><span>{business.email}</span></a>
           <a href={whatsappUrl} target="_blank" rel="noopener"><small>WhatsApp</small><span>Message Nora’s Upholstery</span></a>
           <div><small>Based in</small><span>Richmond Hill, Ontario</span></div>
         </div>
@@ -55,12 +58,17 @@ const initialFormStatus = formWasSent
       </aside>
 
       <div>
-        <div class="optional-form-heading"><p class="eyebrow">Contact form</p><p>Send your contact details and project description, with photos if you have them.</p></div>
+        <div class="optional-form-heading"><p class="eyebrow">Request an estimate</p><p>Send your contact details and project description, with photos if you have them.</p></div>
+        <div class="estimate-reassurance" aria-label="Estimate request information">
+          <div><strong>Free, no-obligation estimates</strong><span>Tell us about your project and we’ll help you understand the next step.</span></div>
+          <div><strong>Reply within one business day</strong><span>Weekend dental work should be requested as early as possible.</span></div>
+          <div><strong>Photos are helpful, not required</strong><span>Include them when you can for a faster, more accurate estimate.</span></div>
+        </div>
         <!--
           CLOUDFLARE FORM NOTE
           This form posts to /api/quote, implemented in functions/api/quote.ts.
-          In Cloudflare Pages, add a secret named QUOTE_WEBHOOK_URL pointing to
-          your chosen email/form endpoint. Never commit that URL or its token.
+          In Cloudflare Pages, add RESEND_API_KEY, QUOTE_TO_EMAIL and
+          QUOTE_FROM_EMAIL as secrets. Never commit their values.
           Photo uploads are limited to three files and 8 MB per file.
         -->
         <form class="quote-form" id="estimate-form" method="POST" action="/api/quote" enctype="multipart/form-data" data-quote-form>
@@ -70,6 +78,19 @@ const initialFormStatus = formWasSent
           <label>City<input name="city" autocomplete="address-level2" maxlength="100" required /></label>
           <label class="full">What would you like restored?<input name="item" maxlength="160" placeholder="e.g. chiropractic table, four dining chairs" required /></label>
           <label class="full">Project details<textarea name="message" rows="5" maxlength="3000" placeholder="Tell us about condition, timing, colour or material preferences" required></textarea></label>
+          <label class="full"><span class="field-label">How did you hear about Nora’s Upholstery? <small>(optional)</small></span>
+            <select name="referralSource" data-referral-source>
+              <option value="">Please select</option>
+              <option value="Google">Google</option>
+              <option value="Instagram">Instagram</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Referral">Referral</option>
+              <option value="Returning customer">Returning customer</option>
+              <option value="ODA or OCA magazine/advertisement">ODA or OCA magazine / advertisement</option>
+              <option value="Other">Other</option>
+            </select>
+          </label>
+          <label class="full referral-detail" hidden data-referral-detail>Who referred you, or where did you hear about us?<input name="referralDetail" maxlength="160" placeholder="e.g. Dr. Smith at ABC Dental" /></label>
           <label class="full upload-field">
             Add up to three photos <small>(optional)</small>
             <input type="file" name="photos" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple data-photo-input />
@@ -77,6 +98,7 @@ const initialFormStatus = formWasSent
           </label>
           <label class="honeypot" aria-hidden="true">Leave this blank<input name="website" tabindex="-1" autocomplete="off" /></label>
           <div class="full form-submit">
+            {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-action="estimate_request" data-theme="light" data-appearance="interaction-only"></div>}
             <button class="button button--dark" type="submit">Send estimate request</button>
             <p class:list={{ 'is-success': formWasSent, 'is-error': Boolean(formError) }} data-form-status role="status" aria-live="polite" tabindex="-1">{initialFormStatus}</p>
           </div>
@@ -88,6 +110,9 @@ const initialFormStatus = formWasSent
   <script is:inline>
     const form = document.querySelector('[data-quote-form]');
     const input = document.querySelector('[data-photo-input]');
+    const referralSource = document.querySelector('[data-referral-source]');
+    const referralDetail = document.querySelector('[data-referral-detail]');
+    const referralDetailInput = referralDetail?.querySelector('input');
     const status = document.querySelector('[data-form-status]');
     const submitButton = form?.querySelector('button[type="submit"]');
     const allowedTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
@@ -104,9 +129,20 @@ const initialFormStatus = formWasSent
         showStatus('Choose up to 3 JPG, PNG, WebP, HEIC or HEIF photos, each smaller than 8 MB.', 'error');
       } else if (files.length) showStatus(`${files.length} photo${files.length > 1 ? 's' : ''} ready to send.`);
     });
+    referralSource?.addEventListener('change', () => {
+      const showDetail = referralSource.value === 'Referral' || referralSource.value === 'Other';
+      if (referralDetail) referralDetail.hidden = !showDetail;
+      if (!showDetail && referralDetailInput) referralDetailInput.value = '';
+    });
     form?.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!submitButton) return;
+      const turnstileToken = form.querySelector('input[name="cf-turnstile-response"]')?.value;
+      if (!turnstileToken) {
+        showStatus('Please wait for the security check to finish, then try again.', 'error');
+        status?.focus({ preventScroll: true });
+        return;
+      }
       submitButton.disabled = true;
       submitButton.setAttribute('aria-busy', 'true');
       const originalLabel = submitButton.textContent;
@@ -121,10 +157,12 @@ const initialFormStatus = formWasSent
         const result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || 'We could not send your request. Please try again or use one of the contact options.');
         form.reset();
+        if (referralDetail) referralDetail.hidden = true;
         showStatus('Thank you. Your project details have been sent and we will be in touch soon.', 'success');
       } catch (error) {
         showStatus(error instanceof Error ? error.message : 'We could not send your request. Please try again.', 'error');
       } finally {
+        window.turnstile?.reset();
         submitButton.disabled = false;
         submitButton.removeAttribute('aria-busy');
         submitButton.textContent = originalLabel;
@@ -141,12 +179,19 @@ const initialFormStatus = formWasSent
   .contact-list a, .contact-list > div { display: grid; padding: .85rem 0; border-bottom: 1px solid var(--line); }
   .contact-list small { color: rgba(8,30,39,.5); font-size: .65rem; text-transform: uppercase; }
   .contact-list span { font-size: .88rem; }
+  .form-note + .form-note { margin-top: .65rem; }
   .travel-contact-card { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1rem; max-width: 760px; margin-top: 1.25rem; padding: 1rem 1.15rem; border-radius: 1rem; font-size: .72rem; }
   .travel-contact-card strong { width: 100%; }
   .travel-contact-card a { padding-bottom: .15rem; border-bottom: 1px solid var(--saddle); font-weight: 600; }
   .optional-form-heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.1rem; padding-bottom: .8rem; border-bottom: 1px solid var(--line); }
   .optional-form-heading .eyebrow, .optional-form-heading > p:last-child { margin: 0; }
   .optional-form-heading > p:last-child { max-width: 340px; color: rgba(8,30,39,.58); font-size: .72rem; }
+  .estimate-reassurance { display: grid; grid-template-columns: repeat(3, 1fr); gap: .65rem; margin: 0 0 1.15rem; }
+  .estimate-reassurance > div { display: grid; gap: .35rem; padding: .85rem .9rem; border: 1px solid var(--line); border-radius: .85rem; background: rgba(255,255,255,.38); }
+  .estimate-reassurance strong { font-size: .68rem; line-height: 1.35; }
+  .estimate-reassurance span { color: rgba(8,30,39,.58); font-size: .61rem; line-height: 1.45; }
+  .quote-form label small { color: rgba(8,30,39,.5); font-size: .62rem; font-weight: 400; }
+  .field-label { display: flex; align-items: baseline; gap: .35rem; }
   .upload-field input { padding: 1.15rem; border-style: dashed; }
   #estimate-form { scroll-margin-top: 7rem; }
   .upload-field > span { color: rgba(8,30,39,.48); font-size: .62rem; font-weight: 400; }
@@ -156,5 +201,5 @@ const initialFormStatus = formWasSent
   .form-submit p.is-success { color: #27623b; }
   .form-submit p.is-error { color: #9b3029; }
   .form-submit button:disabled { cursor: wait; opacity: .68; }
-  @media (max-width: 820px) { .optional-form-heading, .form-submit { display: grid; } .form-submit .button { width: 100%; } }
+  @media (max-width: 820px) { .optional-form-heading, .form-submit { display: grid; } .estimate-reassurance { grid-template-columns: 1fr; } .form-submit .button { width: 100%; } }
 </style>

@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PhotoStrip from '../components/PhotoStrip.astro';
 import { serviceAreas } from '../data/serviceAreas';
-import { serviceSchema } from '../data/business';
+import { phoneDisplay, phoneHref, serviceSchema } from '../data/business';
 
 const title = "Service Areas | Nora's Upholstery | GTA & Southern Ontario";
 const description = "Upholstery service across Toronto, York Region, Peel Region and Southern Ontario, based in Richmond Hill.";
@@ -60,8 +60,8 @@ const structuredData = serviceSchema(siteOrigin, {
           {extendedAreas.map((area) => <li>{area}</li>)}
         </ul>
         <div class="service-area-actions">
-          <a class="button button--light" href="tel:+16479812622">Call 647 981 2622</a>
-          <a class="text-link text-link--light" href="/contact#estimate-form">Send your project through our form <span>↗</span></a>
+          <a class="button button--light" href={phoneHref}>Call {phoneDisplay}</a>
+          <a class="text-link text-link--light" href="/contact#estimate-form">Request a free estimate <span>↗</span></a>
         </div>
       </article>
     </div>

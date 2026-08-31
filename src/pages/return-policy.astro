@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { business, phoneDisplay, phoneHref } from '../data/business';
 const title = "Return Policy | Nora's Upholstery";
 const description = "Nora's Upholstery service return policy and contact information.";
 ---
@@ -11,8 +12,8 @@ const description = "Nora's Upholstery service return policy and contact informa
       <p>Every upholstery project is completed specifically for the customer and their furniture or equipment. For that reason, all completed services are final sale.</p>
       <h2>We’re here to talk</h2>
       <p>We care about the work we return to you. If you have a concern about a completed project, please get in touch with Nora’s Upholstery so we can listen, understand what happened and discuss it with you.</p>
-      <p><a class="text-link" href="tel:+16479812622">Call 647 981 2622 <span>↗</span></a></p>
-      <p><a class="text-link" href="mailto:norasupholstery@gmail.com">Email norasupholstery@gmail.com <span>↗</span></a></p>
+      <p><a class="text-link" href={phoneHref}>Call {phoneDisplay} <span>↗</span></a></p>
+      <p><a class="text-link" href={`mailto:${business.email}`}>Email {business.email} <span>↗</span></a></p>
     </article>
   </section>
 </BaseLayout>

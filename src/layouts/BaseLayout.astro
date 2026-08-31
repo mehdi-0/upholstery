@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import '../styles/mobile.css';
-import { business, organizationSchema, travelContact, websiteSchema, whatsappUrl } from '../data/business';
+import { business, organizationSchema, phoneDisplay, phoneHref, travelContact, websiteSchema, whatsappUrl } from '../data/business';
 
 const {
   title = "Nora's Upholstery",
@@ -105,7 +105,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
 
           {travelContact.enabled
             ? <a class="header-cta" href={whatsappUrl} target="_blank" rel="noopener">Message on WhatsApp</a>
-            : <a class="header-cta" href="tel:+16479812622">Call 647 981 2622</a>
+            : <a class="header-cta" href={phoneHref}>Call {phoneDisplay}</a>
           }
           <button class="menu-trigger" type="button" aria-controls="mobile-menu" aria-expanded="false" data-menu-open>
             <span>Menu</span><i aria-hidden="true"></i>
@@ -135,8 +135,8 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
           {navItems.slice(1).map((item, index) => <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label} <span>0{index + 3}</span></a>)}
         </nav>
         <div class="mobile-menu__contact">
-          <a href="tel:+16479812622">647 981 2622</a>
-          <a href="mailto:norasupholstery@gmail.com">norasupholstery@gmail.com</a>
+          <a href={phoneHref}>{phoneDisplay}</a>
+          <a href={`mailto:${business.email}`}>{business.email}</a>
           <a href={whatsappUrl} target="_blank" rel="noopener">WhatsApp</a>
         </div>
       </div>
@@ -153,19 +153,22 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
           </div>
           <div class="footer-explore">
             <p class="footer-label">Explore</p>
-            <a class="footer-priority-link" href="/contact">Contact Nora’s</a><a href="/services">Services</a><a href="/before-after">Our Work</a><a href="/testimonials">Reviews</a><a href="/service-areas">Service areas</a><a href="/about">Our Story</a>
+            <a class="footer-priority-link" href="/contact#estimate-form">Request an estimate</a>
+            <div class="footer-explore__links">
+              <a href="/contact">Contact Nora’s</a><a href="/services">Services</a><a href="/before-after">Our Work</a><a href="/testimonials">Reviews</a><a href="/service-areas">Service areas</a><a href="/about">Our Story</a>
+            </div>
           </div>
           <div class="footer-contact">
             <p class="footer-label">Contact</p>
             <p class="footer-contact-copy">Based in Richmond Hill, Ontario<br />Serving the GTA and Southern Ontario by request</p>
             <div class="footer-contact-links">
-              <a href="tel:+16479812622">647 981 2622</a>
-              <a href="mailto:norasupholstery@gmail.com">norasupholstery@gmail.com</a>
+              <a href={phoneHref}>{phoneDisplay}</a>
+              <a href={`mailto:${business.email}`}>{business.email}</a>
             </div>
             <p class="footer-visit-note">Please call or email before visiting so we can arrange a time and prepare for your project.</p>
             <div class="footer-socials" aria-label="Contact and social links">
-              <a href="tel:+16479812622" aria-label="Call Nora's Upholstery" title="Call"><span aria-hidden="true">☎</span></a>
-              <a href="mailto:norasupholstery@gmail.com" aria-label="Email Nora's Upholstery" title="Email"><span aria-hidden="true">@</span></a>
+              <a href={phoneHref} aria-label="Call Nora's Upholstery" title="Call"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.33 1.78.62 2.64a2 2 0 0 1-.45 2.11L8.01 9.74a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.86.29 1.74.5 2.64.62A2 2 0 0 1 22 16.92z" /></svg></a>
+              <a href={`mailto:${business.email}`} aria-label="Email Nora's Upholstery" title="Email"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m3 7 9 6 9-6" /></svg></a>
               <a href={whatsappUrl} target="_blank" rel="noopener" aria-label="Message Nora's Upholstery on WhatsApp" title="WhatsApp"><img src="/icons/whatsapp.svg" alt="" loading="lazy" decoding="async" /></a>
               <a href={googleProfileUrl} target="_blank" rel="noopener" aria-label="Nora's Upholstery on Google Business" title="Google Business"><img src="/icons/google.svg" alt="" loading="lazy" decoding="async" /></a>
               <a href={instagramUrl} target="_blank" rel="noopener" aria-label="Nora's Upholstery on Instagram" title="Instagram"><img src="/icons/instagram.svg" alt="" loading="lazy" decoding="async" /></a>
@@ -178,8 +181,8 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
     </footer>
 
     <div class="mobile-actions" aria-label="Quick contact actions">
-      <a href={travelContact.enabled ? whatsappUrl : 'tel:+16479812622'} target={travelContact.enabled ? '_blank' : undefined} rel={travelContact.enabled ? 'noopener' : undefined}><span>{travelContact.enabled ? 'WhatsApp' : 'Call'}</span><small>{travelContact.enabled ? 'Send a message' : 'Speak with us'}</small></a>
-      <a href="mailto:norasupholstery@gmail.com"><span>Email</span><small>Send project details</small></a>
+      <a href={travelContact.enabled ? whatsappUrl : phoneHref} target={travelContact.enabled ? '_blank' : undefined} rel={travelContact.enabled ? 'noopener' : undefined}><span>{travelContact.enabled ? 'WhatsApp' : 'Call'}</span><small>{travelContact.enabled ? 'Send a message' : 'Speak with us'}</small></a>
+      <a href="/contact#estimate-form"><span>Get estimate</span><small>Send project details</small></a>
     </div>
 
     <script is:inline>
@@ -279,7 +282,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
         const footerObserver = new IntersectionObserver(([entry]) => {
           mobileActions.classList.toggle('is-over-footer', entry.isIntersecting);
           document.body.classList.toggle('mobile-actions-over-footer', entry.isIntersecting);
-        }, { threshold: 0, rootMargin: '0px 0px 3.75rem 0px' });
+        }, { threshold: 0, rootMargin: '0px 0px 10rem 0px' });
         footerObserver.observe(siteFooter);
       }
 

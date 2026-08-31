@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { business, phoneDisplay, phoneHref } from '../data/business';
 const title = "Privacy Policy | Nora's Upholstery";
 const description = "How Nora's Upholstery collects, uses and protects information submitted through this website.";
 ---
@@ -18,7 +19,7 @@ const description = "How Nora's Upholstery collects, uses and protects informati
       <h2>Your choices</h2>
       <p>You may ask to access, correct or delete personal information held by Nora’s Upholstery, subject to applicable legal and recordkeeping requirements.</p>
       <h2>Contact</h2>
-      <p>Questions or privacy requests can be made by phone at <a href="tel:+16479812622">647 981 2622</a> or email at <a href="mailto:norasupholstery@gmail.com">norasupholstery@gmail.com</a>.</p>
+      <p>Questions or privacy requests can be made by phone at <a href={phoneHref}>{phoneDisplay}</a> or email at <a href={`mailto:${business.email}`}>{business.email}</a>.</p>
     </article>
   </section>
 </BaseLayout>
