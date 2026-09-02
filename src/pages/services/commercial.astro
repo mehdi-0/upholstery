@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ServiceAreaLinks from '../../components/ServiceAreaLinks.astro';
 import { serviceSchema } from '../../data/business';
-const title = "Commercial Upholstery for Restaurants, Gyms & Venues | Nora's Upholstery";
-const description = "Restaurant booths, gym pads, bowling seating, hospitality furniture, office seating and specialty commercial upholstery.";
+const title = "Commercial Upholstery in the GTA | Nora's Upholstery";
+const description = "Restaurant booths, gym pads, bowling seating, hospitality furniture, office seating and specialty commercial upholstery across the GTA.";
 const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
   name: 'Commercial upholstery',
   description,
@@ -28,7 +29,7 @@ const categories = [
         { name: 'Commercial' },
       ]} />
       <p class="kicker-gold">Commercial upholstery</p>
-      <h1>Made for every<br /><em>kind of venue.</em></h1>
+      <h1>Commercial upholstery for<br /><em>every kind of venue.</em></h1>
       <p>Commercial upholstery extends far beyond restaurant booths. We adapt materials, construction and scheduling to each business and the way its seating is used.</p>
     </header>
     <div class="individual-service__grid individual-service__grid--commercial">
@@ -39,6 +40,7 @@ const categories = [
         </article>
       ))}
     </div>
+    <ServiceAreaLinks serviceName="Commercial upholstery" intro="We plan commercial seating projects in Richmond Hill, Vaughan, Toronto, Scarborough, Markham and Woodbridge around access, quantities and business operations." />
     <div class="individual-service__cta glass-dark">
       <div><p class="eyebrow">One piece or a coordinated rollout</p><h2>Let’s plan around your operation.</h2></div>
       <a href="/contact#estimate-form" class="button button--light">Discuss your commercial project</a>

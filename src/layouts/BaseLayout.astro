@@ -9,6 +9,7 @@ const {
   seoImage,
   includeSiteSchema = false,
   structuredData = [],
+  bodyClass = '',
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
@@ -69,7 +70,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
       />
     )}
   </head>
-  <body class:list={{ 'travel-contact-active': travelContact.enabled, 'has-mobile-actions': true }}>
+  <body class:list={['has-mobile-actions', travelContact.enabled && 'travel-contact-active', bodyClass]}>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="scroll-progress" aria-hidden="true"><span data-scroll-progress></span></div>
 

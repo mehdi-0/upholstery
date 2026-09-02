@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ServiceAreaLinks from '../../components/ServiceAreaLinks.astro';
 import { serviceSchema } from '../../data/business';
-const title = "Medical & Chiropractic Upholstery | Nora's Upholstery";
-const description = "Medical tables, chiropractic beds, clinic stools and waiting seating restored with cleanable healthcare materials.";
+const title = "Medical & Chiropractic Upholstery in the GTA | Nora's Upholstery";
+const description = "Medical tables, chiropractic beds, clinic stools and waiting seating restored across the GTA with cleanable healthcare materials.";
 const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
   name: 'Medical and chiropractic upholstery',
   description,
@@ -26,7 +27,7 @@ const categories = [
         { name: 'Medical & Chiropractic' },
       ]} />
       <p class="kicker-gold">Medical & chiropractic</p>
-      <h1>Built around<br /><em>patient care.</em></h1>
+      <h1>Medical and chiropractic<br /><em>upholstery for patient care.</em></h1>
       <p>We restore the tables, beds, stools and waiting seating used across medical and chiropractic environments, with materials chosen for frequent cleaning.</p>
     </header>
     <div class="individual-service__grid">
@@ -37,6 +38,7 @@ const categories = [
         </article>
       ))}
     </div>
+    <ServiceAreaLinks serviceName="Medical & chiropractic upholstery" intro="We work with clinics throughout Richmond Hill, Vaughan, Toronto, Scarborough, Markham and Woodbridge on tables, beds, stools and waiting seating." />
     <div class="individual-service__cta glass-dark">
       <div><p class="eyebrow">Minimize clinic downtime</p><h2>Tell us what your practice needs.</h2></div>
       <a href="/contact#estimate-form" class="button button--light">Request a medical estimate</a>

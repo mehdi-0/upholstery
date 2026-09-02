@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import PhotoStrip from '../../../components/PhotoStrip.astro';
+import RelatedPageLinks from '../../../components/RelatedPageLinks.astro';
 import { serviceSchema } from '../../../data/business';
 
 const title = "Outdoor Cushion & Patio Upholstery | Nora's Upholstery";
@@ -49,6 +50,8 @@ const faq = [
       <div><p class="eyebrow">Common questions</p><h2>Planning an outdoor project</h2></div>
       <div>{faq.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}</div>
     </section>
+
+    <RelatedPageLinks serviceHref="/services/residential" serviceLabel="Residential, outdoor & boat" />
 
     <div class="individual-service__cta glass-dark">
       <div><p class="eyebrow">Start with the setting</p><h2>Show us where the pieces will live.</h2></div>

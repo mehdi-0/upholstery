@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ServiceAreaLinks from '../../components/ServiceAreaLinks.astro';
 import { serviceSchema } from '../../data/business';
-const title = "Dental Upholstery | Nora's Upholstery";
-const description = "Dental chair, stool and operatory upholstery with cleanable clinical materials and weekend rush options.";
+const title = "Dental Chair Upholstery in Toronto & the GTA | Nora's Upholstery";
+const description = "Dental chair, stool and operatory upholstery across Toronto and the GTA, with cleanable clinical materials and weekend turnaround for suitable projects.";
 const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
   name: 'Dental upholstery',
   description,
@@ -26,7 +27,7 @@ const categories = [
         { name: 'Dental' },
       ]} />
       <p class="kicker-gold">Dental upholstery</p>
-      <h1>Every surface in<br /><em>the operatory.</em></h1>
+      <h1>Dental upholstery for<br /><em>every operatory.</em></h1>
       <p>From the patient chair to dentist chairs and dental assistant stools, we restore the pieces your team and patients depend on using precise patterns and materials appropriate for healthcare settings.</p>
     </header>
     <div class="individual-service__grid">
@@ -37,6 +38,7 @@ const categories = [
         </article>
       ))}
     </div>
+    <ServiceAreaLinks serviceName="Dental chair upholstery" intro="We serve dental practices in Richmond Hill, Vaughan, Toronto, Scarborough, Markham and Woodbridge with cleanable clinical upholstery and careful scheduling." />
     <div class="individual-service__cta glass-dark">
       <div><p class="eyebrow">Free estimates available</p><h2>Send photos of the chair or parts.</h2></div>
       <a href="/contact#estimate-form" class="button button--light">Request a dental estimate</a>

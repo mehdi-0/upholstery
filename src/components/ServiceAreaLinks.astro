@@ -1,0 +1,40 @@
+---
+interface Props {
+  serviceName: string;
+  intro: string;
+}
+
+const { serviceName, intro } = Astro.props;
+const areas = [
+  { name: 'Richmond Hill', href: '/service-areas/richmond-hill/' },
+  { name: 'Markham', href: '/service-areas/markham/' },
+  { name: 'Vaughan', href: '/service-areas/vaughan/' },
+  { name: 'Scarborough', href: '/service-areas/scarborough/' },
+  { name: 'Toronto', href: '/service-areas/toronto/' },
+  { name: 'Other service areas', href: '/service-areas' },
+];
+---
+
+<section class="service-area-links" aria-labelledby="service-area-links-heading">
+  <p class="eyebrow">Where we work</p>
+  <div class="service-area-links__heading">
+    <h2 id="service-area-links-heading">{serviceName} across the GTA.</h2>
+    <p>{intro} Pickup, delivery and timing are confirmed around the project, access and number of pieces.</p>
+  </div>
+  <nav aria-label={`${serviceName} service areas`}>
+    {areas.map((area) => <a href={area.href}>{area.name}<span aria-hidden="true">↗</span></a>)}
+  </nav>
+</section>
+
+<style>
+  .service-area-links { margin-top: clamp(2.5rem, 5vw, 5rem); padding: clamp(1.35rem, 3vw, 2.4rem); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .eyebrow { margin: 0 0 .85rem; color: var(--saddle); }
+  .service-area-links__heading { display: grid; grid-template-columns: minmax(0, 1fr) minmax(16rem, .75fr); gap: 1rem 4vw; align-items: end; }
+  h2 { max-width: 640px; margin: 0; font-family: var(--serif); font-size: clamp(2.35rem, 4.4vw, 4.5rem); font-weight: 400; letter-spacing: -.04em; line-height: .9; }
+  .service-area-links__heading p { max-width: 510px; margin: 0; color: rgba(8,30,39,.66); font-size: .82rem; line-height: 1.55; }
+  nav { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 1.6rem; border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  a { display: flex; min-height: 3.6rem; align-items: center; justify-content: space-between; gap: .5rem; padding: .75rem .9rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(255,255,255,.22); font-size: .76rem; font-weight: 600; transition: color .2s ease, background .2s ease; }
+  a:hover { color: var(--saddle); background: rgba(255,255,255,.5); }
+  @media (max-width: 1000px) { nav { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 820px) { .service-area-links__heading, nav { grid-template-columns: 1fr; } nav { margin-top: 1.2rem; } }
+</style>

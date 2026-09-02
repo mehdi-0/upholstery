@@ -1,8 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ServiceAreaLinks from '../../components/ServiceAreaLinks.astro';
 import { serviceSchema } from '../../data/business';
-const title = "Residential, Outdoor & Boat Upholstery | Nora's Upholstery";
+const title = "Residential & Outdoor Upholstery in the GTA | Nora's Upholstery";
 const description = "Sofas, chairs, dining seating, outdoor cushions and selected boat upholstery projects across the GTA and Southern Ontario by request.";
 const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
   name: 'Residential, outdoor and boat upholstery',
@@ -26,7 +27,7 @@ const categories = [
         { name: 'Residential, Outdoor & Boat' },
       ]} />
       <p class="kicker-gold">Residential, outdoor & boat upholstery</p>
-      <h1>Keep the piece.<br /><em>Change the story.</em></h1>
+      <h1>Residential upholstery for<br /><em>the pieces you keep.</em></h1>
       <p>We help homeowners preserve furniture that is comfortable and well made. We also accept outdoor seating and selected marine projects for boat seating, fitted cushions and interior pieces.</p>
     </header>
     <div class="individual-service__grid">
@@ -37,6 +38,7 @@ const categories = [
         </article>
       ))}
     </div>
+    <ServiceAreaLinks serviceName="Residential upholstery" intro="Home furniture projects are welcomed from Richmond Hill, Vaughan, Toronto, Scarborough, Markham and Woodbridge, with logistics planned around the piece and location." />
     <div class="individual-service__cta glass-dark">
       <div><p class="eyebrow">Start with a few photos</p><h2>Show us the furniture you love.</h2></div>
       <a href="/contact#estimate-form" class="button button--light">Request a furniture estimate</a>

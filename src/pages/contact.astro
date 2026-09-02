@@ -17,7 +17,7 @@ const formWasSent = Astro.url.searchParams.get('sent') === '1';
 const formError = Astro.url.searchParams.get('error') || '';
 const initialFormStatus = formMessages[formError] || '';
 ---
-<BaseLayout {title} {description}>
+<BaseLayout {title} {description} bodyClass="contact-page">
   {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
   <header class="page-hero contact-page-hero">
     <div class="shell contact-page-hero__inner">
@@ -67,7 +67,7 @@ const initialFormStatus = formMessages[formError] || '';
         </div>
         <div class="estimate-reassurance" aria-label="Estimate request information">
           <div><strong><span aria-hidden="true">✓</span> Free, no-obligation estimates</strong><span>Tell us about your project and we’ll help you understand the next step.</span></div>
-          <div><strong><span aria-hidden="true">✓</span> Reply within one business day</strong><span>Weekend dental work should be requested as early as possible.</span></div>
+          <div><strong><span aria-hidden="true">✓</span> Aiming to reply within one business day</strong><span>Weekend dental work should be requested as early as possible.</span></div>
           <div><strong><span aria-hidden="true">✓</span> Photos are helpful, not required</strong><span>Include them when you can for a faster, more accurate estimate.</span></div>
         </div>
         <!--
@@ -76,7 +76,7 @@ const initialFormStatus = formMessages[formError] || '';
           In Cloudflare Pages, add RESEND_API_KEY, QUOTE_TO_EMAIL,
           QUOTE_FROM_EMAIL and TURNSTILE_SECRET_KEY as secrets. Never
           commit their values.
-          Photo uploads are limited to three files and 8 MB per file.
+          Photo uploads are limited to five files and 5 MB per file.
         -->
         <form class="quote-form" id="estimate-form" method="POST" action="/api/quote" enctype="multipart/form-data" data-quote-form>
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required /></label>
@@ -182,7 +182,7 @@ const initialFormStatus = formMessages[formError] || '';
         submitButton.disabled = false;
         submitButton.removeAttribute('aria-busy');
         submitButton.textContent = originalLabel;
-        status?.focus({ preventScroll: true });
+        if (!formConfirmation || formConfirmation.hidden) status?.focus({ preventScroll: true });
       }
     });
   </script>
@@ -208,6 +208,7 @@ const initialFormStatus = formMessages[formError] || '';
   .travel-contact-card a { padding-bottom: .15rem; border-bottom: 1px solid var(--saddle); font-weight: 600; }
   .contact-form-card { padding: clamp(1.15rem, 2.5vw, 2rem); border: 1px solid var(--line); border-radius: 1.2rem; background: rgba(255,255,255,.35); box-shadow: 0 1rem 3.5rem rgba(8,30,39,.05); }
   .form-confirmation { display: grid; gap: .2rem; margin: 0 0 1rem; padding: .9rem 1rem; border-left: 3px solid #3d7a50; background: rgba(224,239,225,.72); color: #1f5131; }
+  .form-confirmation[hidden] { display: none; }
   .form-confirmation strong { font-size: .78rem; }
   .form-confirmation span { font-size: .7rem; line-height: 1.45; }
   .optional-form-heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 1rem; padding-bottom: .8rem; border-bottom: 1px solid var(--line); }

@@ -1,6 +1,6 @@
 export const business = {
   name: "Nora's Upholstery",
-  telephone: '+1-647-613-1500',
+  telephone: '+1-647-981-2622',
   email: 'norasupholstery@gmail.com',
   logoPath: '/logo-site.webp',
   googleProfileUrl: 'https://share.google/hH6pGfzI1YAUH9HLG',

@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import PhotoStrip from '../../../components/PhotoStrip.astro';
+import RelatedPageLinks from '../../../components/RelatedPageLinks.astro';
 import { serviceSchema } from '../../../data/business';
 
 const title = "Restaurant Booth & Banquette Upholstery | Nora's Upholstery";
@@ -49,6 +50,8 @@ const faq = [
       <div><p class="eyebrow">Common questions</p><h2>Planning restaurant upholstery</h2></div>
       <div>{faq.map(([question, answer]) => <details><summary>{question}</summary><p>{answer}</p></details>)}</div>
     </section>
+
+    <RelatedPageLinks serviceHref="/services/commercial" serviceLabel="Commercial" />
 
     <div class="individual-service__cta glass-dark">
       <div><p class="eyebrow">One section or a coordinated room</p><h2>Tell us how your seating is used.</h2></div>
