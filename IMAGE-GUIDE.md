@@ -42,6 +42,13 @@ repository root. GitHub filenames are case-sensitive.
 `medical-exam-tables.webp`, `medical-chiropractic-tables.webp`,
 `medical-clinic-seating.webp`, and `medical-rebuilding.webp`.
 
+### Physiotherapy project pair
+
+The Scarborough SEERS 3 treatment table case study uses responsive WebP variants
+in `public/images/projects/physiotherapy-seers3-scarborough-{before,after}-*.webp`.
+The original supplied photographs are retained locally in the ignored
+`local-assets/physiotherapy/` folder; only optimized WebP files are published.
+
 ## Residential, outdoor and boat photographs
 
 `residential-sofas.webp`, `residential-chairs.webp`,

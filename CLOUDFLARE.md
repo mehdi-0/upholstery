@@ -6,10 +6,11 @@
 - Node version: `22.12.0` or newer (Astro 7 requires Node `^20.19.0` or `>=22.12.0`)
 - Package manager: npm (`package-lock.json` is the deployment lockfile)
 
-Cloudflare automatically provides `CF_PAGES_URL` to preview builds. When the final
-custom domain is ready, add `PUBLIC_SITE_URL` as a production environment variable
-using the full `https://` URL. This lets Astro generate correct absolute metadata and
-structured-data URLs without hard-coding the unfinished domain today.
+The site URL used for canonicals, structured data and the generated sitemap is selected
+in this order: `PUBLIC_SITE_URL`, then Cloudflare's `CF_PAGES_URL`, then
+`https://norasupholstery.ca`. Cloudflare provides `CF_PAGES_URL` to preview builds.
+Set `PUBLIC_SITE_URL` to the full `https://` custom domain in production so metadata
+uses the public domain. The generated `robots.txt` sitemap entry uses the same URL.
 
 ## Estimate form
 
@@ -25,7 +26,7 @@ the function, and Resend delivers the message.
 
 ## Domain and metadata
 
-Preview deployments use `CF_PAGES_URL` for canonical links, social metadata and
-structured data. When the custom domain is connected, set `PUBLIC_SITE_URL` to its
-full `https://` address and those URLs will update automatically. No page code needs
-to change.
+Preview deployments use `CF_PAGES_URL` for canonical links, social metadata, structured
+data, the sitemap and the sitemap URL in `robots.txt`. When the custom domain is
+connected, set `PUBLIC_SITE_URL` to its full `https://` address and those URLs will
+update automatically. No page code needs to change.

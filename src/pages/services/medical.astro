@@ -3,19 +3,33 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ServiceAreaLinks from '../../components/ServiceAreaLinks.astro';
 import { serviceSchema } from '../../data/business';
+import { physiotherapyService } from '../../data/serviceDetails';
 const title = "Medical & Chiropractic Upholstery in the GTA | Nora's Upholstery";
 const description = "Medical tables, chiropractic beds, clinic stools and waiting seating restored across the GTA with cleanable healthcare materials.";
 const structuredData = serviceSchema((Astro.site ?? Astro.url).origin, {
   name: 'Medical and chiropractic upholstery',
   description,
   path: '/services/medical/',
-  serviceTypes: ['Medical exam table upholstery', 'Chiropractic table upholstery', 'Clinic seating upholstery', 'Clinical foam rebuilding'],
+  serviceTypes: ['Medical exam table upholstery', 'Chiropractic table upholstery', 'Clinic seating upholstery', 'Physiotherapy and treatment table upholstery', 'Ophthalmic upholstery', 'Clinical foam rebuilding'],
 });
-const categories = [
+type Category = {
+  number: string;
+  title: string;
+  copy: string;
+  examples: string[];
+  image?: string;
+  photo: string;
+  alt?: string;
+  href?: string;
+  linkLabel?: string;
+};
+const categories: Category[] = [
   { number: '01', title: 'Medical exam tables', copy: 'Professional reupholstering for examination and treatment surfaces in clinics and allied health practices.', examples: ['Exam tables', 'Treatment tables', 'Procedure chair cushions'], image: '/images/medical-exam-tables.webp', photo: 'Exam or treatment table', alt: 'Professionally reupholstered medical examination table', href: '/services/medical/medical-exam-table-upholstery', linkLabel: 'Explore medical exam tables' },
   { number: '02', title: 'Chiropractic tables', copy: 'Chiropractic tables, segmented cushions and adjustment table components require special care because they are adjusted for every patient. Trust us to repair, replace and restore them for lasting performance and durability.', examples: ['Adjustment tables', 'Drop section cushions', 'Head & ankle sections'], image: '/images/medical-chiropractic-tables.webp', photo: 'Chiropractic table', alt: 'Reupholstered chiropractic adjustment table with segmented cushions', href: '/services/medical/chiropractic-table-upholstery', linkLabel: 'Explore chiropractic tables' },
   { number: '03', title: 'Clinic seating', copy: 'We have the highest respect for healthcare workers, through challenging times and the pressures of everyday care. We make sure the upholstery is durable and safe for staff, patients and visitors throughout the clinic.', examples: ['Practitioner stools', 'Waiting room chairs', 'Reception seating'], image: '/images/medical-clinic-seating.webp', photo: 'Clinic or waiting seating', alt: 'Restored seating in a professional medical clinic', href: '/services/medical/clinic-seating-upholstery', linkLabel: 'Explore clinic seating' },
-  { number: '04', title: 'Clinical rebuilding', copy: 'Worn foam, split vinyl and damaged contours can be repaired with cleanable finishes appropriate for healthcare settings.', examples: ['Foam rebuilding', 'Antibacterial vinyls'], image: '/images/medical-rebuilding.webp', photo: 'Clinical rebuilding detail', alt: 'Medical upholstery foam rebuilding and vinyl repair', href: '/services/medical/clinical-upholstery-repair', linkLabel: 'Explore clinical rebuilding' },
+  { number: '04', title: 'Physiotherapy & treatment tables', copy: 'Upholstery for physiotherapy and treatment tables, including complete tables, individual sections and foam restoration.', examples: ['Treatment tables', 'Individual sections', 'Foam renewal'], image: physiotherapyService.hubImage.src, photo: 'Physiotherapy treatment tables', alt: physiotherapyService.hubImage.alt, href: physiotherapyService.path, linkLabel: 'Explore physiotherapy tables' },
+  { number: '05', title: 'Ophthalmic upholstery', copy: 'Upholstery for ophthalmic examination chairs, procedure chairs, stools and other upholstered eye-care equipment.', examples: ['Examination chairs', 'Ophthalmic stools', 'Padding & covers'], image: '/images/projects/ophthalmic-queen-street-east-after.jpg', photo: 'Ophthalmic seating', alt: 'Beige upholstered ophthalmic examination chair in an eye-exam room.' },
+  { number: '06', title: 'Clinical rebuilding', copy: 'Worn foam, split vinyl and damaged contours can be repaired with cleanable finishes appropriate for healthcare settings.', examples: ['Foam rebuilding', 'Antibacterial vinyls'], image: '/images/medical-rebuilding.webp', photo: 'Clinical rebuilding detail', alt: 'Medical upholstery foam rebuilding and vinyl repair', href: '/services/medical/clinical-upholstery-repair', linkLabel: 'Explore clinical rebuilding' },
 ];
 ---
 <BaseLayout {title} {description} {structuredData}>
@@ -33,8 +47,8 @@ const categories = [
     <div class="individual-service__grid">
       {categories.map(category => (
         <article class="individual-service__card glass">
-          <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" onerror="this.hidden=true" /></div>
-          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul>{category.href && <a class="individual-service__detail-link" href={category.href}><span>{category.linkLabel}</span><span aria-hidden="true">→</span></a>}</div>
+          <div class="individual-service__media"><div><span>{category.photo}</span>{category.image && <small>Photo slot</small>}</div>{category.image && <img src={category.image} alt={category.alt ?? ''} loading="lazy" onerror="this.hidden=true" />}</div>
+          <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul>{category.href && category.linkLabel && <a class="individual-service__detail-link" href={category.href}><span>{category.linkLabel}</span><span aria-hidden="true">→</span></a>}</div>
         </article>
       ))}
     </div>

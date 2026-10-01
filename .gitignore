@@ -16,6 +16,9 @@ pnpm-debug.log*
 pnpm-lock.yaml
 pnpm-workspace.yaml
 
+# Local agent instructions for this checkout.
+/AGENTS.md
+
 
 # environment variables
 .env
@@ -33,3 +36,5 @@ pnpm-workspace.yaml
 
 # Local visual experiments are not part of the production site.
 verdant-visual/
+# Original supplied photographs are retained locally; publish only optimized WebP assets.
+/local-assets/
