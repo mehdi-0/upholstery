@@ -7,6 +7,7 @@ const {
   title = "Nora's Upholstery",
   description = "Precision upholstery for clinics, homes and hospitality across the Greater Toronto Area.",
   seoImage,
+  seoImageAlt = "Nora's Upholstery logo",
   includeSiteSchema = false,
   structuredData = [],
   bodyClass = '',
@@ -58,11 +59,12 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
     <meta property="og:site_name" content="Nora's Upholstery" />
     {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
     <meta property="og:image" content={socialImage} />
-    <meta property="og:image:alt" content="Nora's Upholstery logo" />
+    <meta property="og:image:alt" content={seoImageAlt} />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={seoImageAlt} />
     {schemaGraph.length > 0 && (
       <script
         type="application/ld+json"
@@ -280,10 +282,27 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
       window.addEventListener('scroll', updateScroll, { passive: true });
 
       if (mobileActions && siteFooter) {
+        let footerIsIntersecting = false;
+        const mobileActionLinks = mobileActions.querySelectorAll('a[href]');
+        const updateMobileActionsFooterState = () => {
+          const shouldHide = footerIsIntersecting && !mobileActions.contains(document.activeElement);
+          mobileActions.classList.toggle('is-over-footer', shouldHide);
+          document.body.classList.toggle('mobile-actions-over-footer', shouldHide);
+          mobileActions.toggleAttribute('inert', shouldHide);
+          mobileActions.setAttribute('aria-hidden', String(shouldHide));
+          mobileActionLinks.forEach((link) => {
+            link.tabIndex = shouldHide ? -1 : 0;
+          });
+        };
+
+        mobileActions.addEventListener('focusout', () => {
+          requestAnimationFrame(updateMobileActionsFooterState);
+        });
+
         const footerObserver = new IntersectionObserver(([entry]) => {
-          mobileActions.classList.toggle('is-over-footer', entry.isIntersecting);
-          document.body.classList.toggle('mobile-actions-over-footer', entry.isIntersecting);
-        }, { threshold: 0, rootMargin: '0px 0px 10rem 0px' });
+          footerIsIntersecting = entry.isIntersecting;
+          updateMobileActionsFooterState();
+        }, { threshold: 0, rootMargin: '0px 0px 160px 0px' });
         footerObserver.observe(siteFooter);
       }
 

@@ -1,0 +1,275 @@
+---
+import type { ServiceProject as ServiceProjectData } from '../data/serviceDetails';
+
+const { project } = Astro.props as { project: ServiceProjectData };
+---
+
+<article class="service-project" aria-labelledby="service-project-heading">
+  <header class="service-project__heading">
+    <p class="eyebrow">A real clinic project</p>
+    <h2 id="service-project-heading">{project.heading}</h2>
+    <p class="service-project__summary">{project.summary}</p>
+  </header>
+
+  <div class="service-project__images">
+    <figure>
+      <div class="service-project__photo-frame">
+        <img
+          src={project.before.src}
+          srcset={project.before.srcset}
+          sizes={project.before.sizes}
+          width={project.before.width}
+          height={project.before.height}
+          alt={project.before.alt}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption><strong>Before</strong><span>Worn upholstery and a damaged face opening</span></figcaption>
+    </figure>
+    <figure>
+      <div class="service-project__photo-frame">
+        <img
+          src={project.after.src}
+          srcset={project.after.srcset}
+          sizes={project.after.sizes}
+          width={project.after.width}
+          height={project.after.height}
+          alt={project.after.alt}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <figcaption><strong>After</strong><span>Light spa green upholstery selected for the clinic</span></figcaption>
+    </figure>
+  </div>
+
+  <dl class="service-project__facts">
+    {project.facts.map((fact) => (
+      <div>
+        <dt>{fact.label}</dt>
+        <dd>{fact.href ? <a href={fact.href}>{fact.value}</a> : fact.value}</dd>
+      </div>
+    ))}
+  </dl>
+
+  {project.story?.length && (
+    <div class="service-project__story">
+      {project.story.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+  )}
+
+  {project.review && (
+    <figure class="service-project__review">
+      <blockquote>{project.review.quote}</blockquote>
+      <figcaption>{project.review.attribution}</figcaption>
+    </figure>
+  )}
+</article>
+
+<style>
+  .service-project {
+    position: relative;
+    padding-block-start: var(--service-evidence-chapter-gap, clamp(3.5rem, 5vw, 4.5rem));
+  }
+
+  .service-project::before {
+    position: absolute;
+    inset-inline: 0;
+    top: calc(var(--service-evidence-chapter-gap, clamp(3.5rem, 5vw, 4.5rem)) / 2);
+    border-top: 1px solid var(--line);
+    content: '';
+  }
+
+  .service-project__heading {
+    display: grid;
+    max-width: 52rem;
+    margin-bottom: var(--service-evidence-group-gap, 1.5rem);
+    gap: var(--service-evidence-copy-gap, .625rem);
+  }
+
+  .service-project__heading h2 {
+    max-width: 48rem;
+    margin: 0;
+    font-family: var(--serif);
+    font-size: clamp(3rem, 5.2vw, 5rem);
+    font-weight: 400;
+    line-height: .94;
+    letter-spacing: -.04em;
+  }
+
+  .service-project__summary {
+    max-width: 43rem;
+    margin: 0;
+    color: rgba(8, 30, 39, .72);
+    font-size: .9rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .service-project__images {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: clamp(.8rem, 2vw, 1.5rem);
+  }
+
+  .service-project__images figure {
+    min-width: 0;
+    margin: 0;
+  }
+
+  .service-project__photo-frame {
+    display: grid;
+    aspect-ratio: .9;
+    place-items: center;
+    overflow: hidden;
+    border: 1px solid rgba(16, 47, 61, .08);
+    border-radius: clamp(1rem, 2vw, 1.6rem);
+    background: rgba(16, 47, 61, .045);
+  }
+
+  .service-project__photo-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .service-project__images figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .2rem .7rem;
+    padding: .7rem .1rem 0;
+    font-size: .78rem;
+  }
+
+  .service-project__images figcaption strong {
+    color: var(--saddle);
+  }
+
+  .service-project__images figcaption span {
+    color: rgba(8, 30, 39, .68);
+  }
+
+  .service-project__facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0 1.5rem;
+    margin: var(--service-evidence-group-gap, 1.5rem) 0 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .service-project__facts > div {
+    padding: .8rem .2rem .9rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .service-project__facts dt {
+    margin-bottom: .2rem;
+    color: rgba(8, 30, 39, .58);
+    font-size: .68rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  .service-project__facts dd {
+    margin: 0;
+    font-size: .84rem;
+    line-height: 1.4;
+  }
+
+  .service-project__facts a {
+    text-decoration: underline;
+    text-decoration-color: rgba(139, 98, 72, .48);
+    text-underline-offset: .2em;
+  }
+
+  .service-project__story {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .8rem 2rem;
+    max-width: 58rem;
+    margin-top: var(--service-evidence-group-gap, 1.5rem);
+    color: rgba(8, 30, 39, .76);
+    font-size: .9rem;
+  }
+
+  .service-project__story p {
+    margin: 0;
+  }
+
+  .service-project__review {
+    max-width: 44rem;
+    margin: 2rem 0 0;
+    padding-left: 1rem;
+    border-left: 1px solid var(--brass);
+  }
+
+  .service-project__review blockquote {
+    margin: 0;
+    font-family: var(--serif);
+    font-size: 1.7rem;
+    line-height: 1.15;
+  }
+
+  .service-project__review figcaption {
+    margin-top: .5rem;
+    color: rgba(8, 30, 39, .62);
+    font-size: .75rem;
+  }
+
+  @media (max-width: 820px) {
+    .service-project {
+      padding-block-start: var(--service-evidence-chapter-gap, 2.5rem);
+    }
+
+    .service-project::before {
+      top: calc(var(--service-evidence-chapter-gap, 2.5rem) / 2);
+    }
+
+    .service-project__heading h2 {
+      font-size: clamp(2rem, 7.4vw, 2.75rem);
+      line-height: .98;
+    }
+
+    .service-project__summary {
+      font-size: .86rem;
+    }
+
+    .service-project__images {
+      grid-template-columns: 1fr;
+      gap: 1.1rem;
+    }
+
+    .service-project__photo-frame {
+      aspect-ratio: .88;
+    }
+
+    .service-project__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 1rem;
+    }
+
+    .service-project__facts > div {
+      padding-block: .65rem .75rem;
+    }
+
+    .service-project__facts dd {
+      font-size: .8rem;
+      line-height: 1.4;
+    }
+
+    .service-project__story {
+      grid-template-columns: 1fr;
+      gap: .9rem;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .service-project__facts {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
