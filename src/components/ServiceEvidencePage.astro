@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from './Breadcrumbs.astro';
 import ServiceFaq from './ServiceFaq.astro';
 import ServiceProject from './ServiceProject.astro';
+import ServiceEditorialHero from './ServiceEditorialHero.astro';
 import { absoluteUrl, organizationSchema, phoneDisplay, phoneHref, serviceSchema, websiteSchema } from '../data/business';
 import type { ServiceDetail } from '../data/serviceDetails';
 
@@ -13,6 +14,10 @@ const pageId = `${pageUrl}#webpage`;
 const serviceId = `${pageUrl}#service`;
 const breadcrumbId = `${pageUrl}#breadcrumb`;
 const faqId = `${pageUrl}#faq`;
+const faqDomId = `${data.path.replace(/^\/+|\/+$/g, '').replaceAll('/', '-')}-faq`;
+const socialImageProps = data.hero.variant === 'image'
+  ? { seoImage: data.hero.image.src, seoImageAlt: data.hero.image.alt }
+  : {};
 const structuredData = [
   organizationSchema(origin),
   websiteSchema(origin),
@@ -51,15 +56,14 @@ const structuredData = [
 const breadcrumbs = [
   { name: 'Home', href: '/' },
   { name: 'Medical & Chiropractic', href: '/services/medical/' },
-  { name: 'Physiotherapy & Treatment Table Upholstery' },
+  { name: data.heading },
 ];
 ---
 
 <BaseLayout
   title={data.title}
   description={data.description}
-  seoImage={data.heroImage.src}
-  seoImageAlt={data.heroImage.alt}
+  {...socialImageProps}
   structuredData={structuredData}
 >
   <div class="service-evidence shell">
@@ -74,22 +78,26 @@ const breadcrumbs = [
           <a class="text-link" href={phoneHref}>Call Nora’s <span aria-hidden="true">↗</span><span class="visually-hidden"> at {phoneDisplay}</span></a>
         </div>
       </div>
+      {data.hero.variant === 'editorial' ? (
+        <ServiceEditorialHero signals={data.hero.signals} />
+      ) : (
       <figure class="service-evidence__hero-image">
         <div class="service-evidence__hero-media">
           <img
-            src={data.heroImage.src}
-            srcset={data.heroImage.srcset}
-            sizes={data.heroImage.sizes}
-            width={data.heroImage.width}
-            height={data.heroImage.height}
-            alt={data.heroImage.alt}
+            src={data.hero.image.src}
+            srcset={data.hero.image.srcset}
+            sizes={data.hero.image.sizes}
+            width={data.hero.image.width}
+            height={data.hero.image.height}
+            alt={data.hero.image.alt}
             loading="eager"
             fetchpriority="high"
             decoding="async"
           />
         </div>
-        <figcaption>A SEERS 3 table from the Scarborough clinic project</figcaption>
+        {data.hero.caption && <figcaption>{data.hero.caption}</figcaption>}
       </figure>
+      )}
     </header>
 
     <section class="service-evidence__details" aria-labelledby="service-details-heading">
@@ -117,7 +125,7 @@ const breadcrumbs = [
     </section>
 
     <ServiceProject project={data.project} />
-    <ServiceFaq heading={data.faqHeading} items={data.faq} id="physiotherapy-faq" />
+    <ServiceFaq heading={data.faqHeading} items={data.faq} id={faqDomId} />
 
     <section class="service-evidence__next" aria-labelledby="getting-started-heading">
       <div class="service-evidence__related">
@@ -138,7 +146,7 @@ const breadcrumbs = [
           <a class="button button--light" href="/contact#estimate-form">Send Photos for an Estimate</a>
           <a class="text-link text-link--light" href={phoneHref}>Call Nora’s <span aria-hidden="true">↗</span><span class="visually-hidden"> at {phoneDisplay}</span></a>
         </div>
-        <p class="service-evidence__policy">Pickup and delivery are available across the GTA. Pricing depends on location and project.</p>
+        <p class="service-evidence__policy">{data.policyCopy ?? 'Pickup and delivery are available across the GTA. Pricing depends on location and project.'}</p>
       </div>
     </section>
   </div>

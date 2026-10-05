@@ -8,7 +8,16 @@ const { project } = Astro.props as { project: ServiceProjectData };
   <header class="service-project__heading">
     <p class="eyebrow">A real clinic project</p>
     <h2 id="service-project-heading">{project.heading}</h2>
-    <p class="service-project__summary">{project.summary}</p>
+    {project.summaryItems?.length ? (
+      <p class="service-project__summary service-project__summary-items">
+        {project.summaryItems.map((item, index) => (
+          <>
+            <span>{item}</span>
+            {index < project.summaryItems!.length - 1 && <span class="service-project__summary-separator" aria-hidden="true">·</span>}
+          </>
+        ))}
+      </p>
+    ) : project.summary && <p class="service-project__summary">{project.summary}</p>}
   </header>
 
   <div class="service-project__images">
@@ -25,7 +34,7 @@ const { project } = Astro.props as { project: ServiceProjectData };
           decoding="async"
         />
       </div>
-      <figcaption><strong>Before</strong><span>Worn upholstery and a damaged face opening</span></figcaption>
+      <figcaption><strong>Before</strong><span>{project.beforeCaption ?? 'Worn upholstery and a damaged face opening'}</span></figcaption>
     </figure>
     <figure>
       <div class="service-project__photo-frame">
@@ -40,7 +49,7 @@ const { project } = Astro.props as { project: ServiceProjectData };
           decoding="async"
         />
       </div>
-      <figcaption><strong>After</strong><span>Light spa green upholstery selected for the clinic</span></figcaption>
+      <figcaption><strong>After</strong><span>{project.afterCaption ?? 'Light spa green upholstery selected for the clinic'}</span></figcaption>
     </figure>
   </div>
 
@@ -61,6 +70,21 @@ const { project } = Astro.props as { project: ServiceProjectData };
 
   {project.review && (
     <figure class="service-project__review">
+      {(project.review.source || project.review.rating) && (
+        <div class="service-project__review-meta">
+          {project.review.source && (
+            <span class="service-project__review-source">
+              {project.review.source === 'Google review' && <img src="/icons/google.svg" alt="" />}
+              {project.review.source}
+            </span>
+          )}
+          {project.review.rating && (
+            <span class="service-project__review-rating" role="img" aria-label={`${project.review.rating} out of 5 stars`}>
+              <span aria-hidden="true">{'★'.repeat(project.review.rating)}</span>
+            </span>
+          )}
+        </div>
+      )}
       <blockquote>{project.review.quote}</blockquote>
       <figcaption>{project.review.attribution}</figcaption>
     </figure>
@@ -105,6 +129,17 @@ const { project } = Astro.props as { project: ServiceProjectData };
     font-size: .9rem;
     font-weight: 600;
     line-height: 1.4;
+  }
+
+  .service-project__summary-items {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .2rem .55rem;
+  }
+
+  .service-project__summary-separator {
+    color: var(--saddle);
   }
 
   .service-project__images {
@@ -207,10 +242,37 @@ const { project } = Astro.props as { project: ServiceProjectData };
     border-left: 1px solid var(--brass);
   }
 
+  .service-project__review-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .5rem .9rem;
+    margin-bottom: .55rem;
+    font-size: .72rem;
+    font-weight: 600;
+  }
+
+  .service-project__review-source {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    color: rgba(8, 30, 39, .68);
+  }
+
+  .service-project__review-source img {
+    width: .9rem;
+    height: .9rem;
+  }
+
+  .service-project__review-rating {
+    color: var(--saddle);
+    letter-spacing: .08em;
+  }
+
   .service-project__review blockquote {
     margin: 0;
     font-family: var(--serif);
-    font-size: 1.7rem;
+    font-size: clamp(1.2rem, 1.65vw, 1.5rem);
     line-height: 1.15;
   }
 
