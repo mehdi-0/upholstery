@@ -24,6 +24,7 @@ try {
     vite.ssrLoadModule('/src/data/serviceDetails.ts'),
     vite.ssrLoadModule('/src/data/servicePaths.ts'),
   ]);
+  const servicePath = paths.servicePaths;
 
   const actualGraph = {
     projects: projectData.projects,
@@ -47,11 +48,21 @@ try {
   assert.deepEqual(curation.reviewsPageIds, ['david-song', 'gabriel', 'monica', 'irit-frid']);
   assert.equal(curation.reviewsPageFeaturedId, 'david-song');
   assert.equal(curation.homepageFeaturedReviewId, 'david-song');
+  for (const id of curation.reviewsPageIds) {
+    assert.equal(reviewData.getReview(id).rating, 5, `${id} is a verified five-star review`);
+  }
+  for (const id of ['david-song', 'gabriel', 'irit-frid']) {
+    assert.deepEqual(reviewData.getReview(id).relatedProjectIds ?? [], [], `${id} has no inferred project relationship`);
+  }
+  assert.deepEqual(curation.reviewPagePresentation.monica.projectContextIds, ['ophthalmic-chairs-toronto']);
+  assert.deepEqual(curation.reviewPagePresentation.gabriel.servicePath, servicePath.medicalHub);
+  assert.deepEqual(curation.reviewPagePresentation.monica.servicePath, servicePath.ophthalmic);
+  assert.deepEqual(curation.reviewPagePresentation['irit-frid'].servicePath, servicePath.diningChairs);
+  assert.deepEqual(curation.reviewPagePresentation['david-song'].servicePath, servicePath.chiropracticTable);
   assert.equal(curation.ourWorkGalleryExampleIds.length, 7);
   assert.equal(serviceData.ophthalmicService.evidencePresentation.featuredReviewId, 'monica');
   assert.equal(evidence.getServiceFeaturedProjectId(serviceData.physiotherapyService), 'physiotherapy-seers3-scarborough');
 
-  const servicePath = paths.servicePaths;
   const makeImage = (role, filename) => ({
     role,
     src: `/fixture/${filename}.webp`,

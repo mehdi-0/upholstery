@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
+import ReviewArticle from '../components/ReviewArticle.astro';
+import ReviewShowcase from '../components/ReviewShowcase.astro';
 import { absoluteUrl, business } from '../data/business';
 import { assertEvidenceIntegrity } from '../data/evidence';
 import { getProject } from '../data/projects';
-import { getReview, getReviewSourceUrl, type Review } from '../data/reviews';
+import { getReview, type Review } from '../data/reviews';
 import { servicePaths, type ServicePath } from '../data/servicePaths';
 import { reviewPagePresentation, reviewsPageFeaturedId, reviewsPageIds } from '../data/evidenceCuration';
 
@@ -42,6 +44,7 @@ const reviewArticles = reviewsPageIds.map((id) => {
   const projectContexts = (presentation?.projectContextIds ?? []).map((projectId) => {
     const project = getProject(projectId);
     return {
+      projectId,
       label: project.summaryItems?.join(' · ') ?? project.summary ?? project.title,
       href: `/before-after/#${project.id}`,
     };
@@ -52,14 +55,13 @@ const reviewArticles = reviewsPageIds.map((id) => {
     review,
     context,
     projectContexts,
-    sourceUrl: getReviewSourceUrl(review),
-    sourceAction: review.sourceIdentity === 'google'
-      ? review.sourceUrl ? 'View review on Google' : 'Visit Google profile'
-      : 'View original source',
     servicePath,
     serviceLabel: servicePath ? serviceLabels[servicePath] : undefined,
   };
 });
+const featuredReview = reviewArticles.find(({ review }) => review.id === reviewsPageFeaturedId);
+if (!featuredReview) throw new Error(`Featured review ${reviewsPageFeaturedId} is missing from the Reviews page selection`);
+const standardReviews = reviewArticles.filter(({ review }) => review.id !== reviewsPageFeaturedId);
 ---
 
 <BaseLayout {title} {description} {structuredData} includeSiteSchema>
@@ -71,27 +73,18 @@ const reviewArticles = reviewsPageIds.map((id) => {
       <p class="reviews-hero__intro">Selected client experiences with Nora’s Upholstery, from clinic equipment to the furniture they use every day.</p>
     </header>
     <section class="review-library" aria-label="Selected client reviews">
-      {reviewArticles.map(({ review, context, projectContexts, sourceUrl, sourceAction, servicePath, serviceLabel }) => (
-        <article class:list={['review-article', review.id === reviewsPageFeaturedId && 'review-article--featured']} aria-labelledby={`review-${review.id}`}>
-          <header class="review-article__metadata">
-            <h2 id={`review-${review.id}`}>{review.reviewerDisplayName}</h2>
-            <p class="review-article__source">{review.sourceLabel}</p>
-            {review.rating && <p class="review-article__rating"><span aria-hidden="true">{'★'.repeat(review.rating)}</span><span class="visually-hidden">{review.rating} out of 5 stars</span></p>}
-            {(context || projectContexts.length > 0) && <p class="review-article__context">
-              {context && <span>{context}</span>}
-              {projectContexts.map((project) => <a href={project.href}>{project.label}<span aria-hidden="true"> ↗</span></a>)}
-            </p>}
-          </header>
-          <blockquote class="review-article__quote"><p>{review.originalText}</p></blockquote>
-          <div class="review-article__actions">
-            {servicePath && <a class="review-article__service" href={servicePath}>{serviceLabel}<span aria-hidden="true"> ↗</span></a>}
-            {sourceUrl && <a class="review-article__source-link" href={sourceUrl}>{sourceAction}</a>}
-          </div>
-        </article>
-      ))}
+      <ReviewArticle
+        review={featuredReview.review}
+        featured
+        context={featuredReview.context}
+        projectContexts={featuredReview.projectContexts}
+        servicePath={featuredReview.servicePath}
+        serviceLabel={featuredReview.serviceLabel}
+      />
+      <ReviewShowcase reviews={standardReviews} />
     </section>
     <section class="reviews-google" aria-labelledby="reviews-google-heading">
-      <div><h2 id="reviews-google-heading">More client experiences</h2><p>Continue reading on our Google profile.</p></div>
+      <div><p class="eyebrow">More on Google</p><h2 id="reviews-google-heading">See more customer reviews on Google.</h2></div>
       <a class="reviews-google__link" href={business.googleProfileUrl}>Read more reviews on Google<span aria-hidden="true"> ↗</span></a>
     </section>
     <section class="reviews-estimate" aria-labelledby="reviews-estimate-heading">
@@ -112,30 +105,13 @@ const reviewArticles = reviewsPageIds.map((id) => {
   .reviews-hero h1 { margin: 0; font-family: var(--serif); font-size: clamp(3.25rem, 5.6vw, 5.5rem); font-weight: 400; letter-spacing: -.035em; line-height: .98; text-wrap: balance; }
   .reviews-hero h1 em { color: var(--saddle); font-weight: 400; }
   .reviews-hero__intro { max-width: 39rem; margin: 1rem 0 0; font-size: 1rem; color: var(--ink); }
-  .review-article { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.5fr); grid-template-areas: 'metadata quote' 'metadata actions'; column-gap: clamp(2rem, 5vw, 4.5rem); row-gap: 1.25rem; padding: clamp(2rem, 4vw, 3.5rem) 0; border-bottom: 1px solid var(--line); }
-  .review-article__metadata { grid-area: metadata; min-width: 0; }
-  .review-article__metadata h2 { margin: 0; font-size: 1.05rem; font-weight: 600; line-height: 1.4; }
-  .review-article__source { margin: .3rem 0 0; font-size: .875rem; color: var(--ink); }
-  .review-article__rating { margin: .5rem 0 0; color: var(--saddle); font-size: .9rem; letter-spacing: .1em; }
-  .review-article__context { max-width: 19rem; margin: 1rem 0 0; font-size: .9375rem; color: var(--ink); line-height: 1.55; }
-  .review-article__context a { text-decoration: underline; text-underline-offset: .2em; }
-  .review-article__quote { grid-area: quote; min-width: 0; margin: 0; max-width: 50rem; }
-  .review-article__quote p { margin: 0; font-family: var(--serif); font-size: clamp(1.5rem, 1.9vw, 1.75rem); line-height: 1.3; color: var(--ink-deep); }
-  .review-article__actions { grid-area: actions; display: flex; flex-wrap: wrap; align-items: center; gap: .25rem 1.5rem; min-width: 0; }
-  .review-article__actions a, .reviews-google__link { display: inline-flex; align-items: center; min-height: 2.75rem; padding-block: .5rem; font-size: .875rem; line-height: 1.5; text-decoration: underline; text-underline-offset: .25em; text-decoration-thickness: 1px; }
-  .review-article__service { color: var(--ink); font-weight: 600; }
-  .review-article__source-link { color: var(--saddle); }
-  .review-article--featured { grid-template-columns: minmax(0, 2.65fr) minmax(0, 1fr); grid-template-areas: 'quote metadata' 'quote actions'; row-gap: 1rem; padding: clamp(2rem, 3.5vw, 3rem); margin-bottom: .5rem; border: 0; border-radius: var(--radius); background: var(--ink); color: var(--paper); }
-  .review-article--featured .review-article__quote p { color: var(--paper); font-size: clamp(2.25rem, 2.9vw, 2.75rem); line-height: 1.16; }
-  .review-article--featured .review-article__metadata { padding-top: .25rem; }
-  .review-article--featured .review-article__source, .review-article--featured .review-article__context { color: var(--cream); }
-  .review-article--featured .review-article__actions { align-self: start; flex-direction: column; align-items: flex-start; gap: .25rem; }
-  .review-article--featured .review-article__service { color: var(--paper); }
-  .review-article--featured .review-article__source-link { color: #e8cfa8; }
+  .review-library { display: grid; gap: clamp(2rem, 4vw, 3rem); }
+  .review-article--featured + .review-showcase { margin-top: .15rem; }
+  .reviews-google .eyebrow { margin: 0 0 .3rem; color: var(--saddle); font-size: .65rem; }
   .reviews-google { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding-block: 1.75rem; }
-  .reviews-google h2 { margin: 0; font-size: 1rem; font-weight: 600; }
-  .reviews-google p { margin: .25rem 0 0; font-size: .9375rem; color: var(--ink); }
+  .reviews-google h2 { margin: 0; font-family: var(--serif); font-size: clamp(1.45rem, 2vw, 1.8rem); font-weight: 400; line-height: 1.2; }
   .reviews-google__link { color: var(--saddle); font-weight: 600; }
+  .reviews-google__link { display: inline-flex; min-height: 2.75rem; align-items: center; padding-block: .5rem; font-size: .875rem; line-height: 1.5; text-decoration: underline; text-underline-offset: .25em; text-decoration-thickness: 1px; }
   .reviews-estimate { display: flex; justify-content: space-between; align-items: center; gap: 2rem; padding: clamp(1.5rem, 3vw, 2.5rem); border: 1px solid var(--line); border-radius: var(--radius); background: var(--cream); }
   .reviews-estimate > div { max-width: 43rem; }
   .reviews-estimate .eyebrow { margin-bottom: .6rem; color: var(--saddle); }
@@ -150,15 +126,9 @@ const reviewArticles = reviewsPageIds.map((id) => {
     .reviews-page { padding-top: 7rem; }
     .reviews-hero h1 { font-size: clamp(2.75rem, 12vw, 3.5rem); }
     .reviews-hero__intro { font-size: .9375rem; }
-    .review-article { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'metadata' 'quote' 'actions'; gap: 1.1rem; padding-block: 1.75rem; }
-    .review-article__context { max-width: none; margin-top: .6rem; }
-    .review-article__quote p { font-size: 1.5rem; line-height: 1.3; }
-    .review-article--featured { grid-template-areas: 'quote' 'metadata' 'actions'; padding: 1.25rem; border-radius: 1.25rem; }
-    .review-article--featured .review-article__quote p { font-size: 1.5625rem; line-height: 1.24; }
-    .review-article--featured .review-article__metadata { padding-top: .4rem; }
-    .review-article--featured .review-article__actions { gap: .15rem; }
     .reviews-google, .reviews-estimate { align-items: flex-start; flex-direction: column; gap: 1rem; }
     .reviews-estimate { padding: 1.25rem; border-radius: 1.25rem; }
     .reviews-estimate .button { max-width: 100%; }
   }
+  @media (max-width: 359px) { .reviews-hero h1 { font-size: 2.5rem; } }
 </style>

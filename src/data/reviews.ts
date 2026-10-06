@@ -28,6 +28,7 @@ export const reviews = [
     id: 'david-song',
     reviewerDisplayName: 'Dr. David Song',
     originalText: 'Awesome rates and beautiful workmanship for my chiropractic table. They also replaced some missing screws and cleaned up some nasty rust that I had going on with the table. Great communication as well.',
+    rating: 5,
     sourceIdentity: 'google',
     sourceLabel: 'Google review',
     contextLabel: 'Chiropractic table restoration',
@@ -43,6 +44,7 @@ export const reviews = [
     id: 'gabriel',
     reviewerDisplayName: 'Gabriel',
     originalText: "I highly recommend Nora's Upholstery for your commercial or residential needs. This business is family run and has been supporting my medical clinics for over 12 years. Shaida, is fantastic to deal with and she has great customer service, great prices and excellent turn good around times. Support our economy by supporting local business and our trades.",
+    rating: 5,
     sourceIdentity: 'google',
     sourceLabel: 'Google review',
     contextLabel: 'Medical clinic client for over 12 years',
@@ -51,6 +53,7 @@ export const reviews = [
   {
     id: 'irit-frid',
     reviewerDisplayName: 'Irit Frid',
+    rating: 5,
     originalText: 'I highly recommend Nora\'s upholstery! I can’t say enough about their excellent friendly service, from the first moment I made the contact to choosing the fabric and the final result. Nora’s upholstery did an AMAZING job renewing my 8 dining chairs, including replacing the fabric, foam, and upholstery. The job was done fast, professionally, and with a lot of care for the small details. Top Notch. Thank you, Nora.',
     sourceIdentity: 'google',
     sourceLabel: 'Google review',
