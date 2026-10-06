@@ -2,25 +2,26 @@
 interface Props {
   serviceHref: string;
   serviceLabel: string;
+  workHref?: string;
+  workLabel?: string;
 }
 
-const { serviceHref, serviceLabel } = Astro.props;
+const { serviceHref, serviceLabel, workHref, workLabel = 'View completed work' } = Astro.props;
 ---
 
 <nav class="related-page-links" aria-label="Related pages">
   <p class="eyebrow">Continue exploring</p>
-  <div>
-    <a href={serviceHref}>All {serviceLabel} services <span aria-hidden="true">↗</span></a>
-    <a href="/before-after">View completed work <span aria-hidden="true">↗</span></a>
-    <a href="/service-areas">Explore service areas <span aria-hidden="true">↗</span></a>
-    <a href="/contact#estimate-form">Request an estimate <span aria-hidden="true">↗</span></a>
-  </div>
+    <div>
+      <a href={serviceHref}>All {serviceLabel} services <span aria-hidden="true">↗</span></a>
+      {workHref && <a href={workHref}>{workLabel} <span aria-hidden="true">↗</span></a>}
+      <a href="/service-areas">Explore service areas <span aria-hidden="true">↗</span></a>
+    </div>
 </nav>
 
 <style>
   .related-page-links { padding: clamp(1.3rem, 3vw, 2.25rem); border: 1px solid var(--line); border-radius: 1.2rem; background: rgba(255,255,255,.25); }
   .eyebrow { margin: 0 0 1rem; color: var(--saddle); }
-  div { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+  div { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
   a { display: flex; min-height: 3.7rem; align-items: center; justify-content: space-between; gap: .5rem; padding: .75rem .85rem; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: .72rem; font-weight: 600; transition: color .2s ease, background .2s ease; }
   a:hover { color: var(--saddle); background: rgba(255,255,255,.52); }
   @media (max-width: 1000px) { div { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

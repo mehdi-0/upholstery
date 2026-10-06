@@ -1,5 +1,5 @@
 ---
-import type { ServiceProject as ServiceProjectData } from '../data/serviceDetails';
+import type { ServiceProjectPresentation as ServiceProjectData } from '../data/evidence';
 
 const { project } = Astro.props as { project: ServiceProjectData };
 ---
@@ -89,6 +89,7 @@ const { project } = Astro.props as { project: ServiceProjectData };
       <figcaption>{project.review.attribution}</figcaption>
     </figure>
   )}
+  <a class="service-project__work-link" href={`/before-after/#${project.projectId}`}>See more completed work <span aria-hidden="true">↗</span></a>
 </article>
 
 <style>
@@ -280,6 +281,18 @@ const { project } = Astro.props as { project: ServiceProjectData };
     margin-top: .5rem;
     color: rgba(8, 30, 39, .62);
     font-size: .75rem;
+  }
+
+  .service-project__work-link {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    margin-top: 1.25rem;
+    color: var(--ink);
+    font-size: .82rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: .25em;
   }
 
   @media (max-width: 820px) {

@@ -5,6 +5,7 @@ import ServiceFaq from './ServiceFaq.astro';
 import ServiceProject from './ServiceProject.astro';
 import ServiceEditorialHero from './ServiceEditorialHero.astro';
 import { absoluteUrl, organizationSchema, phoneDisplay, phoneHref, serviceSchema, websiteSchema } from '../data/business';
+import { getServiceHeroImage, getServiceProject } from '../data/evidence';
 import type { ServiceDetail } from '../data/serviceDetails';
 
 const { data } = Astro.props as { data: ServiceDetail };
@@ -15,8 +16,10 @@ const serviceId = `${pageUrl}#service`;
 const breadcrumbId = `${pageUrl}#breadcrumb`;
 const faqId = `${pageUrl}#faq`;
 const faqDomId = `${data.path.replace(/^\/+|\/+$/g, '').replaceAll('/', '-')}-faq`;
-const socialImageProps = data.hero.variant === 'image'
-  ? { seoImage: data.hero.image.src, seoImageAlt: data.hero.image.alt }
+const heroImage = getServiceHeroImage(data);
+const serviceProject = getServiceProject(data);
+const socialImageProps = heroImage
+  ? { seoImage: heroImage.src, seoImageAlt: heroImage.alt }
   : {};
 const structuredData = [
   organizationSchema(origin),
@@ -80,22 +83,22 @@ const breadcrumbs = [
       </div>
       {data.hero.variant === 'editorial' ? (
         <ServiceEditorialHero signals={data.hero.signals} />
-      ) : (
+      ) : heroImage && (
       <figure class="service-evidence__hero-image">
         <div class="service-evidence__hero-media">
           <img
-            src={data.hero.image.src}
-            srcset={data.hero.image.srcset}
-            sizes={data.hero.image.sizes}
-            width={data.hero.image.width}
-            height={data.hero.image.height}
-            alt={data.hero.image.alt}
+            src={heroImage.src}
+            srcset={heroImage.srcset}
+            sizes={heroImage.sizes}
+            width={heroImage.width}
+            height={heroImage.height}
+            alt={heroImage.alt}
             loading="eager"
             fetchpriority="high"
             decoding="async"
           />
         </div>
-        {data.hero.caption && <figcaption>{data.hero.caption}</figcaption>}
+        {heroImage.caption && <figcaption>{heroImage.caption}</figcaption>}
       </figure>
       )}
     </header>
@@ -124,7 +127,7 @@ const breadcrumbs = [
       </div>
     </section>
 
-    <ServiceProject project={data.project} />
+    <ServiceProject project={serviceProject} />
     <ServiceFaq heading={data.faqHeading} items={data.faq} id={faqDomId} />
 
     <section class="service-evidence__next" aria-labelledby="getting-started-heading">

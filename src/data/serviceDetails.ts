@@ -1,3 +1,6 @@
+import { projectIds, type ProjectId } from './projects';
+import { servicePaths } from './servicePaths';
+
 export type ServiceImage = {
   src: string;
   srcset: string;
@@ -5,41 +8,16 @@ export type ServiceImage = {
   width: number;
   height: number;
   alt: string;
+  caption?: string;
 };
 
 export type ServiceHero =
-  | { variant: 'image'; image: ServiceImage; caption?: string }
+  | { variant: 'project-image'; role: 'hero' }
   | { variant: 'editorial'; signals: readonly [string, string] };
 
 export type ServiceFaq = {
   question: string;
   answer: string;
-};
-
-export type CustomerReview = {
-  quote: string;
-  attribution: string;
-  source?: string;
-  rating?: number;
-};
-
-export type ProjectFact = {
-  label: string;
-  value: string;
-  href?: string;
-};
-
-export type ServiceProject = {
-  heading: string;
-  summary?: string;
-  summaryItems?: string[];
-  facts: ProjectFact[];
-  story?: string[];
-  before: ServiceImage;
-  after: ServiceImage;
-  beforeCaption?: string;
-  afterCaption?: string;
-  review?: CustomerReview;
 };
 
 export type ServiceDetail = {
@@ -51,8 +29,8 @@ export type ServiceDetail = {
   intro: string[];
   serviceTypes: string[];
   areas: string[];
+  projectId: ProjectId;
   hero: ServiceHero;
-  hubImage: { src: string; alt: string };
   details: {
     heading: string;
     scopeHeading: string;
@@ -65,7 +43,6 @@ export type ServiceDetail = {
     pickupHeading: string;
     workflowCopy: string;
   };
-  project: ServiceProject;
   faqHeading: string;
   faq: ServiceFaq[];
   related: { label: string; href: string }[];
@@ -76,65 +53,8 @@ export type ServiceDetail = {
   policyCopy?: string;
 };
 
-const responsiveSizes = '(max-width: 820px) calc(100vw - 2rem), (max-width: 1280px) 48vw, 596px';
-
-const beforeImage: ServiceImage = {
-  src: '/images/projects/physiotherapy-seers3-scarborough-before-960.webp',
-  srcset: [
-    '/images/projects/physiotherapy-seers3-scarborough-before-480.webp 480w',
-    '/images/projects/physiotherapy-seers3-scarborough-before-640.webp 640w',
-    '/images/projects/physiotherapy-seers3-scarborough-before-960.webp 960w',
-    '/images/projects/physiotherapy-seers3-scarborough-before-1493.webp 1493w',
-  ].join(', '),
-  sizes: responsiveSizes,
-  width: 1493,
-  height: 1600,
-  alt: 'Worn black upholstery with a taped, damaged face opening on a SEERS 3 treatment table before reupholstery.',
-};
-
-const physiotherapyHeroImage: ServiceImage = {
-  src: '/images/projects/physiotherapy-treatment-table-hero-original.jpg',
-  srcset: '/images/projects/physiotherapy-treatment-table-hero-original.jpg 640w',
-  sizes: responsiveSizes,
-  width: 640,
-  height: 480,
-  alt: 'Black physiotherapy treatment table with a face opening and electrotherapy equipment in a clinic.',
-};
-
-const afterImage: ServiceImage = {
-  src: '/images/projects/physiotherapy-seers3-scarborough-after-960.webp',
-  srcset: [
-    '/images/projects/physiotherapy-seers3-scarborough-after-480.webp 480w',
-    '/images/projects/physiotherapy-seers3-scarborough-after-640.webp 640w',
-    '/images/projects/physiotherapy-seers3-scarborough-after-960.webp 960w',
-    '/images/projects/physiotherapy-seers3-scarborough-after-1279.webp 1279w',
-  ].join(', '),
-  sizes: responsiveSizes,
-  width: 1279,
-  height: 1600,
-  alt: 'SEERS 3 treatment table with its padded sections upholstered in light spa green vinyl after restoration.',
-};
-
-const ophthalmicBeforeImage: ServiceImage = {
-  src: '/images/projects/ophthalmic-queen-street-east-before-detail.jpg',
-  srcset: '/images/projects/ophthalmic-queen-street-east-before-detail.jpg 900w',
-  sizes: responsiveSizes,
-  width: 900,
-  height: 1200,
-  alt: 'Close-up of torn black upholstery and clear tape on an ophthalmic chair.',
-};
-
-const ophthalmicAfterImage: ServiceImage = {
-  src: '/images/projects/ophthalmic-queen-street-east-after.jpg',
-  srcset: '/images/projects/ophthalmic-queen-street-east-after.jpg 250w',
-  sizes: responsiveSizes,
-  width: 250,
-  height: 250,
-  alt: 'Beige upholstered ophthalmic examination chair in an eye-exam room.',
-};
-
 export const physiotherapyService: ServiceDetail = {
-  path: '/services/medical/physiotherapy-treatment-table-upholstery/',
+  path: servicePaths.physiotherapyTables,
   title: "Physiotherapy & Treatment Table Upholstery | Nora's Upholstery",
   description: 'Physiotherapy and treatment table reupholstery across the GTA. Complete tables, individual sections, foam restoration and medical grade vinyl. Start with photos.',
   heading: 'Physiotherapy & Treatment Table Upholstery',
@@ -150,14 +70,10 @@ export const physiotherapyService: ServiceDetail = {
     'Treatment table foam restoration',
   ],
   areas: ['Greater Toronto Area'],
+  projectId: projectIds.physiotherapy,
   hero: {
-    variant: 'image',
-    image: physiotherapyHeroImage,
-    caption: 'A SEERS 3 table from the Scarborough clinic project',
-  },
-  hubImage: {
-    src: '/images/projects/physiotherapy-seers3-scarborough-after-480.webp',
-    alt: 'SEERS 3 physiotherapy treatment table reupholstered in light spa green vinyl.',
+    variant: 'project-image',
+    role: 'hero',
   },
   details: {
     heading: 'What we can restore',
@@ -170,22 +86,6 @@ export const physiotherapyService: ServiceDetail = {
     foamCopy: 'Renewed or replaced where needed.',
     pickupHeading: 'Section pickup',
     workflowCopy: 'Where practical, upholstered sections can be collected while the frame stays at the clinic.',
-  },
-  project: {
-    heading: 'Ten treatment tables renewed for a Scarborough clinic',
-    summary: '10 SEERS 3 tables · Scarborough · One at a time',
-    facts: [
-      { label: 'Customer', value: 'Returning physiotherapy clinic' },
-      { label: 'Location', value: 'Scarborough, Ontario', href: '/service-areas/scarborough' },
-      { label: 'Equipment', value: 'SEERS 3 treatment tables' },
-      { label: 'Quantity', value: '10 tables, one at a time' },
-      { label: 'Work', value: 'Whole-table upholstery; foam renewed or repaired as needed' },
-      { label: 'Material', value: 'Light/spa green medical grade vinyl selected from Nora’s samples' },
-      { label: 'Schedule', value: 'Friday 6 AM to Saturday 6 AM' },
-      { label: 'Turnaround for this table', value: '24 hours' },
-    ],
-    before: beforeImage,
-    after: afterImage,
   },
   faqHeading: 'Physiotherapy table upholstery questions',
   faq: [
@@ -223,13 +123,13 @@ export const physiotherapyService: ServiceDetail = {
 };
 
 export const ophthalmicService: ServiceDetail = {
-  path: '/services/medical/ophthalmic-upholstery/',
+  path: servicePaths.ophthalmic,
   title: 'Ophthalmic Chair Upholstery in the GTA | Nora’s Upholstery',
   description: 'Professional upholstery for ophthalmic examination chairs, patient seating and stools across Toronto and the GTA. Medical grade materials, foam restoration and rush scheduling available.',
   heading: 'Ophthalmic Upholstery',
   eyebrow: 'Medical & Chiropractic',
   intro: [
-    'Nora’s reupholsters ophthalmic examination chairs and other upholstered eye-care equipment for clinics across the GTA.',
+    'Nora’s reupholsters ophthalmic examination chairs and other upholstered equipment used in eye care for clinics across the GTA.',
     'Medical grade upholstery and foam restoration are available for worn or damaged patient and operator seating.',
   ],
   serviceTypes: [
@@ -240,13 +140,10 @@ export const ophthalmicService: ServiceDetail = {
     'Ophthalmic chair foam restoration',
   ],
   areas: ['Toronto', 'Greater Toronto Area'],
+  projectId: projectIds.ophthalmic,
   hero: {
     variant: 'editorial',
     signals: ['Medical grade upholstery', 'Foam restoration'],
-  },
-  hubImage: {
-    src: ophthalmicAfterImage.src,
-    alt: ophthalmicAfterImage.alt,
   },
   details: {
     heading: 'What we can restore',
@@ -265,36 +162,11 @@ export const ophthalmicService: ServiceDetail = {
     pickupHeading: 'Photo assessment',
     workflowCopy: 'Photos help Nora assess the upholstery approach and discuss scheduling.',
   },
-  project: {
-    heading: 'Two ophthalmic chairs renewed in 24 hours',
-    summaryItems: ['2 Midmark/Ritter chairs', 'Toronto', '24 hours'],
-    facts: [
-      { label: 'Customer', value: 'Anonymous eye-care clinic / ophthalmic clinic' },
-      { label: 'Location', value: 'Queen Street East, Toronto' },
-      { label: 'Equipment', value: 'Midmark/Ritter automatic ophthalmic examination chairs' },
-      { label: 'Quantity', value: '2 chairs' },
-      { label: 'Work', value: 'Complete upholstery; foam renewed with localized replacement where needed' },
-      { label: 'Material', value: 'Beige medical grade vinyl selected from Nora’s samples' },
-      { label: 'Schedule', value: 'Rush project during the clinic renovation' },
-      { label: 'Workshop drop-off', value: 'Customer dismantled both chairs and brought them to Nora’s workshop' },
-      { label: 'Turnaround', value: '24 hours for both chairs' },
-    ],
-    before: ophthalmicBeforeImage,
-    after: ophthalmicAfterImage,
-    beforeCaption: 'Close-up detail of the damaged black upholstery and tape',
-    afterCaption: 'Full chair after reupholstery in beige vinyl',
-    review: {
-      quote: 'Amazing experience with Nora’s company. We were in a tough spot and they were able to help us with the chair within a 24 hours turn around period.',
-      attribution: 'Monica',
-      source: 'Google review',
-      rating: 5,
-    },
-  },
   faqHeading: 'Ophthalmic upholstery questions',
   faq: [
     {
       question: 'What ophthalmic equipment can you reupholster?',
-      answer: 'Nora’s can reupholster ophthalmic examination chairs, patient and procedure chairs, operator seating, stools and other upholstered eye-care equipment across brands and models.',
+      answer: 'Nora’s can reupholster ophthalmic examination chairs, patient and procedure chairs, operator seating, stools and other upholstered equipment used in eye care across brands and models.',
     },
     {
       question: 'Can you reupholster powered or automatic ophthalmic examination chairs?',
@@ -306,7 +178,7 @@ export const ophthalmicService: ServiceDetail = {
     },
     {
       question: 'How quickly can an ophthalmic examination chair be reupholstered?',
-      answer: 'Turnaround depends on the equipment, materials and scheduling. Rush, overnight and weekend service may be available when arranged in advance. In the Queen Street East project, two Midmark/Ritter ophthalmic examination chairs were completed within 24 hours; that project timing is not a standard or guarantee.',
+      answer: 'Turnaround depends on the equipment, materials and scheduling. Rush, overnight and weekend service may be available when arranged in advance. In the Toronto project, two Midmark/Ritter ophthalmic examination chairs were completed within 24 hours; that project timing is not a standard or guarantee.',
     },
   ],
   related: [
