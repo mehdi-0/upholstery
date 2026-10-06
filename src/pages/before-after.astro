@@ -2,8 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { absoluteUrl, organizationSchema, websiteSchema } from '../data/business';
-import { projects, projectIds, getProjectImage } from '../data/projects';
-import { servicePaths, type ServicePath } from '../data/servicePaths';
+import { getProject, getProjectImage } from '../data/projects';
+import { servicePaths } from '../data/servicePaths';
+import { getGalleryExample } from '../data/galleryExamples';
+import { ourWorkGalleryExampleIds, ourWorkProjectIds } from '../data/evidenceCuration';
 const title = "Upholstery Before & After Projects | Nora's Upholstery";
 const description = "See dental, chiropractic, clinic, residential and commercial upholstery before and after. Explore selected restorations by Nora's Upholstery.";
 const origin = (Astro.site ?? Astro.url).origin;
@@ -24,32 +26,8 @@ const structuredData = [
     breadcrumb: { '@id': breadcrumbId },
   },
 ];
-const galleryPhotos = [
-  { src: '/images/gallery-dental-operatory.webp', width: 1350, height: 1800, label: 'Dental operatory', note: 'Patient chair and dentist seating finished for a busy practice', alt: 'Blue dental patient chair and dentist stool with renewed upholstery in a dental operatory', fit: 'contain', servicePath: '/services/dental/', serviceLabel: 'Explore dental upholstery' },
-  { src: '/images/gallery-waiting-room-blue-chairs.webp', width: 1800, height: 1350, label: 'Waiting room seating', note: 'Comfortable clinic chairs renewed in durable blue upholstery', alt: 'Two blue upholstered clinic waiting room chairs', servicePath: servicePaths.clinicSeating, serviceLabel: 'Explore clinic seating' },
-  { src: '/images/gallery-waiting-room-fireplace.webp', width: 1800, height: 1350, label: 'Clinic seating', note: 'Cleanable seating coordinated for a welcoming patient space', alt: 'Blue upholstered clinic waiting room chairs beside a fireplace', servicePath: servicePaths.clinicSeating, serviceLabel: 'Explore clinic seating' },
-  { src: '/images/gallery-dining-chairs.webp', width: 1800, height: 1350, label: 'Dining chairs', note: 'A coordinated dining set renewed for everyday gatherings', alt: 'Eight reupholstered dining chairs around a dining table', servicePath: servicePaths.diningChairs, serviceLabel: 'Explore dining chair upholstery' },
-  { src: '/images/gallery-residential-chair.webp', width: 1350, height: 1800, label: 'Residential', note: 'Comfort and texture brought together for a personal space', alt: 'Grey upholstered accent chair and coordinating desk chair in a home office', fit: 'contain', servicePath: servicePaths.residentialChair, serviceLabel: 'Explore chair upholstery' },
-  { src: '/images/gallery-restaurant-seating.jpg', width: 750, height: 751, label: 'Restaurant seating', note: 'Built-in booth seating renewed for a welcoming dining space', alt: 'Black upholstered restaurant booth seating against a reclaimed wood wall', servicePath: servicePaths.restaurantSeating, serviceLabel: 'Explore restaurant seating' },
-  { src: '/images/gallery-restaurant-bench.webp', width: 1200, height: 1600, label: 'Restaurant seating', note: 'Custom bench seating prepared for daily commercial use', alt: 'Brown upholstered restaurant bench completed in the workshop', fit: 'contain', servicePath: servicePaths.restaurantSeating, serviceLabel: 'Explore restaurant seating' },
-];
-const projectServiceLabels: Record<ServicePath, string> = {
-  [servicePaths.physiotherapyTables]: 'Explore physiotherapy table upholstery',
-  [servicePaths.ophthalmic]: 'Explore ophthalmic upholstery',
-  [servicePaths.chiropracticTable]: 'Explore chiropractic table upholstery',
-  [servicePaths.medicalHub]: 'Explore medical and chiropractic upholstery',
-  [servicePaths.clinicSeating]: 'Explore clinic seating',
-  [servicePaths.dentalChair]: 'Explore dental chair upholstery',
-  [servicePaths.dentalChairRepair]: 'Explore dental chair repair',
-  [servicePaths.dentalStool]: 'Explore dental team seating',
-  [servicePaths.diningChairs]: 'Explore dining chair upholstery',
-  [servicePaths.residentialChair]: 'Explore chair upholstery',
-  [servicePaths.restaurantSeating]: 'Explore restaurant seating',
-};
-const projectFactKeys: Record<(typeof projects)[number]['id'], readonly string[]> = {
-  [projectIds.physiotherapy]: ['equipment', 'quantity', 'location'],
-  [projectIds.ophthalmic]: ['equipment', 'quantity', 'turnaround'],
-};
+const galleryPhotos = ourWorkGalleryExampleIds.map(getGalleryExample);
+const workProjects = ourWorkProjectIds.map(getProject);
 ---
 <BaseLayout {title} {description} {structuredData}>
   <header class="page-hero">
@@ -71,13 +49,13 @@ const projectFactKeys: Record<(typeof projects)[number]['id'], readonly string[]
         <div class="work-carousel__viewport" data-carousel-viewport tabindex="0" role="region" aria-roledescription="carousel" aria-label="Completed upholstery photo gallery. Use the arrow keys or controls to move between images.">
           <div class="work-carousel__track">
             {galleryPhotos.map((photo, index) => (
-              <figure class="work-carousel__slide" data-carousel-slide role="group" aria-label={`${index + 1} of ${galleryPhotos.length}: ${photo.label}`}>
+              <figure class="work-carousel__slide" data-carousel-slide role="group" aria-label={`${index + 1} of ${galleryPhotos.length}: ${photo.label ?? 'Completed work'}`}>
                 <div class="work-carousel__fallback" aria-hidden="true"></div>
-                <img class="work-carousel__backdrop" src={photo.src} alt="" width={photo.width} height={photo.height} sizes="(max-width: 820px) 86vw, 760px" loading="lazy" decoding="async" aria-hidden="true" />
-                <img class:list={['work-carousel__image', photo.fit === 'contain' && 'work-carousel__image--contain']} src={photo.src} alt={photo.alt} width={photo.width} height={photo.height} sizes="(max-width: 820px) 86vw, 760px" loading="lazy" decoding="async" onerror="this.hidden=true" />
+                <img class="work-carousel__backdrop" src={photo.image.src} alt="" width={photo.image.width} height={photo.image.height} sizes="(max-width: 820px) 86vw, 760px" loading="lazy" decoding="async" aria-hidden="true" />
+                <img class:list={['work-carousel__image', photo.image.fit === 'contain' && 'work-carousel__image--contain']} src={photo.image.src} alt={photo.image.alt} width={photo.image.width} height={photo.image.height} sizes="(max-width: 820px) 86vw, 760px" loading="lazy" decoding="async" onerror="this.hidden=true" />
                 <figcaption>
-                  <span class="work-carousel__caption-copy"><strong>{photo.label}</strong><span>{photo.note}</span></span>
-                  <a href={photo.servicePath}>{photo.serviceLabel}<span aria-hidden="true"> ↗</span></a>
+                  <span class="work-carousel__caption-copy">{photo.label && <strong>{photo.label}</strong>}{photo.note && <span>{photo.note}</span>}</span>
+                  {photo.serviceLink && <a href={photo.serviceLink.path}>{photo.serviceLink.label}<span aria-hidden="true"> ↗</span></a>}
                 </figcaption>
               </figure>
             ))}
@@ -146,16 +124,17 @@ const projectFactKeys: Record<(typeof projects)[number]['id'], readonly string[]
         <div class="work-project-pathway"><p>A familiar residential armchair, renewed while keeping its traditional shape</p><a href={servicePaths.residentialChair}>Explore chair upholstery <span aria-hidden="true">↗</span></a></div>
       </article>
 
-      {projects.map((project, index) => {
+      {workProjects.map((project, index) => {
+        const presentation = project.ourWorkPresentation;
+        if (!presentation) throw new Error(`Our Work project ${project.id} is missing presentation metadata`);
         const before = getProjectImage(project.id, 'before');
         const after = getProjectImage(project.id, 'after');
-        const facts = project.facts.filter((fact) => projectFactKeys[project.id].includes(fact.key));
-        const servicePath = project.servicePaths[0];
+        const facts = project.facts.filter((fact) => presentation.factKeys.includes(fact.key));
         return (
           <article class="work-project" id={project.id} aria-labelledby={`${project.id}-heading`}>
             <header class="section-heading section-heading--compact work-project__heading">
-              <div><p class="eyebrow">{String(index + 4).padStart(2, '0')} · {project.id === projectIds.physiotherapy ? 'Physiotherapy' : 'Ophthalmic'}</p><h2 class="display-heading" id={`${project.id}-heading`}>{project.title}</h2></div>
-              <p>{project.id === projectIds.physiotherapy ? 'Ten SEERS 3 treatment tables were renewed one at a time for a Scarborough physiotherapy clinic.' : 'Two Midmark/Ritter ophthalmic chairs were renewed for a Toronto clinic in 24 hours.'}</p>
+              <div><p class="eyebrow">{String(index + 4).padStart(2, '0')} · {presentation.categoryLabel}</p><h2 class="display-heading" id={`${project.id}-heading`}>{project.title}</h2></div>
+              <p>{presentation.description}</p>
             </header>
             <div class="work-project__images">
               {[{ image: before, label: 'Before' }, { image: after, label: 'After' }].map(({ image, label }) => (
@@ -170,7 +149,7 @@ const projectFactKeys: Record<(typeof projects)[number]['id'], readonly string[]
             <dl class="work-project__facts">
               {facts.map((fact) => <div><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}
             </dl>
-            <a class="work-project__service" href={servicePath}>{projectServiceLabels[servicePath]} <span aria-hidden="true">↗</span></a>
+            {presentation.serviceLink && <a class="work-project__service" href={presentation.serviceLink.path}>{presentation.serviceLink.label} <span aria-hidden="true">↗</span></a>}
           </article>
         );
       })}

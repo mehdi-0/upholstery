@@ -3,10 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { business, phoneHref } from '../data/business';
 import { getReview, getReviewExcerpt, getReviewSourceUrl } from '../data/reviews';
 import { servicePaths } from '../data/servicePaths';
+import { homepageFeaturedReviewId } from '../data/evidenceCuration';
 
 const title = "Nora's Upholstery | Precision restoration across the GTA";
 const description = "Dental chair, medical, chiropractic, residential and commercial upholstery with careful patterning, durable materials and pickup across Richmond Hill and the Greater Toronto Area.";
-const davidReview = getReview('david-song');
+const davidReview = getReview(homepageFeaturedReviewId);
 const davidReviewExcerpt = getReviewExcerpt(davidReview, 'homepage');
 const davidReviewUrl = getReviewSourceUrl(davidReview) ?? business.googleProfileUrl;
 

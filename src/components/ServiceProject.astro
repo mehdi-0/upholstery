@@ -1,10 +1,10 @@
 ---
 import type { ServiceProjectPresentation as ServiceProjectData } from '../data/evidence';
 
-const { project } = Astro.props as { project: ServiceProjectData };
+const { project } = Astro.props as { project?: ServiceProjectData };
 ---
 
-<article class="service-project" aria-labelledby="service-project-heading">
+{project && <article class="service-project" aria-labelledby="service-project-heading">
   <header class="service-project__heading">
     <p class="eyebrow">A real clinic project</p>
     <h2 id="service-project-heading">{project.heading}</h2>
@@ -89,8 +89,8 @@ const { project } = Astro.props as { project: ServiceProjectData };
       <figcaption>{project.review.attribution}</figcaption>
     </figure>
   )}
-  <a class="service-project__work-link" href={`/before-after/#${project.projectId}`}>See more completed work <span aria-hidden="true">↗</span></a>
-</article>
+  {project.ourWorkHref && <a class="service-project__work-link" href={project.ourWorkHref}>See more completed work <span aria-hidden="true">↗</span></a>}
+</article>}
 
 <style>
   .service-project {

@@ -3,10 +3,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import { absoluteUrl, business } from '../data/business';
 import { assertEvidenceIntegrity } from '../data/evidence';
-import { getProject, type Project } from '../data/projects';
-import { getReview, getReviewSourceUrl, reviewsPageIds, type Review } from '../data/reviews';
+import { getProject } from '../data/projects';
+import { getReview, getReviewSourceUrl, type Review } from '../data/reviews';
 import { servicePaths, type ServicePath } from '../data/servicePaths';
-import { projectIds } from '../data/projects';
+import { reviewPagePresentation, reviewsPageFeaturedId, reviewsPageIds } from '../data/evidenceCuration';
 
 assertEvidenceIntegrity();
 const title = "Client Reviews | Nora's Upholstery";
@@ -22,6 +22,7 @@ const structuredData = [{
   breadcrumb: { '@id': breadcrumbId },
 }];
 const serviceLabels: Record<ServicePath, string> = {
+  [servicePaths.dentalHub]: 'Explore dental upholstery',
   [servicePaths.chiropracticTable]: 'Explore chiropractic table upholstery',
   [servicePaths.medicalHub]: 'Explore medical & chiropractic upholstery',
   [servicePaths.clinicSeating]: 'Explore clinic seating',
@@ -31,20 +32,30 @@ const serviceLabels: Record<ServicePath, string> = {
   [servicePaths.diningChairs]: 'Explore dining chair upholstery',
   [servicePaths.residentialChair]: 'Explore chair upholstery',
   [servicePaths.restaurantSeating]: 'Explore restaurant seating',
+  [servicePaths.gymEquipment]: 'Explore gym equipment upholstery',
   [servicePaths.ophthalmic]: 'Explore ophthalmic upholstery',
   [servicePaths.physiotherapyTables]: 'Explore physiotherapy table upholstery',
 };
 const reviewArticles = reviewsPageIds.map((id) => {
   const review: Review = getReview(id);
-  const project: Project | undefined = review.relatedProjectIds?.[0]
-    ? getProject(review.relatedProjectIds[0]) : undefined;
-  const servicePath = review.relatedServicePaths?.[0] ?? project?.servicePaths[0];
+  const presentation = reviewPagePresentation[id];
+  const projectContexts = (presentation?.projectContextIds ?? []).map((projectId) => {
+    const project = getProject(projectId);
+    return {
+      label: project.summaryItems?.join(' · ') ?? project.summary ?? project.title,
+      href: `/before-after/#${project.id}`,
+    };
+  });
+  const context = review.contextLabel;
+  const servicePath = presentation?.servicePath;
   return {
     review,
-    context: review.contextLabel ?? project?.summaryItems?.join(' · ') ?? project?.summary,
-    projectHref: project?.id === projectIds.ophthalmic ? `/before-after/#${project.id}` : undefined,
+    context,
+    projectContexts,
     sourceUrl: getReviewSourceUrl(review),
-    sourceAction: review.sourceUrl ? 'View review on Google' : 'Visit Google profile',
+    sourceAction: review.sourceIdentity === 'google'
+      ? review.sourceUrl ? 'View review on Google' : 'Visit Google profile'
+      : 'View original source',
     servicePath,
     serviceLabel: servicePath ? serviceLabels[servicePath] : undefined,
   };
@@ -60,13 +71,16 @@ const reviewArticles = reviewsPageIds.map((id) => {
       <p class="reviews-hero__intro">Selected client experiences with Nora’s Upholstery, from clinic equipment to the furniture they use every day.</p>
     </header>
     <section class="review-library" aria-label="Selected client reviews">
-      {reviewArticles.map(({ review, context, projectHref, sourceUrl, sourceAction, servicePath, serviceLabel }) => (
-        <article class:list={['review-article', review.id === 'david-song' && 'review-article--featured']} aria-labelledby={`review-${review.id}`}>
+      {reviewArticles.map(({ review, context, projectContexts, sourceUrl, sourceAction, servicePath, serviceLabel }) => (
+        <article class:list={['review-article', review.id === reviewsPageFeaturedId && 'review-article--featured']} aria-labelledby={`review-${review.id}`}>
           <header class="review-article__metadata">
             <h2 id={`review-${review.id}`}>{review.reviewerDisplayName}</h2>
             <p class="review-article__source">{review.sourceLabel}</p>
             {review.rating && <p class="review-article__rating"><span aria-hidden="true">{'★'.repeat(review.rating)}</span><span class="visually-hidden">{review.rating} out of 5 stars</span></p>}
-            {context && <p class="review-article__context">{projectHref ? <a href={projectHref}>{context}<span aria-hidden="true"> ↗</span></a> : context}</p>}
+            {(context || projectContexts.length > 0) && <p class="review-article__context">
+              {context && <span>{context}</span>}
+              {projectContexts.map((project) => <a href={project.href}>{project.label}<span aria-hidden="true"> ↗</span></a>)}
+            </p>}
           </header>
           <blockquote class="review-article__quote"><p>{review.originalText}</p></blockquote>
           <div class="review-article__actions">

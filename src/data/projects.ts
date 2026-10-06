@@ -5,7 +5,6 @@ export const projectIds = {
   ophthalmic: 'ophthalmic-chairs-toronto',
 } as const;
 
-export type ProjectId = (typeof projectIds)[keyof typeof projectIds];
 export type ProjectImageRole = 'before' | 'after' | 'hero' | 'detail' | 'completed';
 
 export type ProjectFact = {
@@ -15,8 +14,7 @@ export type ProjectFact = {
   href?: string;
 };
 
-export type ProjectImage = {
-  role: ProjectImageRole;
+export type EvidenceImage = {
   src: string;
   srcset?: string;
   cardSrc?: string;
@@ -27,8 +25,18 @@ export type ProjectImage = {
   fit?: 'contain' | 'cover';
 };
 
+export type ProjectImage = EvidenceImage & { role: ProjectImageRole };
+
+export type OurWorkProjectPresentation = {
+  categoryLabel: string;
+  description: string;
+  factKeys: readonly string[];
+  layout: 'before-after';
+  serviceLink?: { path: ServicePath; label: string };
+};
+
 export type Project = {
-  id: ProjectId;
+  id: string;
   title: string;
   summary?: string;
   summaryItems?: readonly string[];
@@ -36,6 +44,7 @@ export type Project = {
   facts: readonly ProjectFact[];
   story?: readonly string[];
   images: readonly ProjectImage[];
+  ourWorkPresentation?: OurWorkProjectPresentation;
 };
 
 export const projects = [
@@ -54,6 +63,13 @@ export const projects = [
       { key: 'schedule', label: 'Schedule', value: 'Friday 6 AM to Saturday 6 AM' },
       { key: 'turnaround-table', label: 'Turnaround for this table', value: '24 hours' },
     ],
+    ourWorkPresentation: {
+      categoryLabel: 'Physiotherapy',
+      description: 'Ten SEERS 3 treatment tables were renewed one at a time for a Scarborough physiotherapy clinic.',
+      factKeys: ['equipment', 'quantity', 'location'],
+      layout: 'before-after',
+      serviceLink: { path: servicePaths.physiotherapyTables, label: 'Explore physiotherapy table upholstery' },
+    },
     images: [
       {
         role: 'hero',
@@ -109,6 +125,13 @@ export const projects = [
       { key: 'workshop-drop-off', label: 'Workshop drop off', value: 'Customer dismantled both chairs and brought them to Nora’s workshop' },
       { key: 'turnaround', label: 'Turnaround', value: '24 hours for both chairs' },
     ],
+    ourWorkPresentation: {
+      categoryLabel: 'Ophthalmic',
+      description: 'Two Midmark/Ritter ophthalmic chairs were renewed for a Toronto clinic in 24 hours.',
+      factKeys: ['equipment', 'quantity', 'turnaround'],
+      layout: 'before-after',
+      serviceLink: { path: servicePaths.ophthalmic, label: 'Explore ophthalmic upholstery' },
+    },
     images: [
       {
         role: 'before',
@@ -132,14 +155,25 @@ export const projects = [
   },
 ] as const satisfies readonly Project[];
 
-export function getProject(id: ProjectId): (typeof projects)[number] {
+export type ProjectId = (typeof projects)[number]['id'];
+
+export function getProject(id: ProjectId): Project {
   const project = projects.find((item) => item.id === id);
   if (!project) throw new Error(`Unknown project ID: ${id}`);
   return project;
 }
 
-export function getProjectImage(id: ProjectId, role: ProjectImageRole): (typeof projects)[number]['images'][number] {
-  const image = getProject(id).images.find((item) => item.role === role);
-  if (!image) throw new Error(`Project ${id} has no ${role} image`);
-  return image;
+export function getProjectImages(id: ProjectId, role?: ProjectImageRole): readonly ProjectImage[] {
+  const images = getProject(id).images;
+  return role ? images.filter((image) => image.role === role) : images;
+}
+
+export function getProjectImage(id: ProjectId, role: ProjectImageRole): ProjectImage {
+  const images = getProjectImages(id, role);
+  if (images.length !== 1) {
+    throw new Error(images.length
+      ? `Project ${id} has multiple ${role} images; select one explicitly`
+      : `Project ${id} has no ${role} image`);
+  }
+  return images[0];
 }

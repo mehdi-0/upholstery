@@ -1,5 +1,6 @@
 import { projectIds, type ProjectId } from './projects';
-import { servicePaths } from './servicePaths';
+import type { ReviewId } from './reviews';
+import { servicePaths, type ServicePath } from './servicePaths';
 
 export type ServiceImage = {
   src: string;
@@ -21,7 +22,7 @@ export type ServiceFaq = {
 };
 
 export type ServiceDetail = {
-  path: string;
+  path: ServicePath;
   title: string;
   description: string;
   heading: string;
@@ -29,7 +30,11 @@ export type ServiceDetail = {
   intro: string[];
   serviceTypes: string[];
   areas: string[];
-  projectId: ProjectId;
+  evidencePresentation?: {
+    // Ordered presentation selection; project.servicePaths remains the relationship source of truth.
+    featuredProjectIds: readonly ProjectId[];
+    featuredReviewId?: ReviewId;
+  };
   hero: ServiceHero;
   details: {
     heading: string;
@@ -70,7 +75,9 @@ export const physiotherapyService: ServiceDetail = {
     'Treatment table foam restoration',
   ],
   areas: ['Greater Toronto Area'],
-  projectId: projectIds.physiotherapy,
+  evidencePresentation: {
+    featuredProjectIds: [projectIds.physiotherapy],
+  },
   hero: {
     variant: 'project-image',
     role: 'hero',
@@ -140,7 +147,10 @@ export const ophthalmicService: ServiceDetail = {
     'Ophthalmic chair foam restoration',
   ],
   areas: ['Toronto', 'Greater Toronto Area'],
-  projectId: projectIds.ophthalmic,
+  evidencePresentation: {
+    featuredProjectIds: [projectIds.ophthalmic],
+    featuredReviewId: 'monica',
+  },
   hero: {
     variant: 'editorial',
     signals: ['Medical grade upholstery', 'Foam restoration'],
@@ -197,3 +207,5 @@ export const ophthalmicService: ServiceDetail = {
   },
   policyCopy: 'Pickup and delivery are available throughout the GTA. Pricing depends on location and project.',
 };
+
+export const serviceDetails = [physiotherapyService, ophthalmicService] as const satisfies readonly ServiceDetail[];

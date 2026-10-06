@@ -1,6 +1,7 @@
 // Canonical service destinations used by shared evidence relationships.
 export const servicePaths = {
   medicalHub: '/services/medical/',
+  dentalHub: '/services/dental/',
   chiropracticTable: '/services/medical/chiropractic-table-upholstery/',
   clinicSeating: '/services/medical/clinic-seating-upholstery/',
   dentalChair: '/services/dental/dental-chair-upholstery/',
@@ -9,6 +10,7 @@ export const servicePaths = {
   diningChairs: '/services/residential/dining-chair-upholstery/',
   residentialChair: '/services/residential/chair-upholstery/',
   restaurantSeating: '/services/commercial/restaurant-seating/',
+  gymEquipment: '/services/commercial/gym-equipment-upholstery/',
   physiotherapyTables: '/services/medical/physiotherapy-treatment-table-upholstery/',
   ophthalmic: '/services/medical/ophthalmic-upholstery/',
 } as const;
