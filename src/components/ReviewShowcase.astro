@@ -1,0 +1,299 @@
+---
+import ReviewArticle from './ReviewArticle.astro';
+import type { ProjectId } from '../data/projects';
+import type { Review } from '../data/reviews';
+import type { ServicePath } from '../data/servicePaths';
+
+type ReviewPresentation = {
+  review: Review;
+  context?: string;
+  projectContexts: readonly { projectId: ProjectId; label: string; href: string }[];
+  servicePath?: ServicePath;
+  serviceLabel?: string;
+};
+
+const { reviews } = Astro.props as { reviews: readonly ReviewPresentation[] };
+---
+
+{reviews.length > 0 && (
+  <section class="review-showcase" aria-label="More client experiences" data-review-showcase>
+    <div class="review-showcase__header">
+      <div>
+        <p class="eyebrow">Client experiences</p>
+        <h2>More client experiences</h2>
+      </div>
+      <div class="review-showcase__controls" data-review-controls hidden>
+        <button type="button" data-review-prev aria-label="Show previous reviews" aria-disabled="true">
+          <span aria-hidden="true">←</span><span class="review-showcase__control-label">Previous</span>
+        </button>
+        <p class="review-showcase__status" data-review-status hidden aria-live="polite" aria-atomic="true"></p>
+        <button type="button" data-review-next aria-label="Show next reviews" aria-disabled="false">
+          <span class="review-showcase__control-label">Next</span><span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </div>
+    <div class="review-showcase__rail" data-review-rail>
+      {reviews.map((item) => (
+        <ReviewArticle
+          review={item.review}
+          context={item.context}
+          projectContexts={item.projectContexts}
+          servicePath={item.servicePath}
+          serviceLabel={item.serviceLabel}
+        />
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .review-showcase { min-width: 0; }
+  .review-showcase[data-enhanced='true'] { contain: paint; }
+  .review-showcase__header { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin-bottom: .45rem; }
+  .review-showcase__header .eyebrow { margin: 0 0 .2rem; color: var(--saddle); font-size: .65rem; }
+  .review-showcase__header h2 { margin: 0; font-family: var(--serif); font-size: clamp(1.7rem, 2.6vw, 2.25rem); font-weight: 400; line-height: 1.1; }
+  .review-showcase__controls { display: flex; align-items: center; gap: .45rem; }
+  .review-showcase__controls[hidden], .review-showcase__status[hidden] { display: none; }
+  .review-showcase__controls button { display: inline-flex; min-width: 2.75rem; min-height: 2.75rem; align-items: center; justify-content: center; gap: .35rem; padding: .5rem .65rem; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); background: rgba(255,255,255,.35); font-size: .75rem; font-weight: 600; cursor: pointer; }
+  .review-showcase__controls button[aria-disabled='true'] { opacity: .45; cursor: default; }
+  .review-showcase__controls button:focus-visible, .review-showcase__rail:focus-visible { outline: 3px solid var(--brass); outline-offset: 3px; }
+  .review-showcase__controls button span[aria-hidden] { font-size: 1rem; }
+  .review-showcase__control-label { display: none; }
+  .review-showcase__status { min-width: 3.4rem; margin: 0; color: var(--ink); font-size: .75rem; font-variant-numeric: tabular-nums; text-align: center; }
+  .review-showcase__rail { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .review-showcase[data-enhanced='true'] .review-showcase__rail { display: flex; align-items: flex-start; gap: 1rem; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .review-showcase[data-enhanced='true'] .review-showcase__rail::-webkit-scrollbar { display: none; }
+  .review-showcase[data-enhanced='true'] .review-showcase__rail :global([data-review-item]) { flex: 0 0 100%; scroll-snap-align: start; }
+
+  @media (min-width: 821px) {
+    .review-showcase__rail { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(2rem, 4vw, 3.5rem); }
+    .review-showcase[data-enhanced='true'] .review-showcase__rail { gap: clamp(2rem, 4vw, 3.5rem); }
+    .review-showcase[data-enhanced='true'] .review-showcase__rail :global([data-review-item]) { flex-basis: calc((100% - clamp(2rem, 4vw, 3.5rem)) / 2); }
+    .review-showcase__controls { gap: .7rem; }
+    .review-showcase__controls button { min-width: auto; padding-inline: .8rem; }
+    .review-showcase__control-label { display: inline; }
+  }
+
+  @media (max-width: 359px) {
+    .review-showcase__header { align-items: flex-start; }
+    .review-showcase__header h2 { font-size: 1.55rem; }
+    .review-showcase__controls { gap: .2rem; }
+    .review-showcase__controls button { min-width: 2.75rem; padding-inline: .45rem; }
+  }
+</style>
+
+<script>
+  type ReviewShowcaseState = {
+    host: HTMLElement;
+    rail: HTMLElement;
+    cards: HTMLElement[];
+    controls: HTMLElement;
+    previous: HTMLButtonElement;
+    next: HTMLButtonElement;
+    status: HTMLElement;
+    visibleCount: number;
+    activeStart: number;
+    isEnhanced: boolean;
+    scrollTimer: number | undefined;
+    frame: number | undefined;
+    settleTimer: number | undefined;
+    resizeObserver?: ResizeObserver;
+    media: MediaQueryList;
+    reduceMotion: MediaQueryList;
+  };
+
+  const initialize = (host: HTMLElement): (() => void) => {
+    const rail = host.querySelector<HTMLElement>('[data-review-rail]');
+    const controls = host.querySelector<HTMLElement>('[data-review-controls]');
+    const previous = host.querySelector<HTMLButtonElement>('[data-review-prev]');
+    const next = host.querySelector<HTMLButtonElement>('[data-review-next]');
+    const status = host.querySelector<HTMLElement>('[data-review-status]');
+    const cards = rail ? Array.from(rail.querySelectorAll<HTMLElement>('[data-review-item]')) : [];
+    if (!rail || !controls || !previous || !next || !status || cards.length < 2) return () => {};
+
+    const media = window.matchMedia('(min-width: 821px)');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const state: ReviewShowcaseState = {
+      host, rail, cards, controls, previous, next, status,
+      visibleCount: media.matches ? 2 : 1,
+      activeStart: 0,
+      isEnhanced: cards.length > (media.matches ? 2 : 1),
+      scrollTimer: undefined,
+      frame: undefined,
+      settleTimer: undefined,
+      media,
+      reduceMotion,
+    };
+
+    const clampStart = (index: number) => Math.max(0, Math.min(cards.length - state.visibleCount, index));
+    const cardScrollLeft = (index: number) => {
+      const railLeft = rail.getBoundingClientRect().left;
+      return rail.scrollLeft + cards[index].getBoundingClientRect().left - railLeft;
+    };
+    const setButtonState = () => {
+      previous.setAttribute('aria-disabled', String(state.activeStart === 0));
+      next.setAttribute('aria-disabled', String(state.activeStart >= cards.length - state.visibleCount));
+    };
+    const getVisibleIndexes = () => {
+      const railRect = rail.getBoundingClientRect();
+      return cards.flatMap((card, index) => {
+        const rect = card.getBoundingClientRect();
+        return rect.right > railRect.left + 1 && rect.left < railRect.right - 1 ? [index] : [];
+      });
+    };
+    const setHeightToVisible = () => {
+      const visible = getVisibleIndexes();
+      const height = Math.max(...(visible.length ? visible : [state.activeStart]).map((index) => cards[index].offsetHeight));
+      if (height > 0) rail.style.height = `${height}px`;
+    };
+    const visibleRange = () => {
+      const first = state.activeStart + 1;
+      const last = Math.min(cards.length, state.activeStart + state.visibleCount);
+      return first === last ? `Review ${first} of ${cards.length}` : `Reviews ${first}–${last} of ${cards.length}`;
+    };
+    const syncAccessibility = () => {
+      if (!state.isEnhanced) {
+        cards.forEach((card) => { card.removeAttribute('inert'); card.removeAttribute('aria-hidden'); });
+        return;
+      }
+      cards.forEach((card, index) => {
+        const visible = index >= state.activeStart && index < state.activeStart + state.visibleCount;
+        if (!visible && card.contains(document.activeElement)) rail.focus({ preventScroll: true });
+        card.toggleAttribute('inert', !visible);
+        card.setAttribute('aria-hidden', String(!visible));
+      });
+      status.textContent = visibleRange();
+      setButtonState();
+      setHeightToVisible();
+    };
+    const nearestStart = () => {
+      const left = rail.getBoundingClientRect().left;
+      const cardIndex = cards.reduce((best, card, index) => {
+        const distance = Math.abs(card.getBoundingClientRect().left - left);
+        return distance < best.distance ? { index, distance } : best;
+      }, { index: 0, distance: Number.POSITIVE_INFINITY }).index;
+      return clampStart(cardIndex);
+    };
+    const settle = () => {
+      window.clearTimeout(state.scrollTimer);
+      state.activeStart = nearestStart();
+      syncAccessibility();
+    };
+    const scheduleSettle = () => {
+      window.clearTimeout(state.scrollTimer);
+      state.scrollTimer = window.setTimeout(settle, 140);
+    };
+    const moveTo = (index: number) => {
+      if (!state.isEnhanced) return;
+      const target = clampStart(index);
+      if (target === state.activeStart) return;
+      const focusedCard = cards.findIndex((card) => card.contains(document.activeElement));
+      if (focusedCard >= 0 && (focusedCard < target || focusedCard >= target + state.visibleCount)) {
+        rail.focus({ preventScroll: true });
+      }
+      state.activeStart = target;
+      setButtonState();
+      rail.scrollTo({
+        left: cardScrollLeft(target),
+        behavior: reduceMotion.matches ? 'auto' : 'smooth',
+      });
+      scheduleSettle();
+    };
+    const updateForWidth = () => {
+      const focusedCard = cards.findIndex((card) => card.contains(document.activeElement));
+      const wasEnhanced = state.isEnhanced;
+      state.visibleCount = media.matches ? 2 : 1;
+      const shouldEnhance = cards.length > state.visibleCount;
+      if (!shouldEnhance) {
+        state.isEnhanced = false;
+        state.activeStart = 0;
+        delete host.dataset.enhanced;
+        controls.hidden = true;
+        status.hidden = true;
+        rail.removeAttribute('role');
+        rail.removeAttribute('aria-label');
+        rail.removeAttribute('tabindex');
+        rail.style.removeProperty('height');
+        rail.scrollLeft = 0;
+        syncAccessibility();
+        return;
+      }
+
+      state.isEnhanced = true;
+      host.dataset.enhanced = 'true';
+      controls.hidden = false;
+      status.hidden = false;
+      rail.setAttribute('role', 'region');
+      rail.setAttribute('aria-label', 'Selected standard client reviews. Use the arrow keys to move between reviews.');
+      rail.tabIndex = 0;
+      state.activeStart = clampStart(focusedCard >= 0 ? focusedCard : (wasEnhanced ? nearestStart() : 0));
+      rail.scrollTo({ left: cardScrollLeft(state.activeStart), behavior: 'auto' });
+      syncAccessibility();
+    };
+    const updateHeightWhileScrolling = () => {
+      if (state.frame !== undefined) return;
+      state.frame = window.requestAnimationFrame(() => {
+        state.frame = undefined;
+        setHeightToVisible();
+      });
+    };
+
+    try {
+      if (state.isEnhanced) {
+        rail.setAttribute('role', 'region');
+        rail.setAttribute('aria-label', 'Selected standard client reviews. Use the arrow keys to move between reviews.');
+        rail.tabIndex = 0;
+        controls.hidden = false;
+        status.hidden = false;
+        host.dataset.enhanced = 'true';
+      }
+      state.resizeObserver = new ResizeObserver(() => {
+        if (state.settleTimer !== undefined) window.clearTimeout(state.settleTimer);
+        state.settleTimer = window.setTimeout(updateForWidth, 40);
+      });
+      state.resizeObserver.observe(rail);
+      cards.forEach((card) => state.resizeObserver?.observe(card));
+      state.media.addEventListener('change', updateForWidth);
+      rail.addEventListener('scroll', updateHeightWhileScrolling, { passive: true });
+      rail.addEventListener('scroll', scheduleSettle, { passive: true });
+      rail.addEventListener('scrollend', settle);
+      previous.addEventListener('click', () => moveTo(state.activeStart - 1));
+      next.addEventListener('click', () => moveTo(state.activeStart + 1));
+      rail.addEventListener('keydown', (event) => {
+        if (event.target !== rail) return;
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        if (event.key === 'Home') moveTo(0);
+        else if (event.key === 'End') moveTo(cards.length - state.visibleCount);
+        else moveTo(state.activeStart + (event.key === 'ArrowRight' ? 1 : -1));
+      });
+
+      const startIndex = state.isEnhanced ? clampStart(nearestStart()) : 0;
+      state.activeStart = startIndex;
+      rail.scrollLeft = cardScrollLeft(startIndex);
+      syncAccessibility();
+      return () => {
+        window.clearTimeout(state.scrollTimer);
+        window.clearTimeout(state.settleTimer);
+        if (state.frame !== undefined) window.cancelAnimationFrame(state.frame);
+        state.resizeObserver?.disconnect();
+      };
+    } catch (error) {
+      state.resizeObserver?.disconnect();
+      window.clearTimeout(state.scrollTimer);
+      window.clearTimeout(state.settleTimer);
+      cards.forEach((card) => { card.removeAttribute('inert'); card.removeAttribute('aria-hidden'); });
+      rail.removeAttribute('role');
+      rail.removeAttribute('aria-label');
+      rail.removeAttribute('tabindex');
+      rail.style.removeProperty('height');
+      controls.hidden = true;
+      status.hidden = true;
+      delete host.dataset.enhanced;
+      console.error('Review showcase enhancement failed; keeping the complete review list available.', error);
+      return () => {};
+    }
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-review-showcase]').forEach(initialize);
+</script>

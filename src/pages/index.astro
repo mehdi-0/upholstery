@@ -1,10 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { phoneHref } from '../data/business';
+import { business, phoneHref } from '../data/business';
+import { getReview, getReviewExcerpt, getReviewSourceUrl } from '../data/reviews';
+import { servicePaths } from '../data/servicePaths';
+import { homepageFeaturedReviewId } from '../data/evidenceCuration';
 
 const title = "Nora's Upholstery | Precision restoration across the GTA";
 const description = "Dental chair, medical, chiropractic, residential and commercial upholstery with careful patterning, durable materials and pickup across Richmond Hill and the Greater Toronto Area.";
-const googleProfileUrl = 'https://share.google/hH6pGfzI1YAUH9HLG';
+const davidReview = getReview(homepageFeaturedReviewId);
+const davidReviewExcerpt = getReviewExcerpt(davidReview, 'homepage');
+const davidReviewUrl = getReviewSourceUrl(davidReview) ?? business.googleProfileUrl;
 
 const services = [
   { number: '01', title: 'Dental', detail: 'Dental chairs and stools with weekend turnaround available.', href: '/services/dental' },
@@ -84,13 +89,13 @@ const process = [
           <p>Real feedback from clinics, homeowners and businesses that trusted us to renew their seating.</p>
         <div class="home-review__links">
           <a class="text-link" href="/testimonials">Read client reviews <span>↗</span></a>
-          <a class="text-link" href={googleProfileUrl} target="_blank" rel="noopener">Reviews on Google <span>↗</span></a>
+          <a class="text-link" href={servicePaths.chiropracticTable}>Explore chiropractic table upholstery <span>↗</span></a>
         </div>
       </div>
       <blockquote class="home-review__quote glass-dark">
-        <div class="home-review__source"><span class="home-review__google"><img src="/icons/google.svg" alt="" />Google review</span><span aria-label="5 out of 5 stars">★★★★★</span></div>
-        <p>“Awesome rates and beautiful workmanship for my chiropractic table. Great communication as well.”</p>
-        <footer><strong>Dr. David Song</strong><span>Chiropractic table restoration</span><a href={googleProfileUrl} target="_blank" rel="noopener">View on Google ↗</a></footer>
+        <div class="home-review__source"><span class="home-review__google"><img src="/icons/google.svg" alt="" />{davidReview.sourceLabel}</span></div>
+        <p>“{davidReviewExcerpt}”</p>
+        <footer><strong>{davidReview.reviewerDisplayName}</strong><span>{davidReview.contextLabel}</span><a href={davidReviewUrl} target="_blank" rel="noopener">View on Google ↗</a></footer>
       </blockquote>
     </div>
   </section>

@@ -1,3 +1,7 @@
+import { projectIds, type ProjectId } from './projects';
+import type { ReviewId } from './reviews';
+import { servicePaths, type ServicePath } from './servicePaths';
+
 export type ServiceImage = {
   src: string;
   srcset: string;
@@ -5,36 +9,20 @@ export type ServiceImage = {
   width: number;
   height: number;
   alt: string;
+  caption?: string;
 };
+
+export type ServiceHero =
+  | { variant: 'project-image'; role: 'hero' }
+  | { variant: 'editorial'; signals: readonly [string, string] };
 
 export type ServiceFaq = {
   question: string;
   answer: string;
 };
 
-export type CustomerReview = {
-  quote: string;
-  attribution: string;
-};
-
-export type ProjectFact = {
-  label: string;
-  value: string;
-  href?: string;
-};
-
-export type ServiceProject = {
-  heading: string;
-  summary: string;
-  facts: ProjectFact[];
-  story?: string[];
-  before: ServiceImage;
-  after: ServiceImage;
-  review?: CustomerReview;
-};
-
 export type ServiceDetail = {
-  path: string;
+  path: ServicePath;
   title: string;
   description: string;
   heading: string;
@@ -42,8 +30,12 @@ export type ServiceDetail = {
   intro: string[];
   serviceTypes: string[];
   areas: string[];
-  heroImage: ServiceImage;
-  hubImage: { src: string; alt: string };
+  evidencePresentation?: {
+    // Ordered presentation selection; project.servicePaths remains the relationship source of truth.
+    featuredProjectIds: readonly ProjectId[];
+    featuredReviewId?: ReviewId;
+  };
+  hero: ServiceHero;
   details: {
     heading: string;
     scopeHeading: string;
@@ -56,7 +48,6 @@ export type ServiceDetail = {
     pickupHeading: string;
     workflowCopy: string;
   };
-  project: ServiceProject;
   faqHeading: string;
   faq: ServiceFaq[];
   related: { label: string; href: string }[];
@@ -64,49 +55,11 @@ export type ServiceDetail = {
     heading: string;
     steps: string[];
   };
-};
-
-const responsiveSizes = '(max-width: 820px) calc(100vw - 2rem), (max-width: 1280px) 48vw, 596px';
-
-const beforeImage: ServiceImage = {
-  src: '/images/projects/physiotherapy-seers3-scarborough-before-960.webp',
-  srcset: [
-    '/images/projects/physiotherapy-seers3-scarborough-before-480.webp 480w',
-    '/images/projects/physiotherapy-seers3-scarborough-before-640.webp 640w',
-    '/images/projects/physiotherapy-seers3-scarborough-before-960.webp 960w',
-    '/images/projects/physiotherapy-seers3-scarborough-before-1493.webp 1493w',
-  ].join(', '),
-  sizes: responsiveSizes,
-  width: 1493,
-  height: 1600,
-  alt: 'Worn black upholstery with a taped, damaged face opening on a SEERS 3 treatment table before reupholstery.',
-};
-
-const physiotherapyHeroImage: ServiceImage = {
-  src: '/images/projects/physiotherapy-treatment-table-hero-original.jpg',
-  srcset: '/images/projects/physiotherapy-treatment-table-hero-original.jpg 640w',
-  sizes: responsiveSizes,
-  width: 640,
-  height: 480,
-  alt: 'Black physiotherapy treatment table with a face opening and electrotherapy equipment in a clinic.',
-};
-
-const afterImage: ServiceImage = {
-  src: '/images/projects/physiotherapy-seers3-scarborough-after-960.webp',
-  srcset: [
-    '/images/projects/physiotherapy-seers3-scarborough-after-480.webp 480w',
-    '/images/projects/physiotherapy-seers3-scarborough-after-640.webp 640w',
-    '/images/projects/physiotherapy-seers3-scarborough-after-960.webp 960w',
-    '/images/projects/physiotherapy-seers3-scarborough-after-1279.webp 1279w',
-  ].join(', '),
-  sizes: responsiveSizes,
-  width: 1279,
-  height: 1600,
-  alt: 'SEERS 3 treatment table with its padded sections upholstered in light spa green vinyl after restoration.',
+  policyCopy?: string;
 };
 
 export const physiotherapyService: ServiceDetail = {
-  path: '/services/medical/physiotherapy-treatment-table-upholstery/',
+  path: servicePaths.physiotherapyTables,
   title: "Physiotherapy & Treatment Table Upholstery | Nora's Upholstery",
   description: 'Physiotherapy and treatment table reupholstery across the GTA. Complete tables, individual sections, foam restoration and medical grade vinyl. Start with photos.',
   heading: 'Physiotherapy & Treatment Table Upholstery',
@@ -122,10 +75,12 @@ export const physiotherapyService: ServiceDetail = {
     'Treatment table foam restoration',
   ],
   areas: ['Greater Toronto Area'],
-  heroImage: physiotherapyHeroImage,
-  hubImage: {
-    src: '/images/projects/physiotherapy-seers3-scarborough-after-480.webp',
-    alt: 'SEERS 3 physiotherapy treatment table reupholstered in light spa green vinyl.',
+  evidencePresentation: {
+    featuredProjectIds: [projectIds.physiotherapy],
+  },
+  hero: {
+    variant: 'project-image',
+    role: 'hero',
   },
   details: {
     heading: 'What we can restore',
@@ -138,22 +93,6 @@ export const physiotherapyService: ServiceDetail = {
     foamCopy: 'Renewed or replaced where needed.',
     pickupHeading: 'Section pickup',
     workflowCopy: 'Where practical, upholstered sections can be collected while the frame stays at the clinic.',
-  },
-  project: {
-    heading: 'Ten treatment tables renewed for a Scarborough clinic',
-    summary: '10 SEERS 3 tables · Scarborough · One at a time',
-    facts: [
-      { label: 'Customer', value: 'Returning physiotherapy clinic' },
-      { label: 'Location', value: 'Scarborough, Ontario', href: '/service-areas/scarborough' },
-      { label: 'Equipment', value: 'SEERS 3 treatment tables' },
-      { label: 'Quantity', value: '10 tables, one at a time' },
-      { label: 'Work', value: 'Whole-table upholstery; foam renewed or repaired as needed' },
-      { label: 'Material', value: 'Light/spa green medical grade vinyl selected from Nora’s samples' },
-      { label: 'Schedule', value: 'Friday 6 AM to Saturday 6 AM' },
-      { label: 'Turnaround for this table', value: '24 hours' },
-    ],
-    before: beforeImage,
-    after: afterImage,
   },
   faqHeading: 'Physiotherapy table upholstery questions',
   faq: [
@@ -189,3 +128,84 @@ export const physiotherapyService: ServiceDetail = {
     ],
   },
 };
+
+export const ophthalmicService: ServiceDetail = {
+  path: servicePaths.ophthalmic,
+  title: 'Ophthalmic Chair Upholstery in the GTA | Nora’s Upholstery',
+  description: 'Professional upholstery for ophthalmic examination chairs, patient seating and stools across Toronto and the GTA. Medical grade materials, foam restoration and rush scheduling available.',
+  heading: 'Ophthalmic Upholstery',
+  eyebrow: 'Medical & Chiropractic',
+  intro: [
+    'Nora’s reupholsters ophthalmic examination chairs and other upholstered equipment used in eye care for clinics across the GTA.',
+    'Medical grade upholstery and foam restoration are available for worn or damaged patient and operator seating.',
+  ],
+  serviceTypes: [
+    'Ophthalmic upholstery',
+    'Ophthalmic examination chair upholstery',
+    'Patient and procedure chair upholstery',
+    'Operator seating and stool upholstery',
+    'Ophthalmic chair foam restoration',
+  ],
+  areas: ['Toronto', 'Greater Toronto Area'],
+  evidencePresentation: {
+    featuredProjectIds: [projectIds.ophthalmic],
+    featuredReviewId: 'monica',
+  },
+  hero: {
+    variant: 'editorial',
+    signals: ['Medical grade upholstery', 'Foam restoration'],
+  },
+  details: {
+    heading: 'What we can restore',
+    scopeHeading: 'Ophthalmic chairs & seating',
+    scopeCopy: 'Nora’s works across brands, models and configurations within upholstery scope.',
+    scopeItems: [
+      'Examination chairs',
+      'Patient and procedure chairs',
+      'Operator seating and stools',
+      'Other upholstered ophthalmic equipment',
+    ],
+    materialsHeading: 'Medical grade upholstery',
+    materialsCopy: 'Durable medical grade upholstery with colours available from Nora’s samples.',
+    foamHeading: 'Foam restoration',
+    foamCopy: 'Worn or damaged foam can be renewed or replaced where needed.',
+    pickupHeading: 'Photo assessment',
+    workflowCopy: 'Photos help Nora assess the upholstery approach and discuss scheduling.',
+  },
+  faqHeading: 'Ophthalmic upholstery questions',
+  faq: [
+    {
+      question: 'What ophthalmic equipment can you reupholster?',
+      answer: 'Nora’s can reupholster ophthalmic examination chairs, patient and procedure chairs, operator seating, stools and other upholstered equipment used in eye care across brands and models.',
+    },
+    {
+      question: 'Can you reupholster powered or automatic ophthalmic examination chairs?',
+      answer: 'Yes. Nora’s works on the upholstered and padded portions while preserving their fit and movement. Mechanical and electrical servicing is not included.',
+    },
+    {
+      question: 'Can damaged foam be restored when an ophthalmic chair is reupholstered?',
+      answer: 'Yes. Foam is assessed after the upholstery is removed and can be renewed or replaced in localized areas where needed. Full replacement can be completed when required.',
+    },
+    {
+      question: 'How quickly can an ophthalmic examination chair be reupholstered?',
+      answer: 'Turnaround depends on the equipment, materials and scheduling. Rush, overnight and weekend service may be available when arranged in advance. In the Toronto project, two Midmark/Ritter ophthalmic examination chairs were completed within 24 hours; that project timing is not a standard or guarantee.',
+    },
+  ],
+  related: [
+    { label: 'Medical & Chiropractic Upholstery', href: '/services/medical/' },
+    { label: 'Medical Exam Tables', href: '/services/medical/medical-exam-table-upholstery/' },
+    { label: 'Physiotherapy & Treatment Tables', href: '/services/medical/physiotherapy-treatment-table-upholstery/' },
+    { label: 'Clinic Seating', href: '/services/medical/clinic-seating-upholstery/' },
+  ],
+  gettingStarted: {
+    heading: 'Start with a few photos',
+    steps: [
+      'Send photos of the chair or equipment and damaged areas.',
+      'Nora reviews the upholstery, foam and material options.',
+      'Receive an estimate and arrange scheduling.',
+    ],
+  },
+  policyCopy: 'Pickup and delivery are available throughout the GTA. Pricing depends on location and project.',
+};
+
+export const serviceDetails = [physiotherapyService, ophthalmicService] as const satisfies readonly ServiceDetail[];
