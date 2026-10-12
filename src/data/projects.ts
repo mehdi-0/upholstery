@@ -139,7 +139,7 @@ export const projects = [
         srcset: '/images/projects/ophthalmic-queen-street-east-before-detail.jpg 1287w',
         width: 1287,
         height: 1716,
-        alt: 'Torn black upholstery and clear tape on an ophthalmic chair.',
+        alt: 'Close-up of black ophthalmic chair upholstery with clear tape before reupholstery.',
         caption: 'Damaged black upholstery and tape',
       },
       {

@@ -29,17 +29,21 @@ async function assertServiceLinksResolve(html, owner) {
   }
 }
 
-const [home, reviews, work, medical, physiotherapy, ophthalmic] = await Promise.all([
+const [home, reviews, work, medical, physiotherapy, ophthalmic, about, serviceAreas] = await Promise.all([
   route('index.html'),
   route('testimonials/index.html'),
   route('before-after/index.html'),
   route('services/medical/index.html'),
   route('services/medical/physiotherapy-treatment-table-upholstery/index.html'),
   route('services/medical/ophthalmic-upholstery/index.html'),
+  route('about/index.html'),
+  route('service-areas/index.html'),
 ]);
 
 assert.match(home, /Awesome rates and beautiful workmanship/);
 assert.match(home, /rel="canonical"/);
+assert.match(home, /property="og:image" content="https:\/\/norasupholstery\.ca\/logo-social\.jpg"/);
+assert.match(home, /name="twitter:image" content="https:\/\/norasupholstery\.ca\/logo-social\.jpg"/);
 assert.match(reviews, /Dr\. David Song/);
 assert.match(reviews, /Gabriel/);
 assert.match(reviews, /Monica/);
@@ -64,8 +68,13 @@ assert.doesNotMatch(reviews, /<astro-island\b/);
 assert.doesNotMatch(reviews, /"@type"\s*:\s*"(?:Review|AggregateRating)"/);
 
 assert.match(work, /data-work-carousel/);
-assert.equal((work.match(/data-carousel-slide role=/g) ?? []).length, 7, 'the rotating seven-image gallery remains curated');
-assert.equal((work.match(/data-compare style=/g) ?? []).length, 3, 'all three existing Before/After sliders remain');
+assert.match(work, /property="og:image" content="https:\/\/norasupholstery\.ca\/logo-social\.jpg"/);
+assert.equal((work.match(/data-carousel-slide role=/g) ?? []).length, 8, 'the gallery includes dialysis alongside the seven existing examples');
+assert.equal((work.match(/data-compare style=/g) ?? []).length, 4, 'the dialysis comparison and all three standalone sliders are rendered');
+assert.match(work, /Compare the dialysis chair before and after reupholstery/);
+assert.match(work, /src="\/images\/dialysis-chair-before\.webp"/);
+assert.match(work, /src="\/images\/dialysis-chair-after\.webp"/);
+assert.match(work, /srcset="\/images\/chiropractic-table-before-640\.webp 640w, \/images\/chiropractic-table-before-960\.webp 960w, \/images\/chiropractic-table-before-1350\.webp 1350w"/);
 assert.match(work, /id="physiotherapy-seers3-scarborough"/);
 assert.match(work, /id="ophthalmic-chairs-toronto"/);
 assert.ok(work.indexOf('Ten treatment tables renewed') < work.indexOf('Two ophthalmic chairs renewed'), 'structured project order remains intentional');
@@ -82,6 +91,25 @@ assert.match(physiotherapy, /physiotherapy-seers3-scarborough-after-960\.webp/);
 assert.match(ophthalmic, /ophthalmic-queen-street-east-before-detail\.jpg/);
 assert.match(ophthalmic, /ophthalmic-queen-street-east-after\.jpg/);
 assert.match(ophthalmic, /Amazing experience with Nora/);
+assert.match(about, /srcset="\/images\/about-workshop-640\.webp 640w, \/images\/about-workshop-1280\.webp 1280w"/);
+assert.match(about, /srcset="\/images\/about-materials-640\.webp 640w, \/images\/about-materials-1280\.webp 1280w"/);
+assert.match(serviceAreas, /srcset="\/images\/service-area-clinical-640\.webp 640w, \/images\/service-area-clinical-1280\.webp 1280w"/);
+assert.match(serviceAreas, /srcset="\/images\/service-area-delivery-640\.webp 640w, \/images\/service-area-delivery-1280\.webp 1280w"/);
+
+for (const file of [
+  'logo-social.jpg',
+  'images/chiropractic-table-before-640.webp',
+  'images/chiropractic-table-before-960.webp',
+  'images/chiropractic-table-before-1350.webp',
+  'images/about-workshop-640.webp',
+  'images/about-workshop-1280.webp',
+  'images/about-materials-640.webp',
+  'images/about-materials-1280.webp',
+  'images/service-area-clinical-640.webp',
+  'images/service-area-clinical-1280.webp',
+  'images/service-area-delivery-640.webp',
+  'images/service-area-delivery-1280.webp',
+]) await access(path.join(dist, file)).catch(() => assert.fail(`missing optimized image output: ${file}`));
 
 for (const [html, owner] of [[work, 'Our Work'], [reviews, 'Reviews'], [medical, 'Medical hub'], [physiotherapy, 'Physiotherapy'], [ophthalmic, 'Ophthalmic']]) {
   await assertServiceLinksResolve(html, owner);

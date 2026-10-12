@@ -15,6 +15,7 @@ export const ourWorkProjectIds = [
 
 export const ourWorkGalleryExampleIds = [
   'dental-operatory',
+  'dialysis-chair',
   'waiting-room-blue-chairs',
   'waiting-room-fireplace',
   'dining-chairs',

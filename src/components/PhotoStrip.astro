@@ -1,5 +1,5 @@
 ---
-type Photo = { src: string; label: string; note: string; alt: string; position?: string };
+type Photo = { src: string; label: string; note: string; alt: string; position?: string; srcset?: string; sizes?: string; width?: number; height?: number };
 const { photos, heading = 'Photo slots ready for your work' } = Astro.props as { photos: Photo[]; heading?: string };
 ---
 <section class="photo-strip" aria-label={heading} data-photo-strip>
@@ -22,7 +22,7 @@ const { photos, heading = 'Photo slots ready for your work' } = Astro.props as {
     {photos.map((photo, index) => (
       <figure class="photo-slot" role="group" aria-label={`${index + 1} of ${photos.length}: ${photo.label}`}>
         <div class="photo-slot__fallback" aria-hidden="true"><span>{photo.label}</span><small>{photo.note}</small></div>
-        <img src={photo.src} alt={photo.alt} loading="lazy" decoding="async" style={photo.position ? `object-position: ${photo.position}` : undefined} onerror="this.hidden=true" />
+        <img src={photo.src} srcset={photo.srcset} sizes={photo.sizes} width={photo.width} height={photo.height} alt={photo.alt} loading="lazy" decoding="async" style={photo.position ? `object-position: ${photo.position}` : undefined} onerror="this.hidden=true" />
         <figcaption>{photo.label}</figcaption>
       </figure>
     ))}
