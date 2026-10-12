@@ -55,7 +55,7 @@ export const projects = [
     servicePaths: [servicePaths.physiotherapyTables],
     facts: [
       { key: 'customer', label: 'Customer', value: 'Returning physiotherapy clinic' },
-      { key: 'location', label: 'Location', value: 'Scarborough, Ontario', href: '/service-areas/scarborough' },
+      { key: 'location', label: 'Location', value: 'Scarborough, Ontario', href: '/service-areas/scarborough/' },
       { key: 'equipment', label: 'Equipment', value: 'SEERS 3 treatment tables' },
       { key: 'quantity', label: 'Quantity', value: '10 tables, one at a time' },
       { key: 'work', label: 'Work', value: 'Upholstery for the whole table; foam renewed or repaired as needed' },
@@ -116,7 +116,7 @@ export const projects = [
     servicePaths: [servicePaths.ophthalmic],
     facts: [
       { key: 'customer', label: 'Customer', value: 'Ophthalmic clinic' },
-      { key: 'location', label: 'Location', value: 'Toronto, Ontario' },
+      { key: 'location', label: 'Location', value: 'Toronto, Ontario', href: '/service-areas/toronto/' },
       { key: 'equipment', label: 'Equipment', value: 'Midmark/Ritter automatic ophthalmic examination chairs' },
       { key: 'quantity', label: 'Quantity', value: '2 chairs' },
       { key: 'work', label: 'Work', value: 'Complete upholstery; foam renewed with localized replacement where needed' },

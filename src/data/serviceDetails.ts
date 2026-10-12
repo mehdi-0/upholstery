@@ -61,12 +61,12 @@ export type ServiceDetail = {
 export const physiotherapyService: ServiceDetail = {
   path: servicePaths.physiotherapyTables,
   title: "Physiotherapy & Treatment Table Upholstery | Nora's Upholstery",
-  description: 'Physiotherapy and treatment table reupholstery across the GTA. Complete tables, individual sections, foam restoration and medical grade vinyl. Start with photos.',
+  description: 'Physiotherapy and treatment table upholstery across the GTA. Complete tables, individual sections and foam restoration. Start with photos of the table and damaged areas.',
   heading: 'Physiotherapy & Treatment Table Upholstery',
   eyebrow: 'Medical & Chiropractic',
   intro: [
     'Nora’s reupholsters physiotherapy and treatment tables for clinics across the GTA, from complete tables to individual padded sections.',
-    'Medical grade antibacterial and antifungal vinyl is standard for this service.',
+    'Materials are selected for each table and clinic, with attention to durability, cleanability, colour and the clinic’s cleaning routine.',
   ],
   serviceTypes: [
     'Physiotherapy table upholstery',
@@ -87,8 +87,8 @@ export const physiotherapyService: ServiceDetail = {
     scopeHeading: 'Complete tables & individual sections',
     scopeCopy: 'All brands and models. Individual sections assessed as needed.',
     scopeItems: ['Headpieces', 'Chest and lumbar sections', 'Hand and arm sections', 'Other padded components'],
-    materialsHeading: 'Medical grade vinyl',
-    materialsCopy: 'Antibacterial and antifungal vinyl with colours available from Nora’s samples.',
+    materialsHeading: 'Choosing the right material',
+    materialsCopy: 'We consider the table, its use, durability, cleanability, colour and the clinic’s cleaning routine. Options depend on the project.',
     foamHeading: 'Foam restoration',
     foamCopy: 'Renewed or replaced where needed.',
     pickupHeading: 'Section pickup',
@@ -106,7 +106,7 @@ export const physiotherapyService: ServiceDetail = {
     },
     {
       question: 'What type of upholstery do you use for physiotherapy tables?',
-      answer: 'Medical grade antibacterial and antifungal vinyl is standard for this service. Choose from available samples and colours. Upholstery work does not include mechanical or electrical repairs.',
+      answer: 'Material is selected for the table and clinic, considering durability, cleanability, colour and the cleaning routine. Specific options depend on the project. Upholstery work does not include mechanical or electrical repairs.',
     },
     {
       question: 'How quickly can a physiotherapy table be reupholstered?',
@@ -132,12 +132,12 @@ export const physiotherapyService: ServiceDetail = {
 export const ophthalmicService: ServiceDetail = {
   path: servicePaths.ophthalmic,
   title: 'Ophthalmic Chair Upholstery in the GTA | Nora’s Upholstery',
-  description: 'Professional upholstery for ophthalmic examination chairs, patient seating and stools across Toronto and the GTA. Medical grade materials, foam restoration and rush scheduling available.',
+  description: 'Professional upholstery for ophthalmic examination chairs, patient seating and stools across Toronto and the GTA. Project-specific material options, foam restoration and rush scheduling available.',
   heading: 'Ophthalmic Upholstery',
   eyebrow: 'Medical & Chiropractic',
   intro: [
     'Nora’s reupholsters ophthalmic examination chairs and other upholstered equipment used in eye care for clinics across the GTA.',
-    'Medical grade upholstery and foam restoration are available for worn or damaged patient and operator seating.',
+    'Material choices are discussed for each chair and clinic. Foam restoration is available for worn or damaged patient and operator seating.',
   ],
   serviceTypes: [
     'Ophthalmic upholstery',
@@ -153,7 +153,7 @@ export const ophthalmicService: ServiceDetail = {
   },
   hero: {
     variant: 'editorial',
-    signals: ['Medical grade upholstery', 'Foam restoration'],
+    signals: ['Material options for clinical use', 'Foam restoration'],
   },
   details: {
     heading: 'What we can restore',
@@ -165,8 +165,8 @@ export const ophthalmicService: ServiceDetail = {
       'Operator seating and stools',
       'Other upholstered ophthalmic equipment',
     ],
-    materialsHeading: 'Medical grade upholstery',
-    materialsCopy: 'Durable medical grade upholstery with colours available from Nora’s samples.',
+    materialsHeading: 'Choosing a material',
+    materialsCopy: 'We consider the chair, durability, cleanability, colour and the clinic cleaning routine. Medical grade materials are available where appropriate, with options selected for each project.',
     foamHeading: 'Foam restoration',
     foamCopy: 'Worn or damaged foam can be renewed or replaced where needed.',
     pickupHeading: 'Photo assessment',

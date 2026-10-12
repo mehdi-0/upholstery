@@ -1,18 +1,13 @@
 ---
+import { serviceAreas } from '../data/serviceAreas';
+
 interface Props {
   serviceName: string;
   intro: string;
 }
 
 const { serviceName, intro } = Astro.props;
-const areas = [
-  { name: 'Richmond Hill', href: '/service-areas/richmond-hill/' },
-  { name: 'Markham', href: '/service-areas/markham/' },
-  { name: 'Vaughan', href: '/service-areas/vaughan/' },
-  { name: 'Scarborough', href: '/service-areas/scarborough/' },
-  { name: 'Toronto', href: '/service-areas/toronto/' },
-  { name: 'Other service areas', href: '/service-areas' },
-];
+const areas = serviceAreas.map((area) => ({ name: area.name, href: `/service-areas/${area.slug}/` }));
 ---
 
 <section class="service-area-links" aria-labelledby="service-area-links-heading">
@@ -23,6 +18,7 @@ const areas = [
   </div>
   <nav aria-label={`${serviceName} service areas`}>
     {areas.map((area) => <a href={area.href}>{area.name}<span aria-hidden="true">↗</span></a>)}
+    <a href="/service-areas">Other service areas<span aria-hidden="true">↗</span></a>
   </nav>
 </section>
 

@@ -2,18 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PhotoStrip from '../components/PhotoStrip.astro';
 import { serviceAreas } from '../data/serviceAreas';
-import { phoneDisplay, phoneHref, serviceSchema } from '../data/business';
+import { phoneDisplay, phoneHref, serviceCoverage, serviceSchema } from '../data/business';
 
 const title = "Service Areas | Nora's Upholstery | GTA & Southern Ontario";
 const description = "Upholstery service across Toronto, York Region, Peel Region and Southern Ontario, based in Richmond Hill.";
 
 const linkedAreas = new Map(serviceAreas.map((area) => [area.name, area.slug]));
-const regularAreas = [
-  "Richmond Hill", "Toronto", "Vaughan", "Brampton", "King City", "Markham",
-  "Mississauga", "Newmarket", "Aurora", "Oak Ridges", "Scarborough", "Woodbridge"
-];
-
-const extendedAreas = ["Hamilton", "Burlington", "Oakville", "Guelph", "Kitchener and Waterloo", "Barrie", "Niagara Region"];
+const regularAreas = serviceCoverage.regularLocations.map((location) => location.name);
+const extendedAreas = serviceCoverage.extendedLocations;
 const siteOrigin = (Astro.site ?? Astro.url).origin;
 const structuredData = serviceSchema(siteOrigin, {
   name: 'Upholstery service across the GTA and Southern Ontario',
@@ -36,7 +32,7 @@ const structuredData = serviceSchema(siteOrigin, {
       <article class="glass service-area-card service-area-card--regular">
         <div class="service-area-card__heading">
           <div><p class="eyebrow">Close to home</p><h2>Regular service areas</h2></div>
-          <p>These are some of the communities we serve most often. Nearby areas are welcome too.</p>
+          <p>These are some of the communities we serve most often. Detailed pages are available for selected service areas, and our coverage extends beyond those pages.</p>
         </div>
       <div class="areas-grid">
         {regularAreas.map((area) => linkedAreas.has(area)
@@ -53,7 +49,7 @@ const structuredData = serviceSchema(siteOrigin, {
 
       <article class="glass-dark service-area-card service-area-card--extended">
         <div class="service-area-card__heading">
-          <div><p class="eyebrow">Beyond the GTA</p><h2>Southern Ontario projects are welcome.</h2></div>
+          <div><p class="eyebrow">Beyond the GTA</p><h2>{serviceCoverage.extendedRegion} projects are welcome.</h2></div>
           <p>We often travel beyond our regular service area. Tell us where you are and what you would like restored, and we’ll plan the most practical way to complete the work.</p>
         </div>
         <ul class="extended-areas" aria-label="Southern Ontario areas served">
@@ -74,8 +70,8 @@ const structuredData = serviceSchema(siteOrigin, {
   .service-area-hero h1 em { color: var(--saddle); font-weight: 400; }
   .service-area-hero > .shell > p:last-child { max-width: 760px; margin: 0; color: rgba(8,30,39,.68); font-size: clamp(.98rem, 1.5vw, 1.15rem); }
   .service-area-content { padding: 0 0 clamp(3.5rem, 6vw, 5.5rem); }
-  .service-area-stack { display: grid; gap: .85rem; }
-  .service-area-card { padding: clamp(1.5rem, 3vw, 2.75rem); border-radius: var(--radius); }
+  .service-area-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: .85rem; }
+  .service-area-card { min-width: 0; padding: clamp(1.5rem, 3vw, 2.75rem); border-radius: var(--radius); }
   .service-area-card__heading { display: grid; grid-template-columns: 1.1fr .75fr; gap: 1.5rem 6vw; align-items: end; margin-bottom: 2rem; }
   .service-area-card__heading .eyebrow { color: var(--saddle); }
   .service-area-card__heading h2 { max-width: 720px; margin: 0; font-family: var(--serif); font-size: clamp(2.8rem, 5vw, 5rem); font-weight: 400; line-height: .9; }
