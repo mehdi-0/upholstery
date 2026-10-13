@@ -59,7 +59,11 @@ try {
   assert.deepEqual(curation.reviewPagePresentation.monica.servicePath, servicePath.ophthalmic);
   assert.deepEqual(curation.reviewPagePresentation['irit-frid'].servicePath, servicePath.diningChairs);
   assert.deepEqual(curation.reviewPagePresentation['david-song'].servicePath, servicePath.chiropracticTable);
-  assert.equal(curation.ourWorkGalleryExampleIds.length, 7);
+  assert.equal(curation.ourWorkGalleryExampleIds.length, 8);
+  assert.equal(curation.ourWorkGalleryExampleIds[1], 'dialysis-chair');
+  const dialysis = galleryData.getGalleryExample('dialysis-chair');
+  assert.equal(dialysis.image.src, '/images/dialysis-chair-after.webp');
+  assert.equal(dialysis.comparison.before.src, '/images/dialysis-chair-before.webp');
   assert.equal(serviceData.ophthalmicService.evidencePresentation.featuredReviewId, 'monica');
   assert.equal(evidence.getServiceFeaturedProjectId(serviceData.physiotherapyService), 'physiotherapy-seers3-scarborough');
 
@@ -192,7 +196,7 @@ try {
   const publicRoot = path.join(root, 'public');
   const evidenceImages = [
     ...projectData.projects.flatMap((project) => project.images),
-    ...galleryData.galleryExamples.map((example) => example.image),
+    ...galleryData.galleryExamples.flatMap((example) => [example.image, ...(example.comparison ? [example.comparison.before] : [])]),
   ];
   const assetPaths = new Set();
   for (const image of evidenceImages) {

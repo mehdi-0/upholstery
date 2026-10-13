@@ -16,7 +16,7 @@ const {
 const currentPath = Astro.url.pathname;
 const siteOrigin = (Astro.site ?? Astro.url).origin;
 const canonicalUrl = Astro.site ? new URL(currentPath, Astro.site).toString() : undefined;
-const socialImage = new URL(seoImage ?? '/logo.png', siteOrigin).toString();
+const socialImage = new URL(seoImage ?? '/logo-social.jpg', siteOrigin).toString();
 const pageStructuredData = Array.isArray(structuredData) ? structuredData : [structuredData];
 const schemaGraph = [
   ...(includeSiteSchema ? [organizationSchema(siteOrigin), websiteSchema(siteOrigin)] : []),

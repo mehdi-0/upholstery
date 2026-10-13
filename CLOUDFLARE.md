@@ -6,11 +6,10 @@
 - Node version: `22.12.0` or newer (Astro 7 requires Node `^20.19.0` or `>=22.12.0`)
 - Package manager: npm (`package-lock.json` is the deployment lockfile)
 
-The site URL used for canonicals, structured data and the generated sitemap is selected
-in this order: `PUBLIC_SITE_URL`, then Cloudflare's `CF_PAGES_URL`, then
-`https://norasupholstery.ca`. Cloudflare provides `CF_PAGES_URL` to preview builds.
-Set `PUBLIC_SITE_URL` to the full `https://` custom domain in production so metadata
-uses the public domain. The generated `robots.txt` sitemap entry uses the same URL.
+The canonical site URL for metadata, structured data, the generated sitemap and the
+`robots.txt` sitemap entry is fixed to `https://norasupholstery.ca` in `astro.config.mjs`.
+Do not use Cloudflare's `CF_PAGES_URL` as the site origin: it can be a deployment-specific
+`pages.dev` URL, which must not appear in public canonical metadata or sitemap URLs.
 
 ## Estimate form
 
@@ -26,7 +25,7 @@ the function, and Resend delivers the message.
 
 ## Domain and metadata
 
-Preview deployments use `CF_PAGES_URL` for canonical links, social metadata, structured
-data, the sitemap and the sitemap URL in `robots.txt`. When the custom domain is
-connected, set `PUBLIC_SITE_URL` to its full `https://` address and those URLs will
-update automatically. No page code needs to change.
+Production builds and preview deployments both emit the public `norasupholstery.ca`
+origin in canonical links, social metadata, structured data, the sitemap and the
+sitemap URL in `robots.txt`. A preview deployment does not switch those URLs to its
+`pages.dev` address.

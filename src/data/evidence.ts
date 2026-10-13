@@ -254,6 +254,10 @@ export function getEvidenceIntegrityErrors(input: EvidenceIntegrityInput): strin
 
   for (const example of input.galleryExamples) {
     checkImageMetadata(example.image, `Gallery example ${example.id}`, errors);
+    if (example.comparison) {
+      checkImageMetadata(example.comparison.before, `Gallery example ${example.id} before image`, errors);
+      if (!example.comparison.label.trim()) errors.push(`Gallery example ${example.id} has no comparison label`);
+    }
     if (example.serviceLink && !knownPaths.has(example.serviceLink.path)) {
       errors.push(`Gallery example ${example.id} references unknown service ${example.serviceLink.path}`);
     }

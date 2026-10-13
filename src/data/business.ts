@@ -9,19 +9,33 @@ export const business = {
   homeLocality: 'Richmond Hill',
   homeRegion: 'Ontario',
   country: 'CA',
-  areasServed: [
-    'Greater Toronto Area',
-    'Southern Ontario',
-    'Richmond Hill',
-    'Toronto',
-    'Vaughan',
-    'Scarborough',
-    'Woodbridge',
-    'Markham',
-    'Brampton',
-    'Mississauga',
-  ],
 } as const;
+
+export const serviceCoverage = {
+  regularRegions: ['Greater Toronto Area'],
+  regularLocations: [
+    { name: 'Richmond Hill', schemaType: 'City' },
+    { name: 'Toronto', schemaType: 'City' },
+    { name: 'Vaughan', schemaType: 'City' },
+    { name: 'Brampton', schemaType: 'City' },
+    { name: 'King City', schemaType: 'Place' },
+    { name: 'Markham', schemaType: 'City' },
+    { name: 'Mississauga', schemaType: 'City' },
+    { name: 'Newmarket', schemaType: 'Place' },
+    { name: 'Aurora', schemaType: 'Place' },
+    { name: 'Oak Ridges', schemaType: 'Place' },
+    { name: 'Scarborough', schemaType: 'Place' },
+    { name: 'Woodbridge', schemaType: 'Place' },
+  ],
+  extendedRegion: 'Southern Ontario',
+  extendedLocations: ['Hamilton', 'Burlington', 'Oakville', 'Guelph', 'Kitchener and Waterloo', 'Barrie', 'Niagara Region'],
+} as const;
+
+const schemaAreasServed = [
+  ...serviceCoverage.regularRegions.map((name) => ({ '@type': 'AdministrativeArea', name })),
+  { '@type': 'AdministrativeArea', name: serviceCoverage.extendedRegion },
+  ...serviceCoverage.regularLocations.map(({ name, schemaType }) => ({ '@type': schemaType, name })),
+];
 
 const phoneDigits = business.telephone.replace(/\D/g, '');
 export const phoneDisplay = business.telephone.replace(/^\+1-/, '');
@@ -73,10 +87,7 @@ export const organizationSchema = (origin: string) => ({
       addressCountry: business.country,
     },
   },
-  areaServed: business.areasServed.map((name) => ({
-    '@type': name.includes('Area') || name.includes('Ontario') ? 'AdministrativeArea' : 'City',
-    name,
-  })),
+  areaServed: schemaAreasServed,
   sameAs: [
     business.googleProfileUrl,
     business.instagramUrl,
@@ -101,8 +112,7 @@ export const serviceSchema = (origin: string, service: ServiceSchemaInput) => ({
   url: absoluteUrl(origin, service.path),
   provider: { '@id': absoluteUrl(origin, '/#organization') },
   serviceType: service.serviceTypes,
-  areaServed: (service.areas ?? business.areasServed).map((name) => ({
-    '@type': name.includes('Area') || name.includes('Ontario') ? 'AdministrativeArea' : 'City',
-    name,
-  })),
+  areaServed: (service.areas ?? schemaAreasServed.map(({ name }) => name)).map((name) =>
+    schemaAreasServed.find((area) => area.name === name) ?? { '@type': 'Place', name },
+  ),
 });

@@ -1,6 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import LocalProjectExample from '../../components/LocalProjectExample.astro';
 import { serviceAreas, type ServiceArea } from '../../data/serviceAreas';
+import { getProject, projectIds } from '../../data/projects';
 import { absoluteUrl, phoneDisplay, phoneHref, serviceSchema } from '../../data/business';
 
 export function getStaticPaths() {
@@ -8,6 +10,12 @@ export function getStaticPaths() {
 }
 
 const { area } = Astro.props as { area: ServiceArea };
+const localProjectId = area.slug === 'scarborough'
+  ? projectIds.physiotherapy
+  : area.slug === 'toronto'
+    ? projectIds.ophthalmic
+    : undefined;
+const localProject = localProjectId ? getProject(localProjectId) : undefined;
 const canonicalPath = `/service-areas/${area.slug}/`;
 const siteOrigin = (Astro.site ?? Astro.url).origin;
 const otherAreas = serviceAreas.filter((item) => item.slug !== area.slug);
@@ -75,6 +83,16 @@ const structuredData = [
     </div>
   </section>
 
+  {localProject && <section class="content-section location-project-section">
+    <div class="shell">
+      <div class="section-heading section-heading--compact">
+        <div><p class="eyebrow">Local clinic project</p><h2 class="display-heading">Clinical upholstery,<br /><em>renewed with care.</em></h2></div>
+        <p>See an example of clinic upholstery work completed in {area.name}, then explore the related service and project photos.</p>
+      </div>
+      <LocalProjectExample project={localProject} />
+    </div>
+  </section>}
+
   <section class="content-section location-detail-section">
     <div class="shell location-detail-grid">
       <div class="glass location-coverage">
@@ -111,6 +129,7 @@ const structuredData = [
   .location-intro { max-width: 680px; color: rgba(8,30,39,.7); font-size: clamp(1rem, 1.5vw, 1.18rem); }
   .location-actions { display: flex; align-items: center; gap: 1.25rem; margin-top: 1.2rem; }
   .location-content { padding-top: clamp(2rem, 3vw, 2.75rem); padding-bottom: clamp(2.25rem, 3vw, 3rem); }
+  .location-project-section { padding-top: 0; padding-bottom: clamp(2.25rem, 3vw, 3rem); }
   .location-content .display-heading { font-size: clamp(2.8rem, 4.6vw, 4.8rem); }
   .location-service-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .9rem; }
   .location-service-grid .individual-service__card { display: flex; min-width: 0; min-height: 220px; flex-direction: column; padding: 1rem; transform: none; }
@@ -141,6 +160,7 @@ const structuredData = [
     .location-actions, .location-service-grid, .location-detail-grid, .location-links { display: grid; grid-template-columns: 1fr; }
     .location-actions .button { width: 100%; }
     .location-content { padding-top: 2rem; padding-bottom: 2.25rem; }
+    .location-project-section { padding-bottom: 2.25rem; }
     .location-detail-section { padding-bottom: 2.5rem; }
     .location-service-grid .individual-service__card { min-height: 0; padding: 1rem; }
     .location-service-grid .individual-service__card h2 { margin-top: .9rem; font-size: 2.2rem; }
