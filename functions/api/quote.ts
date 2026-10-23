@@ -6,13 +6,95 @@ interface Env {
 }
 
 const allowedImageTypes = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
+const imageExtensions = new Map([
+  ['image/jpeg', 'jpg'],
+  ['image/png', 'png'],
+  ['image/webp', 'webp'],
+  ['image/heic', 'heic'],
+  ['image/heif', 'heif'],
+]);
 const maxPhotoCount = 5;
 const maxPhotoSize = 5 * 1024 * 1024;
 const maxRequestSize = 28 * 1024 * 1024;
+const maxFormEntries = 20;
 const maxLengths = { name: 100, email: 254, phone: 30, city: 100, item: 160, message: 3000, referralSource: 100, referralDetail: 160 } as const;
 const referralSources = new Set(['Google', 'Instagram', 'Facebook', 'Referral', 'Returning customer', 'ODA or OCA magazine/advertisement', 'Other']);
 const referralSourcesWithDetail = new Set(['Referral', 'Other']);
-type TurnstileVerification = { success: boolean; action?: string };
+const allowedFormFields = new Set([
+  'name', 'email', 'phone', 'city', 'item', 'message', 'referralSource', 'referralDetail',
+  'website', 'cf-turnstile-response', 'photos',
+]);
+const securityHeaders = {
+  'Cache-Control': 'no-store',
+  'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'",
+  'Referrer-Policy': 'no-referrer',
+  'Strict-Transport-Security': 'max-age=31536000',
+  'X-Content-Type-Options': 'nosniff',
+};
+type TurnstileVerification = { success: boolean; action?: string; hostname?: string };
+type ResendAttachment = { filename: string; content_type: string; photo: File };
+
+const readFormDataWithLimit = async (request: Request) => {
+  const contentType = request.headers.get('content-type') || '';
+  if (!/^multipart\/form-data\s*;/i.test(contentType)) throw new Error('Expected multipart form data');
+  if (!request.body) throw new Error('Missing request body');
+
+  const reader = request.body.getReader();
+  let bytesRead = 0;
+  let tooLarge = false;
+  const boundedBody = new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      try {
+        const { done, value } = await reader.read();
+        if (done) {
+          controller.close();
+          return;
+        }
+        if (bytesRead + value.byteLength > maxRequestSize) {
+          tooLarge = true;
+          try {
+            await reader.cancel('Request body exceeds the allowed size');
+          } catch {
+            // The response is rejected below even if cancellation is unavailable.
+          }
+          controller.error(new Error('Request body exceeds the allowed size'));
+          return;
+        }
+        bytesRead += value.byteLength;
+        controller.enqueue(value);
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+    async cancel(reason) {
+      await reader.cancel(reason);
+    },
+  });
+
+  try {
+    const body = new Response(boundedBody, { headers: { 'Content-Type': contentType } });
+    return { form: await body.formData(), tooLarge: false };
+  } catch (error) {
+    if (tooLarge) return { form: null, tooLarge: true };
+    throw error;
+  }
+};
+
+const hasExpectedFormShape = (form: FormData) => {
+  const seenFields = new Set<string>();
+  let entryCount = 0;
+  for (const [name, value] of form.entries()) {
+    entryCount += 1;
+    if (entryCount > maxFormEntries || !allowedFormFields.has(name)) return false;
+    if (name === 'photos') {
+      if (!(value instanceof File)) return false;
+      continue;
+    }
+    if (value instanceof File || seenFields.has(name)) return false;
+    seenFields.add(name);
+  }
+  return true;
+};
 
 const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => ({
   '&': '&amp;',
@@ -22,22 +104,47 @@ const escapeHtml = (value: string) => value.replace(/[&<>"']/g, (character) => (
   "'": '&#039;',
 }[character] || character));
 
-const toBase64 = (buffer: ArrayBuffer) => {
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  const chunkSize = 0x8000;
-  for (let offset = 0; offset < bytes.length; offset += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(offset, offset + chunkSize));
-  }
-  return btoa(binary);
+// Serialize attachments on demand instead of retaining Base64 strings and a second
+// full JSON copy. A multiple of three prevents padding between Base64 chunks.
+const createEmailBody = (message: Record<string, unknown>, attachments: ResendAttachment[]) => {
+  const encoder = new TextEncoder();
+  const chunkSize = 24 * 1024;
+  const chunks = (async function* () {
+    yield encoder.encode(`${JSON.stringify(message).slice(0, -1)},"attachments":[`);
+    for (const [index, attachment] of attachments.entries()) {
+      const metadata = JSON.stringify({ filename: attachment.filename, content_type: attachment.content_type });
+      yield encoder.encode(`${index ? ',' : ''}${metadata.slice(0, -1)},"content":"`);
+      for (let offset = 0; offset < attachment.photo.size; offset += chunkSize) {
+        const bytes = new Uint8Array(await attachment.photo.slice(offset, offset + chunkSize).arrayBuffer());
+        yield encoder.encode(btoa(String.fromCharCode(...bytes)));
+      }
+      yield encoder.encode('"}');
+    }
+    yield encoder.encode(']}');
+  })();
+
+  return new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      try {
+        const { done, value } = await chunks.next();
+        if (done) controller.close();
+        else controller.enqueue(value);
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+    async cancel() {
+      await chunks.return(undefined);
+    },
+  }, { highWaterMark: 0 });
 };
 
-const hasValidImageSignature = async (photo: File) => {
+const hasValidImageSignature = async (photo: File, contentType: string) => {
   const bytes = new Uint8Array(await photo.slice(0, 16).arrayBuffer());
-  if (photo.type === 'image/jpeg') return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
-  if (photo.type === 'image/png') return bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 && bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a;
-  if (photo.type === 'image/webp') return String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP';
-  if (photo.type === 'image/heic' || photo.type === 'image/heif') {
+  if (contentType === 'image/jpeg') return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  if (contentType === 'image/png') return bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 && bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a;
+  if (contentType === 'image/webp') return String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF' && String.fromCharCode(...bytes.slice(8, 12)) === 'WEBP';
+  if (contentType === 'image/heic' || contentType === 'image/heif') {
     const box = String.fromCharCode(...bytes.slice(4, 12));
     return box.startsWith('ftyp') && ['heic', 'heix', 'hevc', 'hevx', 'mif1', 'msf1'].includes(box.slice(4));
   }
@@ -45,30 +152,43 @@ const hasValidImageSignature = async (photo: File) => {
 };
 
 const wantsJson = (request: Request) => request.headers.get('accept')?.includes('application/json') ?? false;
-const responseHeaders = { 'Cache-Control': 'no-store' };
+const redirect = (location: URL) => new Response(null, {
+  status: 303,
+  headers: { ...securityHeaders, Location: location.toString() },
+});
 const fail = (request: Request, error: string, code: string, status: number) => {
-  if (wantsJson(request)) return Response.json({ error }, { status, headers: responseHeaders });
+  if (wantsJson(request)) return Response.json({ error }, { status, headers: securityHeaders });
   const location = new URL('/contact', request.url);
   location.searchParams.set('error', code);
   location.hash = 'estimate-form';
-  return Response.redirect(location, 303);
+  return redirect(location);
 };
 const succeed = (request: Request) => {
-  if (wantsJson(request)) return Response.json({ ok: true }, { headers: responseHeaders });
-  return Response.redirect(new URL('/contact?sent=1#estimate-form', request.url), 303);
+  if (wantsJson(request)) return Response.json({ ok: true }, { headers: securityHeaders });
+  return redirect(new URL('/contact?sent=1#estimate-form', request.url));
 };
 
 export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
-  const contentLength = Number(request.headers.get('content-length') || 0);
-  if (contentLength > maxRequestSize) {
+  const contentLengthHeader = request.headers.get('content-length');
+  const contentLength = contentLengthHeader ? Number(contentLengthHeader) : Number.NaN;
+  if (Number.isFinite(contentLength) && contentLength > maxRequestSize) {
     return fail(request, 'The upload is too large. Choose up to five photos under 5 MB each.', 'large', 413);
   }
 
   let form: FormData;
   try {
-    form = await request.formData();
+    const parsed = await readFormDataWithLimit(request);
+    if (parsed.tooLarge) {
+      return fail(request, 'The upload is too large. Choose up to five photos under 5 MB each.', 'large', 413);
+    }
+    if (!parsed.form) throw new Error('Could not read form data');
+    form = parsed.form;
   } catch {
     return fail(request, 'We could not read this request. Please try again.', 'send', 400);
+  }
+
+  if (!hasExpectedFormShape(form)) {
+    return fail(request, 'This request contains unexpected form fields. Please reload the page and try again.', 'invalid', 400);
   }
 
   // Quietly accept bot submissions caught by the hidden field.
@@ -121,20 +241,32 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: verificationData,
+      signal: AbortSignal.timeout(15_000),
     });
     const verification = await verificationResponse.json() as TurnstileVerification;
-    if (!verificationResponse.ok || !verification.success || verification.action !== 'estimate_request') {
+    const expectedHostname = new URL(request.url).hostname.toLowerCase();
+    if (
+      !verificationResponse.ok ||
+      !verification.success ||
+      verification.action !== 'estimate_request' ||
+      !verification.hostname ||
+      verification.hostname.toLowerCase() !== expectedHostname
+    ) {
       return fail(request, 'Please complete the security check and try again.', 'verification', 400);
     }
   } catch {
     return fail(request, 'We could not verify the security check. Please try again in a moment.', 'unavailable', 503);
   }
 
-  const photos = form.getAll('photos').filter((value): value is File => value instanceof File && value.size > 0);
-  if (photos.length > maxPhotoCount || photos.some((photo) => photo.size > maxPhotoSize || !allowedImageTypes.has(photo.type))) {
+  const photoValues = form.getAll('photos');
+  if (photoValues.length > maxPhotoCount || photoValues.some((value) => !(value instanceof File))) {
     return fail(request, 'Upload up to 5 supported photos, each under 5 MB.', 'files', 400);
   }
-  if ((await Promise.all(photos.map(hasValidImageSignature))).some((valid) => !valid)) {
+  const photos = (photoValues as File[]).filter((photo) => photo.size > 0);
+  if (photos.some((photo) => photo.size > maxPhotoSize || !allowedImageTypes.has(photo.type.toLowerCase()))) {
+    return fail(request, 'Upload up to 5 supported photos, each under 5 MB.', 'files', 400);
+  }
+  if ((await Promise.all(photos.map((photo) => hasValidImageSignature(photo, photo.type.toLowerCase())))).some((valid) => !valid)) {
     return fail(request, 'One or more files do not appear to be valid JPG, PNG, WebP, HEIC or HEIF images.', 'files', 400);
   }
 
@@ -143,10 +275,17 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
   }
 
   try {
-    const attachments = await Promise.all(photos.map(async (photo) => ({
-      filename: photo.name || 'project-photo',
-      content: toBase64(await photo.arrayBuffer()),
-    })));
+    const attachments: ResendAttachment[] = [];
+    for (const [index, photo] of photos.entries()) {
+      const contentType = photo.type.toLowerCase();
+      const extension = imageExtensions.get(contentType);
+      if (!extension) return fail(request, 'Upload up to 5 supported photos, each under 5 MB.', 'files', 400);
+      attachments.push({
+        filename: `project-photo-${index + 1}.${extension}`,
+        content_type: contentType,
+        photo,
+      });
+    }
     const safe = Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, escapeHtml(value)])) as typeof fields;
     const submittedAt = new Date().toISOString();
     const submittedAtDisplay = new Intl.DateTimeFormat('en-CA', {
@@ -167,11 +306,12 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
         'Content-Type': 'application/json',
         'Idempotency-Key': crypto.randomUUID(),
       },
-      body: JSON.stringify({
+      signal: AbortSignal.timeout(20_000),
+      body: createEmailBody({
         from: env.QUOTE_FROM_EMAIL,
         to: [env.QUOTE_TO_EMAIL],
         reply_to: email,
-        subject: `New upholstery request from ${name}`,
+        subject: `New upholstery request from ${name.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()}`,
         html: `
           <div style="margin:0;padding:32px 16px;background:#f7f3eb;color:#102f3d;font-family:Arial,Helvetica,sans-serif">
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:640px;margin:0 auto;border-collapse:separate;border-spacing:0;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 30px rgba(16,47,61,.10)">
@@ -220,8 +360,7 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
           </div>
         `,
         text: `New upholstery request\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\nCity: ${city}\nItem or project: ${item}${referralSource ? `\nHow they found us: ${referralSource}${referralDetail ? ` — ${referralDetail}` : ''}` : ''}\n\nProject details:\n${message}\n\nReceived ${submittedAtDisplay}. ${photos.length} photo${photos.length === 1 ? '' : 's'} attached.`,
-        attachments,
-      }),
+      }, attachments),
     });
     if (!upstream.ok) {
       console.error('Resend rejected quote request', upstream.status, await upstream.text());
@@ -235,6 +374,11 @@ export const onRequestPost: PagesFunction<Env> = async ({ request, env }) => {
 };
 
 export const onRequest: PagesFunction<Env> = async (context) => {
-  if (context.request.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: { Allow: 'POST' } });
+  if (context.request.method !== 'POST') {
+    return new Response('Method not allowed', {
+      status: 405,
+      headers: { ...securityHeaders, Allow: 'POST' },
+    });
+  }
   return onRequestPost(context);
 };

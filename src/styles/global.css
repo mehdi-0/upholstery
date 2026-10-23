@@ -106,10 +106,10 @@ button { color: inherit; }
 .desktop-subnav__trigger { display: flex; align-items: center; gap: .25rem; }
 .desktop-subnav__trigger button { display: grid; width: 1.3rem; height: 1.3rem; place-items: center; border: 0; padding: 0; background: transparent; cursor: pointer; }
 .desktop-subnav__trigger i, .mobile-subnav__row i { width: .42rem; height: .42rem; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .2s ease; }
-.desktop-subnav.is-open .desktop-subnav__trigger i, .desktop-subnav:focus-within .desktop-subnav__trigger i { transform: translateY(1px) rotate(225deg); }
+.desktop-subnav.is-open .desktop-subnav__trigger i { transform: translateY(1px) rotate(225deg); }
 .desktop-subnav__menu { position: absolute; top: calc(100% + 1rem); left: 50%; display: grid; width: 250px; padding: .55rem; border: 1px solid rgba(255,255,255,.72); border-radius: 1.15rem; opacity: 0; visibility: hidden; background: rgba(247,243,235,.9); box-shadow: 0 22px 55px rgba(5,21,27,.18); -webkit-backdrop-filter: blur(24px) saturate(1.3); backdrop-filter: blur(24px) saturate(1.3); transform: translate(-50%, -.45rem); transition: opacity .2s ease, visibility .2s ease, transform .2s ease; }
 .desktop-subnav__menu::before { content: ''; position: absolute; right: 0; bottom: 100%; left: 0; height: 1.1rem; }
-.desktop-subnav:hover .desktop-subnav__menu, .desktop-subnav:focus-within .desktop-subnav__menu, .desktop-subnav.is-open .desktop-subnav__menu { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+.desktop-subnav.is-open .desktop-subnav__menu { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
 .desktop-nav .desktop-subnav__menu a { display: flex; align-items: center; justify-content: space-between; padding: .7rem .75rem; border-radius: .75rem; }
 .desktop-nav .desktop-subnav__menu a::after { display: none; }
 .desktop-subnav__menu a:hover { background: rgba(255,255,255,.62); }
@@ -204,7 +204,7 @@ button { color: inherit; }
 .section-heading > p { max-width: 320px; margin: 0 0 .5rem; color: rgba(8,30,39,.65); }
 .section-heading--compact { margin-bottom: clamp(1.75rem, 2.5vw, 2.5rem); }
 .project-stage { position: relative; }
-.compare { position: relative; width: 100%; height: clamp(430px, 52vw, 650px); max-width: 1120px; margin-inline: auto; border-radius: var(--radius); background: var(--ink); overflow: hidden; }
+.compare { --position: 50%; position: relative; width: 100%; height: clamp(430px, 52vw, 650px); max-width: 1120px; margin-inline: auto; border-radius: var(--radius); background: var(--ink); overflow: hidden; }
 .compare > img, .compare__after img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .compare__after { position: absolute; inset: 0; width: 100%; overflow: hidden; clip-path: inset(0 0 0 var(--position)); }
 .compare__after img { width: 100%; max-width: none; }

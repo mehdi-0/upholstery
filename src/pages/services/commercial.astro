@@ -35,7 +35,7 @@ const categories = [
     <div class="individual-service__grid individual-service__grid--commercial">
       {categories.map(category => (
         <article class="individual-service__card glass">
-          <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" onerror="this.hidden=true" /></div>
+          <div class="individual-service__media"><div><span>{category.photo}</span><small>Photo slot</small></div><img src={category.image} alt={category.alt} loading="lazy" data-hide-on-error /></div>
           <div class="individual-service__body"><span>{category.number}</span><h2>{category.title}</h2><p>{category.copy}</p><ul>{category.examples.map(example => <li>{example}</li>)}</ul>{category.number === '01' && <a class="individual-service__detail-link" href="/services/commercial/restaurant-seating"><span>Explore restaurant seating</span><span aria-hidden="true">→</span></a>}{category.href && <a class="individual-service__detail-link" href={category.href}><span>{category.linkLabel}</span><span aria-hidden="true">→</span></a>}</div>
         </article>
       ))}

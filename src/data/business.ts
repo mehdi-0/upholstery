@@ -71,6 +71,7 @@ export const organizationSchema = (origin: string) => ({
   '@type': 'Organization',
   '@id': absoluteUrl(origin, '/#organization'),
   name: business.name,
+  description: "Upholstery restoration for dental, medical, residential and commercial furniture and equipment across the Greater Toronto Area and Southern Ontario. Based in Richmond Hill, with experience since 1989.",
   url: absoluteUrl(origin, '/'),
   logo: {
     '@type': 'ImageObject',

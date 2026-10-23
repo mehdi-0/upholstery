@@ -5,12 +5,12 @@
   "private": true,
   "packageManager": "npm@10.9.0",
   "scripts": {
-    "dev": "astro dev --host 0.0.0.0",
+    "dev": "astro dev --host 127.0.0.1",
     "prebuild": "node scripts/verify-evidence.mjs",
     "build": "astro build",
     "postbuild": "node scripts/verify-evidence-build.mjs",
     "test:evidence": "node scripts/verify-evidence.mjs",
-    "preview": "astro preview --host 0.0.0.0",
+    "preview": "astro preview --host 127.0.0.1",
     "astro": "astro"
   },
   "dependencies": {

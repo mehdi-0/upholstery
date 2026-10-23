@@ -13,9 +13,6 @@ const formMessages: Record<string, string> = {
   unavailable: 'The contact form is temporarily unavailable. Please call, email or message us on WhatsApp.',
   send: 'We could not send your request. Please try again or use one of the contact options.',
 };
-const formWasSent = Astro.url.searchParams.get('sent') === '1';
-const formError = Astro.url.searchParams.get('error') || '';
-const initialFormStatus = formMessages[formError] || '';
 ---
 <BaseLayout {title} {description} bodyClass="contact-page">
   {turnstileSiteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
@@ -61,7 +58,7 @@ const initialFormStatus = formMessages[formError] || '';
 
       <div class="contact-form-card">
         <div class="optional-form-heading"><p class="eyebrow">Request an estimate</p><p>Send your contact details and project description, with photos if you have them.</p></div>
-        <div class="form-confirmation" data-form-confirmation role="status" aria-live="polite" tabindex="-1" hidden={!formWasSent}>
+        <div class="form-confirmation" data-form-confirmation role="status" aria-live="polite" tabindex="-1" hidden>
           <strong>Estimate request sent</strong>
           <span>Thank you — your project details have been sent. We’ll be in touch soon.</span>
         </div>
@@ -78,7 +75,7 @@ const initialFormStatus = formMessages[formError] || '';
           commit their values.
           Photo uploads are limited to five files and 5 MB per file.
         -->
-        <form class="quote-form" id="estimate-form" method="POST" action="/api/quote" enctype="multipart/form-data" data-quote-form>
+        <form class="quote-form" id="estimate-form" method="POST" action="/api/quote" enctype="multipart/form-data" data-quote-form data-form-messages={JSON.stringify(formMessages)}>
           <label>Full name<input name="name" autocomplete="name" maxlength="100" required /></label>
           <label>Email address<input type="email" name="email" autocomplete="email" maxlength="254" required /></label>
           <label>Phone number<input type="tel" name="phone" autocomplete="tel" inputmode="tel" maxlength="30" required /></label>
@@ -108,7 +105,7 @@ const initialFormStatus = formMessages[formError] || '';
             {turnstileSiteKey && <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-action="estimate_request" data-theme="light" data-appearance="interaction-only"></div>}
             <div class="form-submit__actions">
               <button class="button button--dark" type="submit">Send estimate request</button>
-              <p class:list={{ 'is-success': formWasSent, 'is-error': Boolean(formError) }} data-form-status role="status" aria-live="polite" tabindex="-1">{initialFormStatus}</p>
+              <p data-form-status role="status" aria-live="polite" tabindex="-1"></p>
             </div>
           </div>
         </form>
@@ -116,7 +113,7 @@ const initialFormStatus = formMessages[formError] || '';
     </div>
   </section>
 
-  <script is:inline>
+  <script>
     const form = document.querySelector('[data-quote-form]');
     const input = document.querySelector('[data-photo-input]');
     const referralSource = document.querySelector('[data-referral-source]');
@@ -134,6 +131,25 @@ const initialFormStatus = formMessages[formError] || '';
       status.classList.toggle('is-error', state === 'error');
       status.classList.toggle('is-success', state === 'success');
     };
+    const redirectMessages: Record<string, string> = {};
+    try {
+      Object.assign(redirectMessages, JSON.parse(form?.dataset.formMessages || '{}'));
+    } catch {}
+    const redirectParams = new URLSearchParams(window.location.search);
+    if (redirectParams.get('sent') === '1') {
+      if (formConfirmation) {
+        formConfirmation.hidden = false;
+        formConfirmation.focus({ preventScroll: true });
+      }
+      showStatus('', 'success');
+    } else {
+      const redirectError = redirectParams.get('error');
+      const redirectMessage = redirectError ? redirectMessages[redirectError] : '';
+      if (typeof redirectMessage === 'string' && redirectMessage) {
+        showStatus(redirectMessage, 'error');
+        status?.focus({ preventScroll: true });
+      }
+    }
     input?.addEventListener('change', () => {
       const files = Array.from(input.files || []);
       if (files.length > maxPhotos || files.some((file) => file.size > maxPhotoSize || !allowedTypes.has(file.type))) {

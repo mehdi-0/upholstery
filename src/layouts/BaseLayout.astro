@@ -8,7 +8,7 @@ const {
   description = "Precision upholstery for clinics, homes and hospitality across the Greater Toronto Area.",
   seoImage,
   seoImageAlt = "Nora's Upholstery logo",
-  includeSiteSchema = false,
+  includeSiteSchema = true,
   structuredData = [],
   bodyClass = '',
 } = Astro.props;
@@ -18,10 +18,23 @@ const siteOrigin = (Astro.site ?? Astro.url).origin;
 const canonicalUrl = Astro.site ? new URL(currentPath, Astro.site).toString() : undefined;
 const socialImage = new URL(seoImage ?? '/logo-social.jpg', siteOrigin).toString();
 const pageStructuredData = Array.isArray(structuredData) ? structuredData : [structuredData];
-const schemaGraph = [
+const schemaGraphItems = [
   ...(includeSiteSchema ? [organizationSchema(siteOrigin), websiteSchema(siteOrigin)] : []),
   ...pageStructuredData,
 ];
+const schemaGraphById = new Map<string, unknown>();
+const schemaGraphWithoutId: unknown[] = [];
+for (const item of schemaGraphItems) {
+  const id = item && typeof item === 'object' && '@id' in item && typeof item['@id'] === 'string'
+    ? item['@id']
+    : undefined;
+  if (id) {
+    if (!schemaGraphById.has(id)) schemaGraphById.set(id, item);
+  } else {
+    schemaGraphWithoutId.push(item);
+  }
+}
+const schemaGraph = [...schemaGraphById.values(), ...schemaGraphWithoutId];
 const googleProfileUrl = business.googleProfileUrl;
 const instagramUrl = business.instagramUrl;
 const facebookUrl = business.facebookUrl;
@@ -188,7 +201,12 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
       <a href="/contact#estimate-form"><span>Get estimate</span><small>Send project details</small></a>
     </div>
 
-    <script is:inline>
+    <script>
+      document.addEventListener('error', (event) => {
+        const image = event.target;
+        if (image instanceof HTMLImageElement && image.hasAttribute('data-hide-on-error')) image.hidden = true;
+      }, true);
+
       const header = document.querySelector('[data-header]');
       const progress = document.querySelector('[data-scroll-progress]');
       const menu = document.querySelector('[data-mobile-menu]');
@@ -205,6 +223,7 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
       const mobileServicesToggle = document.querySelector('[data-mobile-services-toggle]');
       const inertLayers = [header, mainContent, siteFooter, mobileActions, travelContact].filter(Boolean);
       let returnFocus = openButton;
+      let desktopServicesHovering = false;
 
       const getMenuFocusable = () => {
         if (!menu) return [];
@@ -243,12 +262,34 @@ const isActive = (href: string) => href === '/' ? currentPath === '/' : currentP
       window.matchMedia('(min-width: 821px)').addEventListener?.('change', (event) => {
         if (event.matches && !menu?.hidden) setMenu(false);
       });
-      desktopServicesToggle?.addEventListener('click', () => setDesktopServices(desktopServicesToggle.getAttribute('aria-expanded') !== 'true'));
+      desktopSubnav?.addEventListener('pointerenter', (event) => {
+        if (event.pointerType === 'mouse') {
+          desktopServicesHovering = true;
+          setDesktopServices(true);
+        }
+      });
+      desktopSubnav?.addEventListener('pointerleave', (event) => {
+        if (event.pointerType === 'mouse') {
+          desktopServicesHovering = false;
+          if (!desktopSubnav.contains(document.activeElement)) setDesktopServices(false);
+        }
+      });
+      desktopServicesToggle?.addEventListener('click', () => {
+        if (desktopServicesHovering) {
+          desktopServicesHovering = false;
+          setDesktopServices(true);
+          return;
+        }
+        setDesktopServices(desktopServicesToggle.getAttribute('aria-expanded') !== 'true');
+      });
       mobileServicesToggle?.addEventListener('click', () => setMobileServices(mobileServicesToggle.getAttribute('aria-expanded') !== 'true'));
       document.addEventListener('click', (event) => { if (!desktopSubnav?.contains(event.target)) setDesktopServices(false); });
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
+          const focusInDesktopServices = desktopSubnav?.contains(document.activeElement) ?? false;
+          desktopServicesHovering = false;
           setDesktopServices(false);
+          if (focusInDesktopServices) desktopServicesToggle?.focus({ preventScroll: true });
           setMobileServices(false);
           if (!menu?.hidden) {
             event.preventDefault();
