@@ -1,13 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceLinks from '../../components/ServiceLinks.astro';
+import { serviceFamilies } from '../../data/serviceFamilies';
 const title = "Upholstery Services in the GTA | Nora's Upholstery";
 const description = "Dental chair, medical, chiropractic, residential and commercial upholstery across Richmond Hill, the GTA and Southern Ontario by request.";
-const cards = [
-  { href: '/services/dental', number: '01', name: 'Dental', image: '/images/service-dental-v2.webp', blurb: 'Dental chairs, dentist chairs and dental assistant stools, with weekend rush service available.', action: 'View dental services' },
-  { href: '/services/medical', number: '02', name: 'Medical & Chiropractic', image: '/images/service-medical-v2.webp', blurb: 'Exam and treatment tables, chiropractic tables, eye care chairs and clinic seating.', action: 'View medical services' },
-  { href: '/services/residential', number: '03', name: 'Residential & Outdoor', image: '/images/service-residential.webp', blurb: 'Sofas, dining chairs, outdoor cushions and boat seating, including selected marine projects.', action: 'View residential services' },
-  { href: '/services/commercial', number: '04', name: 'Commercial', image: '/images/service-commercial.webp', blurb: 'Restaurants, gyms, bowling centres, hospitality and other specialty venue seating.', action: 'View commercial services' },
-];
 ---
 <BaseLayout {title} {description}>
   <section class="services-page shell pt-28 md:pt-32 pb-14">
@@ -18,19 +14,29 @@ const cards = [
     </header>
 
     <div class="service-image-grid">
-      {cards.map(c => (
-        <a href={c.href} class="service-image-card" aria-label={`${c.action}: services, materials and examples`}>
-          <img src={c.image} alt="" loading="lazy" />
-          <span class="service-image-card__wash" aria-hidden="true"></span>
-          <div class="service-image-card__glass">
-            <span>{c.number}</span>
-            <h2>{c.name}</h2>
-            <p>{c.blurb}</p>
-            <span class="service-image-card__tap">Tap to see services, materials and examples</span>
-            <strong><span>{c.action}</span><i aria-hidden="true">→</i></strong>
-          </div>
-        </a>
+      {serviceFamilies.map(family => (
+        <article class="service-overview-family" aria-labelledby={`overview-family-${family.id}`}>
+          <a href={family.href} class="service-image-card" aria-labelledby={`overview-family-${family.id} overview-explore-${family.id}`}>
+            <img src={family.image} alt="" loading="lazy" />
+            <span class="service-image-card__wash" aria-hidden="true"></span>
+            <div class="service-image-card__glass">
+              <span>{family.number}</span>
+              <h2 id={`overview-family-${family.id}`}>{family.name}</h2>
+              <p>{family.description}</p>
+              <strong><span id={`overview-explore-${family.id}`}>Explore the family</span><i aria-hidden="true">→</i></strong>
+            </div>
+          </a>
+          <div class="service-overview-family__links"><ServiceLinks services={family.services} columns /></div>
+        </article>
       ))}
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .service-overview-family { min-width: 0; border-radius: 1.6rem; background: rgba(255,255,255,.3); }
+  .service-overview-family__links { container-type: inline-size; padding: .85rem; }
+  @media (max-width: 820px) {
+    .service-overview-family .service-image-card { min-height: 320px; max-height: none; }
+  }
+</style>

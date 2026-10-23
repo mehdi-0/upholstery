@@ -12,9 +12,11 @@ site. Images are static assets: `/images/example.webp` is served from
 2. If the image uses the same path everywhere, replacing the file in `public/`
    keeps those references intact. Check every use first; one asset can appear on
    several pages.
-3. If the image has responsive variants, replace or create the complete variant
-   set and update its `srcset` and `sizes` together. Replacing only the fallback
-   file can leave older variants in use.
+3. If the image has responsive variants, inspect its `src`, every candidate in
+   `srcset`, and its `sizes` in the owning page or data record. Replace or
+   regenerate the complete responsive variant set and update `srcset` and
+   `sizes` together. Replacing only the fallback can leave older derivatives
+   in use; replacing only a derivative can leave the default `src` outdated.
 4. Keep original photographs outside `public/` (for example, in the ignored
    `local-assets/` folder). Only publish browser-ready versions.
 5. Update descriptive alt text and any visible caption in the same place as the
@@ -93,19 +95,31 @@ variants above.
 
 ### Our Work
 
-The rotating gallery contains eight examples. The Dialysis entry is a
-before/after comparison, so it uses both files shown below.
+The rotating gallery contains eight examples. In the table, **fallback image**
+is the file supplied by the image's `src` attribute. **Responsive WebP
+derivatives** are the smaller `srcset` candidates selected by the browser when
+they suit the rendered size and device. For most entries, the fallback WebP is
+also the largest candidate in `srcset`. Restaurant seating keeps its JPEG as
+the fallback and has one responsive WebP derivative. The Dialysis entry is a
+before/after comparison, so it has a fallback and responsive derivatives for
+both photographs.
 
-| Gallery example | Image files |
-| --- | --- |
-| Dental operatory | `images/gallery-dental-operatory.webp` |
-| Dialysis chair | `images/dialysis-chair-before.webp`, `images/dialysis-chair-after.webp` |
-| Clinic waiting chairs | `images/gallery-waiting-room-blue-chairs.webp` |
-| Clinic chairs by a fireplace | `images/gallery-waiting-room-fireplace.webp` |
-| Dining chairs | `images/gallery-dining-chairs.webp` |
-| Residential chair | `images/gallery-residential-chair.webp` |
-| Restaurant seating | `images/gallery-restaurant-seating.jpg` |
-| Restaurant bench | `images/gallery-restaurant-bench.webp` |
+| Gallery example | Fallback image (`src`) | Responsive WebP derivatives (`srcset`) |
+| --- | --- | --- |
+| Dental operatory | `images/gallery-dental-operatory.webp` | `images/gallery-dental-operatory-480.webp`, `images/gallery-dental-operatory-960.webp` |
+| Dialysis chair, before | `images/dialysis-chair-before.webp` | `images/dialysis-chair-before-480.webp`, `images/dialysis-chair-before-960.webp` |
+| Dialysis chair, after | `images/dialysis-chair-after.webp` | `images/dialysis-chair-after-480.webp`, `images/dialysis-chair-after-960.webp` |
+| Clinic waiting chairs | `images/gallery-waiting-room-blue-chairs.webp` | `images/gallery-waiting-room-blue-chairs-480.webp`, `images/gallery-waiting-room-blue-chairs-960.webp` |
+| Clinic chairs by a fireplace | `images/gallery-waiting-room-fireplace.webp` | `images/gallery-waiting-room-fireplace-480.webp`, `images/gallery-waiting-room-fireplace-960.webp` |
+| Dining chairs | `images/gallery-dining-chairs.webp` | `images/gallery-dining-chairs-480.webp`, `images/gallery-dining-chairs-960.webp` |
+| Residential chair | `images/gallery-residential-chair.webp` | `images/gallery-residential-chair-480.webp`, `images/gallery-residential-chair-960.webp` |
+| Restaurant seating | `images/gallery-restaurant-seating.jpg` | `images/gallery-restaurant-seating-480.webp` |
+| Restaurant bench | `images/gallery-restaurant-bench.webp` | `images/gallery-restaurant-bench-480.webp`, `images/gallery-restaurant-bench-960.webp` |
+
+These eight examples use 17 responsive WebP derivative files. Their source
+records, including each width descriptor and fallback, are in
+`src/data/galleryExamples.ts`. Keep this inventory aligned with that data and
+the files in `public/images/` when the gallery changes.
 
 The standalone comparisons below remain separate from the rotating gallery:
 

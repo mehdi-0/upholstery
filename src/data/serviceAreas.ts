@@ -1,3 +1,5 @@
+import { servicePaths } from './servicePaths';
+
 export type ServiceArea = {
   slug: string;
   name: string;
@@ -21,7 +23,7 @@ export const serviceAreas: ServiceArea[] = [
     localNote: 'Richmond Hill is our home base. Pickup and delivery are assessed from the project size, access requirements and timing rather than a visit to a fixed street address.',
     coverage: ['Richmond Hill', 'Oak Ridges', 'Langstaff', 'Elgin Mills', 'Jefferson'],
     popularServices: [
-      { title: 'Dental chair upholstery', text: 'Dental chairs and stools restored with cleanable materials and careful fit.', href: '/services/dental' },
+      { title: 'Dental chair upholstery', text: 'Dental chairs and stools restored with cleanable materials and careful fit.', href: servicePaths.dentalChair },
       { title: 'Medical & chiropractic', text: 'Exam tables, treatment beds, stools and waiting room seating.', href: '/services/medical' },
       { title: 'Residential upholstery', text: 'Dining chairs, cushions, ottomans, armchairs and sofas.', href: '/services/residential' },
       { title: 'Commercial upholstery', text: 'Restaurant, gym, reception and hospitality seating for regular use.', href: '/services/commercial' },
@@ -37,7 +39,7 @@ export const serviceAreas: ServiceArea[] = [
     localNote: 'We serve neighbourhoods across the City of Toronto for clinical, commercial and residential upholstery projects. The communities listed below are examples, not service boundaries.',
     coverage: ['North York', 'Scarborough', 'Etobicoke', 'Downtown Toronto', 'Midtown Toronto'],
     popularServices: [
-      { title: 'Dental chair upholstery', text: 'Durable, cleanable finishes for dental chairs and operator seating.', href: '/services/dental' },
+      { title: 'Dental chair upholstery', text: 'Durable, cleanable finishes for dental chairs and operator seating.', href: servicePaths.dentalChair },
       { title: 'Medical & chiropractic', text: 'Exam tables, treatment seating, chiropractic tables and clinic stools.', href: '/services/medical' },
       { title: 'Residential upholstery', text: 'Thoughtful renewal for chairs, cushions, sofas and statement pieces.', href: '/services/residential' },
       { title: 'Commercial upholstery', text: 'Restaurant banquettes, gym equipment, reception seating and other frequently used pieces.', href: '/services/commercial' },
@@ -53,7 +55,7 @@ export const serviceAreas: ServiceArea[] = [
     localNote: 'We serve communities throughout the City of Vaughan for clinical, commercial and residential upholstery projects. The communities listed below are examples, not service boundaries.',
     coverage: ['Thornhill', 'Maple', 'Woodbridge', 'Concord', 'Kleinburg'],
     popularServices: [
-      { title: 'Dental chair upholstery', text: 'Precise upholstery for dental chairs and stools with cleanable materials.', href: '/services/dental' },
+      { title: 'Dental chair upholstery', text: 'Precise upholstery for dental chairs and stools with cleanable materials.', href: servicePaths.dentalChair },
       { title: 'Medical & chiropractic', text: 'Exam tables, treatment seating, chiropractic tables and clinic stools.', href: '/services/medical' },
       { title: 'Commercial upholstery', text: 'Restaurant, gym, reception, hospitality and specialty seating made ready for daily use.', href: '/services/commercial' },
       { title: 'Residential furniture', text: 'Dining chairs, cushions, ottomans, armchairs and sofas refreshed for the home.', href: '/services/residential' },
@@ -69,7 +71,7 @@ export const serviceAreas: ServiceArea[] = [
     localNote: 'Scarborough projects are planned around the type of seating, building access, number of pieces and timing. The communities below are examples rather than service boundaries.',
     coverage: ['Agincourt', 'Guildwood', 'Malvern', 'Scarborough Village', 'Wexford'],
     popularServices: [
-      { title: 'Dental chair upholstery', text: 'Dental chairs and stools restored with cleanable materials for clinic use.', href: '/services/dental' },
+      { title: 'Dental chair upholstery', text: 'Dental chairs and stools restored with cleanable materials for clinic use.', href: servicePaths.dentalChair },
       { title: 'Medical & chiropractic', text: 'Exam tables, treatment seating, chiropractic tables and clinic stools.', href: '/services/medical' },
       { title: 'Commercial upholstery', text: 'Restaurant, gym, reception, hospitality and specialty seating prepared for daily use.', href: '/services/commercial' },
       { title: 'Residential furniture', text: 'Dining chairs, cushions, ottomans, armchairs and sofas renewed with careful fit and finish.', href: '/services/residential' },
@@ -85,7 +87,7 @@ export const serviceAreas: ServiceArea[] = [
     localNote: 'Markham projects are coordinated from our Richmond Hill base. Pickup and delivery are confirmed around project size, access and the timing that works for your space.',
     coverage: ['Unionville', 'Milliken', 'Thornhill', 'Cornell', 'Cachet'],
     popularServices: [
-      { title: 'Dental chair upholstery', text: 'Dental chairs and clinic stools restored with cleanable finishes.', href: '/services/dental' },
+      { title: 'Dental chair upholstery', text: 'Dental chairs and clinic stools restored with cleanable finishes.', href: servicePaths.dentalChair },
       { title: 'Medical & chiropractic', text: 'Exam tables, treatment seating, chiropractic tables and clinic stools.', href: '/services/medical' },
       { title: 'Commercial upholstery', text: 'Restaurant, gym, reception, hospitality and specialty seating planned around daily operation.', href: '/services/commercial' },
       { title: 'Residential furniture', text: 'Dining chairs, cushions, armchairs, sofas and other valued home furniture renewed with care.', href: '/services/residential' },
@@ -101,7 +103,7 @@ export const serviceAreas: ServiceArea[] = [
     localNote: 'Woodbridge is within our regular York Region service area. Pickup, delivery and timing are planned around the seating, access and the scope of the project.',
     coverage: ['Islington Woods', 'Weston Downs', 'Pine Valley', 'Sonoma Heights', 'Vellore Village'],
     popularServices: [
-      { title: 'Dental chair upholstery', text: 'Dental chairs and stools restored for cleanable clinical use.', href: '/services/dental' },
+      { title: 'Dental chair upholstery', text: 'Dental chairs and stools restored for cleanable clinical use.', href: servicePaths.dentalChair },
       { title: 'Medical & chiropractic', text: 'Exam tables, treatment seating, chiropractic tables and clinic stools.', href: '/services/medical' },
       { title: 'Commercial upholstery', text: 'Restaurant, gym, reception, hospitality and specialty seating restored for frequent use.', href: '/services/commercial' },
       { title: 'Residential furniture', text: 'Dining chairs, cushions, armchairs and sofas refreshed for comfort and a polished finish.', href: '/services/residential' },

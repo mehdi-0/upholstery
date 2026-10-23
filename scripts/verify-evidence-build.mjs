@@ -15,7 +15,7 @@ async function collectHtml(directory) {
 }
 
 const htmlFiles = await collectHtml(dist);
-assert.ok(htmlFiles.length >= 39, `expected at least the 39 current static pages; found ${htmlFiles.length}`);
+assert.equal(htmlFiles.length, 39, `expected the 39 current static pages; found ${htmlFiles.length}`);
 
 async function route(routePath) {
   return readFile(path.join(dist, routePath), 'utf8');
@@ -29,13 +29,15 @@ async function assertServiceLinksResolve(html, owner) {
   }
 }
 
-const [home, reviews, work, contact, medical, physiotherapy, ophthalmic, about, serviceAreas] = await Promise.all([
+const [home, services, reviews, work, contact, medical, physiotherapy, chiropractic, ophthalmic, about, serviceAreas] = await Promise.all([
   route('index.html'),
+  route('services/index.html'),
   route('testimonials/index.html'),
   route('before-after/index.html'),
   route('contact/index.html'),
   route('services/medical/index.html'),
   route('services/medical/physiotherapy-treatment-table-upholstery/index.html'),
+  route('services/medical/chiropractic-table-upholstery/index.html'),
   route('services/medical/ophthalmic-upholstery/index.html'),
   route('about/index.html'),
   route('service-areas/index.html'),
@@ -45,6 +47,25 @@ assert.match(home, /Awesome rates and beautiful workmanship/);
 assert.match(home, /rel="canonical"/);
 assert.match(home, /property="og:image" content="https:\/\/norasupholstery\.ca\/logo-social\.jpg"/);
 assert.match(home, /name="twitter:image" content="https:\/\/norasupholstery\.ca\/logo-social\.jpg"/);
+// Compare discovery against the built routes, so a later child page cannot be
+// silently omitted from either entry point. Links must exist before any scripts run.
+for (const family of ['dental', 'medical', 'residential', 'commercial']) {
+  for (const [html, prefix] of [[home, 'home'], [services, 'overview']]) {
+    const article = html.match(new RegExp(`<article[^>]*aria-labelledby="${prefix}-family-${family}"[^>]*>([\\s\\S]*?)<\\/article>`))?.[1];
+    assert.ok(article, `${prefix}: missing ${family} family grouping`);
+    assert.ok(article.includes(`href="/services/${family}/"`), `${prefix}: missing ${family} hub link`);
+    if (prefix === 'home') {
+      assert.match(article, /<details name="home-service-families"/);
+      assert.match(article, /<summary(?:\s[^>]*)?>[\s\S]*?View services/);
+      assert.doesNotMatch(article.match(/<summary[^>]*>([\s\S]*?)<\/summary>/)?.[1] ?? '', /<(?:a|button)\b/, 'disclosure controls cannot contain other interactive elements');
+    }
+    const children = await readdir(path.join(dist, 'services', family), { withFileTypes: true });
+    for (const child of children.filter(entry => entry.isDirectory())) {
+      await access(path.join(dist, 'services', family, child.name, 'index.html'));
+      assert.ok(article.includes(`href="/services/${family}/${child.name}/"`), `${prefix}: ${family} omits ${child.name}`);
+    }
+  }
+}
 assert.match(contact, /The upload is too large\. Choose up to 5 photos under 5 MB each\./);
 assert.match(contact, /<script type="module" src="\/_astro\/[^"]+\.js"><\/script>/);
 assert.doesNotMatch(contact, /<script type="module">/);
@@ -91,18 +112,43 @@ assert.match(work, /Two Midmark\/Ritter ophthalmic chairs were renewed for a Tor
 assert.match(work, /Explore physiotherapy table upholstery/);
 assert.match(work, /Explore ophthalmic upholstery/);
 assert.doesNotMatch(work, /fixture-(?:dental|medical|unpublished)/);
+assert.match(work, /href="\/services\/medical\/"[^>]*>Explore medical &amp; chiropractic upholstery/);
+assert.match(work, /id="work-estimate-heading"[\s\S]*?Have a piece you’d like restored\?[\s\S]*?href="\/contact#estimate-form"/);
 
 assert.match(medical, /physiotherapy-seers3-scarborough-after-480\.webp/);
 assert.match(medical, /ophthalmic-queen-street-east-after\.jpg/);
+const firstFourMedicalServices = ['Medical exam tables', 'Chiropractic tables', 'Physiotherapy &amp; treatment tables', 'Clinic and patient seating'].map((label) => medical.indexOf(label));
+assert.ok(firstFourMedicalServices.every((position) => position >= 0), 'the first four Medical hub services render');
+assert.deepEqual(firstFourMedicalServices, [...firstFourMedicalServices].sort((a, b) => a - b), 'Medical hub puts exam tables, chiropractic tables and physiotherapy tables before clinic seating');
 assert.match(physiotherapy, /physiotherapy-seers3-scarborough-before-960\.webp/);
 assert.match(physiotherapy, /physiotherapy-seers3-scarborough-after-960\.webp/);
+assert.match(physiotherapy, /href="\/before-after\/#physiotherapy-seers3-scarborough"/);
+assert.match(chiropractic, /href="\/services\/medical\/physiotherapy-treatment-table-upholstery\/"[^>]*>Explore physiotherapy &amp; treatment table upholstery/);
+assert.match(chiropractic, /href="\/before-after\/"[^>]*>See more completed work/);
 assert.match(ophthalmic, /ophthalmic-queen-street-east-before-detail\.jpg/);
 assert.match(ophthalmic, /ophthalmic-queen-street-east-after\.jpg/);
+assert.match(ophthalmic, /href="\/before-after\/#ophthalmic-chairs-toronto"/);
 assert.match(ophthalmic, /Amazing experience with Nora/);
 assert.match(about, /srcset="\/images\/about-workshop-640\.webp 640w, \/images\/about-workshop-1280\.webp 1280w"/);
 assert.match(about, /srcset="\/images\/about-materials-640\.webp 640w, \/images\/about-materials-1280\.webp 1280w"/);
 assert.match(serviceAreas, /srcset="\/images\/service-area-clinical-640\.webp 640w, \/images\/service-area-clinical-1280\.webp 1280w"/);
 assert.match(serviceAreas, /srcset="\/images\/service-area-delivery-640\.webp 640w, \/images\/service-area-delivery-1280\.webp 1280w"/);
+assert.match(home, /href="\/before-after"[^>]*>View more projects/);
+assert.match(home, /href="\/services\/dental\/dental-chair-upholstery\/"[^>]*>Explore dental chair upholstery/);
+assert.match(about, /Please <a href="tel:\+16479812622"[^>]*>call<\/a> or <a href="mailto:norasupholstery@gmail\.com"[^>]*>email<\/a> before visiting/);
+
+const cityPages = htmlFiles.filter((file) => {
+  const relative = path.relative(dist, file).split(path.sep).join('/');
+  return relative.startsWith('service-areas/') && relative !== 'service-areas/index.html';
+});
+assert.equal(cityPages.length, 6, `expected six established city pages; found ${cityPages.length}`);
+for (const cityPage of cityPages) {
+  const html = await readFile(cityPage, 'utf8');
+  assert.match(html, /href="\/services\/dental\/dental-chair-upholstery\/"[^>]*>[\s\S]*?Dental chair upholstery/,
+    `${path.relative(dist, cityPage)} keeps its Dental chair upholstery card label and destination aligned`);
+  assert.doesNotMatch(html, /href="\/services\/dental\/"[^>]*>[\s\S]*?Dental chair upholstery/,
+    `${path.relative(dist, cityPage)} does not send its Dental chair card to the broad hub`);
+}
 
 for (const file of [
   'logo-social.jpg',
@@ -136,7 +182,7 @@ for (const file of [
   'images/gallery-restaurant-bench-960.webp',
 ]) await access(path.join(dist, file)).catch(() => assert.fail(`missing optimized image output: ${file}`));
 
-for (const [html, owner] of [[work, 'Our Work'], [reviews, 'Reviews'], [medical, 'Medical hub'], [physiotherapy, 'Physiotherapy'], [ophthalmic, 'Ophthalmic']]) {
+for (const [html, owner] of [[home, 'Homepage'], [services, 'Services overview'], [work, 'Our Work'], [reviews, 'Reviews'], [medical, 'Medical hub'], [physiotherapy, 'Physiotherapy'], [ophthalmic, 'Ophthalmic']]) {
   await assertServiceLinksResolve(html, owner);
 }
 
@@ -145,12 +191,47 @@ for (const html of [home, reviews, work, medical, physiotherapy, ophthalmic]) {
   assert.doesNotMatch(html, /"@type"\s*:\s*"(?:Review|AggregateRating|Project)"/, 'no speculative review or project schema is introduced');
 }
 
-const anchorIds = new Set([...work.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]));
+const siteOrigin = 'https://norasupholstery.ca';
+const idsByFile = new Map();
 for (const htmlFile of htmlFiles) {
   const html = await readFile(htmlFile, 'utf8');
-  for (const [, fragment] of html.matchAll(/href="\/before-after\/#([^"#]+)"/g)) {
-    assert.ok(anchorIds.has(fragment), `${path.relative(dist, htmlFile)} links to missing Our Work anchor #${fragment}`);
+  const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(new Set(ids).size, ids.length, `${path.relative(dist, htmlFile)} has no duplicate IDs`);
+  idsByFile.set(path.resolve(htmlFile), new Set(ids));
+}
+
+async function resolveLocalPath(pathname) {
+  const decodedPath = decodeURIComponent(pathname);
+  const relative = decodedPath.replace(/^\/+/, '');
+  const base = path.resolve(dist, relative);
+  assert.ok(base === dist || base.startsWith(`${dist}${path.sep}`), `internal URL stays inside dist: ${pathname}`);
+  const candidates = path.extname(decodedPath)
+    ? [base, path.join(base, 'index.html')]
+    : [path.join(base, 'index.html'), `${base}.html`];
+  for (const candidate of candidates) {
+    try {
+      await access(candidate);
+      return path.resolve(candidate);
+    } catch {}
+  }
+  return undefined;
+}
+
+for (const htmlFile of htmlFiles) {
+  const html = await readFile(htmlFile, 'utf8');
+  const owner = path.relative(dist, htmlFile);
+  for (const [, rawHref] of html.matchAll(/<a\b[^>]*\bhref="([^"]*)"/g)) {
+    const href = rawHref.replaceAll('&amp;', '&');
+    const target = new URL(href, siteOrigin);
+    if (target.origin !== siteOrigin) continue;
+    const targetFile = await resolveLocalPath(target.pathname);
+    assert.ok(targetFile, `${owner} links to a built route or asset: ${href}`);
+    if (target.hash) {
+      const fragment = decodeURIComponent(target.hash.slice(1));
+      const targetHtml = targetFile.endsWith('.html');
+      assert.ok(targetHtml && idsByFile.get(targetFile)?.has(fragment), `${owner} links to an existing fragment: ${href}`);
+    }
   }
 }
 
-console.log(`Rendered-output checks passed: ${htmlFiles.length} static pages, current curation, project anchors, sliders, gallery and evidence routes.`);
+console.log(`Rendered-output checks passed: ${htmlFiles.length} static pages, aligned service relationships, all internal links and fragments, unique IDs, project anchors, sliders, gallery and evidence routes.`);

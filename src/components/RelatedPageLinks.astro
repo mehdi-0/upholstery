@@ -4,15 +4,17 @@ interface Props {
   serviceLabel: string;
   workHref?: string;
   workLabel?: string;
+  relatedService?: { href: string; label: string };
 }
 
-const { serviceHref, serviceLabel, workHref, workLabel = 'View completed work' } = Astro.props;
+const { serviceHref, serviceLabel, workHref, workLabel = 'View completed work', relatedService } = Astro.props;
 ---
 
 <nav class="related-page-links" aria-label="Related pages">
   <p class="eyebrow">Continue exploring</p>
     <div>
       <a href={serviceHref}>All {serviceLabel} services <span aria-hidden="true">↗</span></a>
+      {relatedService && <a href={relatedService.href}>{relatedService.label} <span aria-hidden="true">↗</span></a>}
       {workHref && <a href={workHref}>{workLabel} <span aria-hidden="true">↗</span></a>}
       <a href="/service-areas">Explore service areas <span aria-hidden="true">↗</span></a>
     </div>

@@ -1,0 +1,69 @@
+---
+import { serviceFamilies } from '../data/serviceFamilies';
+import ServiceLinks from './ServiceLinks.astro';
+---
+<div class="service-families glass-service" aria-label="Upholstery service families">
+  {serviceFamilies.map(family => (
+    <article class="service-family" aria-labelledby={`home-family-${family.id}`}>
+      <div class="service-family__intro">
+        <span class="service-family__number">{family.number}</span>
+        <h3 id={`home-family-${family.id}`}>{family.name}</h3>
+        <p>{family.description}</p>
+      </div>
+      <a class="service-family__hub" href={family.href}>Explore family<span class="service-family__sr">: {family.name}</span><span aria-hidden="true">↗</span></a>
+      <details name="home-service-families">
+        <summary><span>View services<span class="service-family__sr"> in {family.name}</span></span><span class="service-family__indicator" aria-hidden="true"></span></summary>
+        <div class="service-family__links"><ServiceLinks services={family.services} columns /></div>
+      </details>
+    </article>
+  ))}
+</div>
+<style>
+  .service-families { position: relative; container-type: inline-size; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: start; border-block: 1px solid var(--line); }
+  .service-family { --family-offset: 0cqw; position: relative; min-width: 0; padding: 1.35rem; border-right: 1px solid var(--line); }
+  .service-family:nth-child(2) { --family-offset: 25cqw; }
+  .service-family:nth-child(3) { --family-offset: 50cqw; }
+  .service-family:nth-child(4) { --family-offset: 75cqw; }
+  .service-family:has(details[open]) { padding-bottom: 0; }
+  .service-family:last-child { border-right: 0; }
+  .service-family__intro { min-height: 220px; }
+  .service-family__number { color: var(--saddle); font-size: .7rem; }
+  h3 { margin: 2rem 0 1rem; font-family: var(--serif); font-size: clamp(2rem, 2.5vw, 2.6rem); font-weight: 400; line-height: 1; }
+  p { margin: 0 0 .8rem; color: rgba(8,30,39,.75); font-size: .875rem; line-height: 1.5; }
+  .service-family__hub, summary { display: flex; min-height: 44px; align-items: center; justify-content: space-between; gap: .5rem; border-radius: .5rem; font-size: .875rem; font-weight: 600; line-height: 1.35; }
+  .service-family__hub { text-decoration: underline; text-decoration-color: rgba(16,47,61,.3); text-underline-offset: .25rem; }
+  summary { padding-inline: .75rem; background: rgba(255,255,255,.6); box-shadow: inset 0 1px 0 rgba(255,255,255,.75); cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: rgba(255,255,255,.9); }
+  details[open] summary { background: var(--ink); color: #fff; }
+  .service-family__indicator { position: relative; flex: none; width: .65rem; height: .65rem; }
+  .service-family__indicator::before, .service-family__indicator::after { content: ''; position: absolute; inset: calc(50% - .5px) 0 auto; height: 1px; background: currentColor; }
+  .service-family__indicator::after { transform: rotate(90deg); }
+  details[open] .service-family__indicator::after { display: none; }
+  /* Span the family grid while keeping the panel in the native disclosure flow. */
+  .service-family__links { container-type: inline-size; width: 100cqw; margin-top: 1.35rem; margin-left: calc(0px - var(--family-offset) - 1.35rem); padding: 1rem 1.35rem; border-top: 1px solid var(--line); background: var(--paper); }
+  .service-family__sr { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @media (min-width: 641px) and (max-width: 1099px) {
+    .service-families { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .service-family:nth-child(even) { --family-offset: 50cqw; border-right: 0; }
+    .service-family:nth-child(3) { --family-offset: 0cqw; }
+    .service-family:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+    .service-family__intro { min-height: 185px; }
+    h3 { margin-top: 1.2rem; font-size: 2.4rem; }
+  }
+  @media (max-width: 640px) {
+    .service-families { grid-template-columns: 1fr; gap: .65rem; border: 0; overflow: visible; background: none; box-shadow: none; backdrop-filter: none; }
+    .service-families::after { display: none; }
+    .service-family { display: grid; grid-template-columns: 1fr 1fr; column-gap: .75rem; padding: 1rem; border: 1px solid var(--line); border-radius: 1.15rem; background: linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,.18)); }
+    .service-family:last-child { border-right: 1px solid var(--line); }
+    .service-family:has(details[open]) { padding-bottom: 1rem; }
+    .service-family__intro { grid-column: 1 / -1; min-height: 0; position: relative; padding-right: 1.5rem; }
+    .service-family__number { position: absolute; top: .15rem; right: 0; }
+    h3 { margin: 0 0 .5rem; font-size: 1.9rem; }
+    p { margin-bottom: .7rem; }
+    .service-family__hub { grid-column: 1; grid-row: 2; align-self: start; position: relative; z-index: 1; }
+    details { grid-column: 1 / -1; grid-row: 2; }
+    summary { margin-left: calc(50% + .375rem); padding-inline: .5rem; }
+    .service-family__links { width: auto; margin: .75rem 0 0; padding: 0; border: 0; background: none; }
+  }
+</style>

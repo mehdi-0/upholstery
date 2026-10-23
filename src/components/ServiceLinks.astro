@@ -1,0 +1,18 @@
+---
+import type { FamilyService } from '../data/serviceFamilies';
+interface Props { services: readonly FamilyService[]; columns?: boolean }
+const { services, columns = false } = Astro.props;
+---
+<ul class:list={['service-links', columns && 'service-links--columns']}>
+  {services.map(service => <li><a href={service.href}><span>{service.label}</span><span aria-hidden="true">↗</span></a></li>)}
+</ul>
+<style>
+  .service-links { display: grid; gap: .15rem; margin: 0; padding: 0; list-style: none; }
+  .service-links li { min-width: 0; }
+  .service-links a { display: flex; min-height: 44px; align-items: center; justify-content: space-between; gap: .75rem; padding: .6rem .65rem; border-radius: .55rem; font-size: .875rem; line-height: 1.4; }
+  .service-links a > span:first-child { overflow-wrap: anywhere; }
+  .service-links a > span:last-child { flex: none; color: var(--saddle); font-size: .8rem; }
+  .service-links a:hover { background: rgba(183,138,71,.1); }
+  .service-links a:focus-visible { outline: 3px solid var(--brass); outline-offset: 0; background: rgba(183,138,71,.1); }
+  @container (min-width: 480px) { .service-links--columns { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 1rem; } }
+</style>

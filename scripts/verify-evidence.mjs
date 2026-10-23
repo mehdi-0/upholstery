@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { access } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { createServer } from 'vite';
 
@@ -15,7 +15,7 @@ const vite = await createServer({
 });
 
 try {
-  const [evidence, projectData, reviewData, galleryData, curation, serviceData, paths] = await Promise.all([
+  const [evidence, projectData, reviewData, galleryData, curation, serviceData, paths, areaData] = await Promise.all([
     vite.ssrLoadModule('/src/data/evidence.ts'),
     vite.ssrLoadModule('/src/data/projects.ts'),
     vite.ssrLoadModule('/src/data/reviews.ts'),
@@ -23,6 +23,7 @@ try {
     vite.ssrLoadModule('/src/data/evidenceCuration.ts'),
     vite.ssrLoadModule('/src/data/serviceDetails.ts'),
     vite.ssrLoadModule('/src/data/servicePaths.ts'),
+    vite.ssrLoadModule('/src/data/serviceAreas.ts'),
   ]);
   const servicePath = paths.servicePaths;
 
@@ -64,8 +65,17 @@ try {
   const dialysis = galleryData.getGalleryExample('dialysis-chair');
   assert.equal(dialysis.image.src, '/images/dialysis-chair-after.webp');
   assert.equal(dialysis.comparison.before.src, '/images/dialysis-chair-before.webp');
+  assert.equal(dialysis.serviceLink?.path, servicePath.medicalHub, 'the Dialysis gallery example links to the Medical & Chiropractic hub');
+  assert.match(dialysis.serviceLink?.label ?? '', /medical & chiropractic/i);
   assert.equal(serviceData.ophthalmicService.evidencePresentation.featuredReviewId, 'monica');
   assert.equal(evidence.getServiceFeaturedProjectId(serviceData.physiotherapyService), 'physiotherapy-seers3-scarborough');
+
+  for (const area of areaData.serviceAreas) {
+    const dentalCards = area.popularServices.filter((service) => service.title === 'Dental chair upholstery');
+    for (const card of dentalCards) {
+      assert.equal(card.href, servicePath.dentalChair, `${area.name} dental-chair card matches its individual service destination`);
+    }
+  }
 
   const makeImage = (role, filename) => ({
     role,
@@ -194,6 +204,19 @@ try {
   assert.ok(sourceFallback, 'Google fallback uses source identity rather than display wording');
 
   const publicRoot = path.join(root, 'public');
+  const imageGuide = await readFile(path.join(root, 'IMAGE-GUIDE.md'), 'utf8');
+  const galleryImages = galleryData.galleryExamples.flatMap((example) => [example.image, ...(example.comparison ? [example.comparison.before] : [])]);
+  const galleryFallbacks = new Set(galleryImages.map((image) => image.src));
+  const galleryResponsiveDerivatives = new Set(galleryImages.flatMap((image) => (image.srcset ?? '').split(',')
+    .map((candidate) => candidate.trim().split(/\s+/)[0])
+    .filter((candidate) => candidate && !galleryFallbacks.has(candidate))));
+  assert.equal(galleryResponsiveDerivatives.size, 17, 'all eight curated Our Work examples retain their 17 responsive image derivatives');
+  assert.match(imageGuide, /fallback image/i, 'the image guide distinguishes default src fallbacks');
+  assert.match(imageGuide, /responsive WebP derivatives/i, 'the image guide distinguishes srcset derivatives');
+  for (const derivative of galleryResponsiveDerivatives) {
+    assert.ok(imageGuide.includes(`\`${derivative.replace(/^\//, '')}\``), `IMAGE-GUIDE.md documents ${derivative}`);
+  }
+
   const evidenceImages = [
     ...projectData.projects.flatMap((project) => project.images),
     ...galleryData.galleryExamples.flatMap((example) => [example.image, ...(example.comparison ? [example.comparison.before] : [])]),

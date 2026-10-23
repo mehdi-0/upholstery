@@ -5,7 +5,7 @@ import RelatedPageLinks from './RelatedPageLinks.astro';
 import { phoneDisplay, phoneHref, serviceSchema } from '../data/business';
 import { serviceWorkLinks, type ServicePath } from '../data/servicePaths';
 type Item={eyebrow:string;title:string;copy:string}; type Faq=[string,string]; type Crumb={name:string;href?:string};
-const p=Astro.props as {title:string;description:string;schemaName:string;path:string;serviceTypes:string[];breadcrumbs:Crumb[];kicker:string;heading:string;headingAccent:string;intro:string;image:string;imageAlt:string;imageLabel:string;highlights:Item[];faqHeading:string;faq:Faq[];ctaEyebrow:string;ctaHeading:string;ctaLabel:string};
+const p=Astro.props as {title:string;description:string;schemaName:string;path:string;serviceTypes:string[];breadcrumbs:Crumb[];kicker:string;heading:string;headingAccent:string;intro:string;image:string;imageAlt:string;imageLabel:string;highlights:Item[];faqHeading:string;faq:Faq[];ctaEyebrow:string;ctaHeading:string;ctaLabel:string;relatedService?:{href:string;label:string}};
 const origin=(Astro.site??Astro.url).origin;
 const callLabel = p.kicker.toLowerCase().includes('dental')
   ? `Call ${phoneDisplay} about weekend turnaround`
@@ -20,7 +20,7 @@ const completedWorkHref = serviceWorkLinks[p.path as ServicePath];
     <figure class="detail__feature glass"><img src={p.image} alt={p.imageAlt} loading="lazy" decoding="async"/><figcaption>{p.imageLabel}</figcaption></figure>
     <section class="detail__grid">{p.highlights.map(x=><article class="glass"><p class="eyebrow">{x.eyebrow}</p><h2>{x.title}</h2><p>{x.copy}</p></article>)}</section>
     <section class="detail__faq"><div><p class="eyebrow">Common questions</p><h2>{p.faqHeading}</h2></div><div>{p.faq.map(([q,a])=><details><summary>{q}</summary><p>{a}</p></details>)}</div></section>
-    {parentService?.href && <RelatedPageLinks serviceHref={parentService.href} serviceLabel={parentService.name} workHref={completedWorkHref} workLabel="See more completed work" />}
+    {parentService?.href && <RelatedPageLinks serviceHref={parentService.href} serviceLabel={parentService.name} workHref={completedWorkHref} workLabel="See more completed work" relatedService={p.relatedService} />}
     <div class="individual-service__cta glass-dark"><div><p class="eyebrow">{p.ctaEyebrow}</p><h2>{p.ctaHeading}</h2></div><div class="individual-service__cta-actions"><a href="/contact#estimate-form" class="button button--light">{p.ctaLabel}</a><a href={phoneHref} class="text-link text-link--light">{callLabel}</a></div></div>
   </section>
 </BaseLayout>

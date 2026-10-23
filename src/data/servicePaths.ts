@@ -1,7 +1,11 @@
-// Canonical service destinations used by shared evidence relationships.
+// Canonical service destinations used by discovery and shared evidence relationships.
 export const servicePaths = {
   medicalHub: '/services/medical/',
   dentalHub: '/services/dental/',
+  residentialHub: '/services/residential/',
+  commercialHub: '/services/commercial/',
+  medicalExamTable: '/services/medical/medical-exam-table-upholstery/',
+  clinicalRepair: '/services/medical/clinical-upholstery-repair/',
   chiropracticTable: '/services/medical/chiropractic-table-upholstery/',
   clinicSeating: '/services/medical/clinic-seating-upholstery/',
   dentalChair: '/services/dental/dental-chair-upholstery/',
@@ -13,6 +17,12 @@ export const servicePaths = {
   gymEquipment: '/services/commercial/gym-equipment-upholstery/',
   physiotherapyTables: '/services/medical/physiotherapy-treatment-table-upholstery/',
   ophthalmic: '/services/medical/ophthalmic-upholstery/',
+  sofaSectional: '/services/residential/sofa-sectional-upholstery/',
+  outdoor: '/services/residential/outdoor-upholstery/',
+  bowlingRecreation: '/services/commercial/bowling-recreation-seating/',
+  hospitality: '/services/commercial/hospitality-upholstery/',
+  officeReception: '/services/commercial/office-reception-upholstery/',
+  specialtyCommercial: '/services/commercial/specialty-commercial-upholstery/',
 } as const;
 
 export type ServicePath = (typeof servicePaths)[keyof typeof servicePaths];

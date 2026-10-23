@@ -21,6 +21,7 @@ export const galleryExamples = [
     },
     label: 'Dialysis chair upholstery',
     note: 'Before and after · Work by Nora’s Upholstery',
+    serviceLink: { path: servicePaths.medicalHub, label: 'Explore medical & chiropractic upholstery' },
   },
   { id: 'waiting-room-blue-chairs', image: { src: '/images/gallery-waiting-room-blue-chairs.webp', srcset: '/images/gallery-waiting-room-blue-chairs-480.webp 480w, /images/gallery-waiting-room-blue-chairs-960.webp 960w, /images/gallery-waiting-room-blue-chairs.webp 1800w', width: 1800, height: 1350, alt: 'Two blue upholstered clinic waiting room chairs' }, label: 'Waiting room seating', note: 'Comfortable clinic chairs renewed in durable blue upholstery', serviceLink: { path: servicePaths.clinicSeating, label: 'Explore clinic seating' } },
   { id: 'waiting-room-fireplace', image: { src: '/images/gallery-waiting-room-fireplace.webp', srcset: '/images/gallery-waiting-room-fireplace-480.webp 480w, /images/gallery-waiting-room-fireplace-960.webp 960w, /images/gallery-waiting-room-fireplace.webp 1800w', width: 1800, height: 1350, alt: 'Blue upholstered clinic waiting room chairs beside a fireplace' }, label: 'Clinic seating', note: 'Cleanable seating coordinated for a welcoming patient space', serviceLink: { path: servicePaths.clinicSeating, label: 'Explore clinic seating' } },
