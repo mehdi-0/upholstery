@@ -22,7 +22,7 @@ const { photos, heading = 'Photo slots ready for your work' } = Astro.props as {
     {photos.map((photo, index) => (
       <figure class="photo-slot" role="group" aria-label={`${index + 1} of ${photos.length}: ${photo.label}`}>
         <div class="photo-slot__fallback" aria-hidden="true"><span>{photo.label}</span><small>{photo.note}</small></div>
-        <img src={photo.src} srcset={photo.srcset} sizes={photo.sizes} width={photo.width} height={photo.height} alt={photo.alt} loading="lazy" decoding="async" style={photo.position ? `object-position: ${photo.position}` : undefined} onerror="this.hidden=true" />
+        <img src={photo.src} srcset={photo.srcset} sizes={photo.sizes} width={photo.width} height={photo.height} alt={photo.alt} loading="lazy" decoding="async" data-object-position={photo.position} data-hide-on-error />
         <figcaption>{photo.label}</figcaption>
       </figure>
     ))}
@@ -54,6 +54,11 @@ const { photos, heading = 'Photo slots ready for your work' } = Astro.props as {
 
 <script>
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  document.querySelectorAll<HTMLImageElement>('[data-object-position]').forEach((image) => {
+    const position = image.dataset.objectPosition;
+    if (position) image.style.objectPosition = position;
+  });
 
   document.querySelectorAll<HTMLElement>('[data-photo-strip]').forEach((strip) => {
     const rail = strip.querySelector<HTMLElement>('[data-photo-strip-rail]');
